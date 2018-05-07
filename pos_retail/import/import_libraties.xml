@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="assets_backend_index" name="index pos ui" inherit_id="point_of_sale.index">
+        <xpath expr="//head" position="inside">
+            <script type="text/javascript" src="/pos_retail/static/src/libs/swiper/js/swiper.js"/>
+            <link href="/pos_retail/static/src/libs/swiper/css/swiper.css" rel="stylesheet"/>
+            <script type="text/javascript" src="/pos_retail/static/src/libs/js/jquery-barcode-last.min.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/libs/js/jquery.validate.min.js"/>
+            <link href="/pos_retail/static/src/libs/assets/css/material-dashboard.css" rel="stylesheet" />
+            <script type="text/javascript" src="/pos_retail/static/src/libs/assets/js/bootstrap-notify.js"/>
+            <script src="/pos_retail/static/src/libs/assets/js/bootstrap-datetimepicker.js"/>
+            <script src="/pos_retail/static/src/libs/assets/js/jquery.validate.min.js"/>
+            <script src="/pos_retail/static/src/libs/assets/js/sweetalert2.js"/>
+            <script src="/pos_retail/static/src/libs/assets/js/jquery.datatables.js"/>
+            <link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet"/>
+            <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" />
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+            <script src="/pos_retail/static/src/js/moment.js"/>
+            <script src="/pos_retail/static/src/js/rpc.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/libs/js/flashcanvas.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/libs/js/jSignature.min.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/libs/js/jSignature.min.noconflict.js"/>
+        </xpath>
+    </template>
+
+    <template id="assets_backend" name="pos_auto_invoice assets" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/pos_retail/static/src/js/big_data.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/buttons.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/channels.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/database.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/model.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/order.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/payment_line.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/popups.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/screens.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/synchronization.js"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/widgets.js"/>
+            <link rel="stylesheet" href="/pos_retail/static/src/css/retail.css"/>
+            <link rel="stylesheet" href="/pos_retail/static/src/css/synchronization.css"/>
+            <script type="text/javascript" src="/pos_retail/static/src/js/chromes.js"/>
+        </xpath>
+    </template>
+</odoo>

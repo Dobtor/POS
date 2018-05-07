@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="retail_view_pos_pos_form" model="ir.ui.view">
+            <field name="name">pos.order.retail</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/> <!-- v10, dont merge Bruce -->
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='lines']/tree/field[@name='price_subtotal_incl']" position="after">
+                    <field name="promotion"/>
+                    <field name="uom_id"/>
+                    <field name="is_return"/>
+                    <field name="tag_ids" widget="many2many_tags"/>
+                </xpath>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Delivery orders" groups="point_of_sale.group_pos_manager">
+                        <separator string="Delivery products pack and return order"/>
+                        <field name="picking_ids"
+                               attrs="{'readonly': [('state', 'in', ['paid', 'done', 'invoiced'])]}"/>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="ean13" groups="point_of_sale.group_pos_manager"/>
+                    <field name="expire_date" groups="point_of_sale.group_pos_manager"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="is_return" groups="point_of_sale.group_pos_manager" readonly="1"/>
+                    <field name="lock_return" groups="point_of_sale.group_pos_manager"/>
+                    <field name="return_order_id" groups="point_of_sale.group_pos_manager"/>
+                    <field name="voucher_id" groups="point_of_sale.group_pos_manager"/>
+                    <field name="email" readonly="1"/>
+                    <field name="signature" widget='image' readonly="1"/>
+                </xpath>
+                <xpath expr="//page[@name='extra']" position="inside">
+                    <field name="mrp_order_ids"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_tax']" position="after">
+                    <field name="amount_paid" widget="monetary"/>
+                    <field name="amount_return" widget="monetary"/>
+                    <field name="amount_tax" widget="monetary"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="retail_view_pos_order_tree">
+            <field name="name">Orders</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="ean13"/>
+                    <field name="expire_date"/>
+                </xpath>
+                <xpath expr="//field[@name='session_id']" position="after">
+                    <field name="plus_point" groups="point_of_sale.group_pos_manager"/>
+                    <field name="redeem_point" groups="point_of_sale.group_pos_manager"/>
+                    <field name="is_return" groups="point_of_sale.group_pos_manager"/>
+                    <field name="lock_return" groups="point_of_sale.group_pos_manager"/>
+                    <field name="return_order_id" groups="point_of_sale.group_pos_manager"/>
+                    <field name="voucher_id" groups="point_of_sale.group_pos_manager"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="colors">red: is_return == True</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="pos_order_filter" model="ir.ui.view">
+            <field name="name">pos.order.list.select</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="ean13"/>
+                    <field name="expire_date"/>
+                    <field name="note"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+

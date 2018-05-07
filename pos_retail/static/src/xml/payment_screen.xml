@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+
+    <t t-extend="PaymentScreen-Paymentmethods">
+        <t t-jquery=".paymentmethods" t-operation="replace">
+            <div class='paymentmethods'>
+                <t t-foreach="widget.pos.cashregisters" t-as="cashregister">
+                    <t t-if="cashregister.journal.pos_method_type == 'default'">
+                        <div class="btn btn-default paymentmethod" t-att-data-id="cashregister.journal_id[0]">
+                            <t t-esc="cashregister.journal_id[1]" />
+                        </div>
+                    </t>
+                    <t t-if="cashregister.journal.pos_method_type != 'default'">
+                        <div class="btn btn-default paymentmethod oe_hidden" t-att-data-id="cashregister.journal_id[0]">
+                            <t t-esc="cashregister.journal_id[1]" />
+                        </div>
+                    </t>
+                </t>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="PaymentScreenWidget">
+        <!-- quickly paid -->
+        <t t-jquery=".right-content" t-operation="append">
+            <t t-if="widget.quickly_datas">
+                <div class='payment-buttons'>
+                    <p class="title">QUICKLY PAID</p>
+                    <t t-foreach="widget.quickly_datas" t-as="quickly">
+                        <div class="btn btn-danger quickly-payment" t-att-data-id="quickly.id">
+                            <i class="fa fa-money"></i> <t t-esc="widget.format_currency(quickly.amount)"/>
+                        </div>
+
+                    </t>
+                </div>
+            </t>
+        </t>
+        <t t-jquery=".js_set_customer" t-operation="after">
+            <t t-if='widget.pos.get_order()'>
+                <!-- Paid full -->
+                <div t-attf-class='button full_payment'>
+                    <i class="fa fa-building"/> Paid full
+                </div>
+                <!-- Voucher -->
+                <div t-attf-class='button input_voucher'>
+                    <i class="fa fa-gift"/> Voucher
+                </div>
+                <!-- Add Wallet -->
+                <div t-attf-class='button add_wallet'>
+                    <i class="fa fa-tag"/> Add Wallet
+                </div>
+            </t>
+        </t>
+        <!-- Credit Balance -->
+        <t t-jquery=".js_customer_name" t-operation="append">
+            <t t-if="widget.pos.get_client()">
+                <span class='credit'>[Credit card] <t t-esc="widget.format_currency(widget.pos.get_client().balance)" /></span>
+            </t>
+        </t>
+        <!-- Multi currency -->
+        <t t-jquery=".paymentlines-container" t-operation="before">
+            <t t-if="widget.pos.config.multi_currency">
+                <table class='multi-currency'>
+                    <colgroup>
+                        <col class='due' />
+                        <col class='tendered' />
+                        <col class='change' />
+                        <col class='method' />
+                        <col class='controls' />
+                    </colgroup>
+                    <thead>
+                        <tr class='label'>
+                            <th>Currency</th>
+                            <th>Rate</th>
+                            <th>Covert</th>
+                            <th>Paid full</th>
+                            <th>Add rate</th>
+                        </tr>
+                        <tr class='paymentline selected'>
+                            <td>
+                                <select class='select-currency'>
+                                    <t t-foreach='widget.pos.currencies' t-as='currency'>
+                                        <option t-att-value='currency.id' t-att-selected="currency['id'] ? ((currency['id'] === widget.pos.currency.id) ? true : undefined) : undefined">
+                                            <t t-esc='currency.name'/>
+                                            (<t t-esc='currency.symbol'/>)
+                                        </option>
+                                    </t>
+                                </select>
+                            </td>
+                            <td><div class='subentry'><span class="value col-due currency-rate">N/A</span></div></td>
+                            <td><div class='subentry'><span class="value col-due currency-covert">N/A</span></div></td>
+                            <td><div class='subentry'><span class="value col-due currency-paid-full">N/A</span></div></td>
+                            <t t-if="widget.pos.config.multi_currency_update_rate">
+                                <td class='update-rate'> <i class='fa fa-edit' /></td>
+                            </t>
+                        </tr>
+                    </thead>
+                </table>
+            </t>
+        </t>
+        <!-- order note -->
+        <t t-jquery=".js_set_customer" t-operation="after">
+            <t t-if='widget.pos.get_order()'>
+                <div t-attf-class='button set-note'>
+                    <i class="fa fa-tag"/> Set order note
+                </div>
+            </t>
+        </t>
+        <t t-jquery=".payment-buttons:eq(1)" t-operation="after">
+            <t t-if="widget.pos.get_order()">
+                <section class='set-note'>
+                    <div class="order-note-information">
+                        <div class="title">Order Notes</div>
+                        <div class="order-note">
+                            <t t-esc="widget.pos.get_order().get_note() || ''"/>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </t>
+        <!-- order signature -->
+        <t t-jquery=".js_set_customer" t-operation="after">
+            <t t-if='widget.pos.get_order()'>
+                <div t-attf-class='button payment-signature-order'>
+                    <i class="fa fa-edit"/> Signature
+                </div>
+            </t>
+        </t>
+        <t t-jquery=".payment-buttons:eq(1)" t-operation="after">
+            <t t-if="widget.pos.get_order()">
+                <section class='signature-order'>
+                    <div class="order-note-information">
+                        <div class="title">Customer Signature</div>
+                        <img class="product-img signature"
+                             t-att-src="widget.pos.get_order().get_signature() || ''"
+                             style="max-height:400px;max-width:100px"
+                        />
+                    </div>
+                </section>
+            </t>
+        </t>
+        <!-- partial payment -->
+        <t t-jquery=".js_set_customer" t-operation="after">
+            <t t-if='widget.pos.get_order()'>
+                <div t-attf-class='button partial-pay'>
+                    <i class="fa fa-edit"/> Partial pay
+                </div>
+            </t>
+        </t>
+    </t>
+
+    <!-- multi currency
+    <t t-extend="PaymentScreen-Paymentlines">
+        <t t-jquery=".paymentlines >thead >tr >th:eq(0)" t-operation="before">
+            <th>Currency</th>
+            <th>Currency amount</th>
+        </t>
+        <t t-jquery=".paymentlines >tbody .paymentline:eq(0) >td:eq(0)" t-operation="before">
+            <td class='col-name'>
+                <t t-if="line.selected_currency">
+                    <t t-esc="line.selected_currency.name"/>
+                    (<t t-esc='line.selected_currency.symbol'/>)
+                </t>
+                <t t-if="!line.selected_currency">
+                    N/A
+                </t>
+
+            </td>
+            <td class='col-name'>
+                <t t-esc="widget.format_currency_no_symbol(line.amount_currency)"/>
+            </td>
+        </t>
+        <t t-jquery=".paymentlines >tbody .paymentline:eq(1) >td:eq(0)" t-operation="before">
+            <td class='col-name'>
+                <t t-if="line.selected_currency">
+                    <t t-esc="line.selected_currency.name"/>
+                </t>
+                <t t-if="!line.selected_currency">
+                    N/A
+                </t>
+
+            </td>
+            <td class='col-name'>
+                <t t-esc="widget.format_currency_no_symbol(line.amount_currency)"/>
+            </td>
+        </t>
+    </t>
+    -->
+
+</templates>

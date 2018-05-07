@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="shop_sale_quotation_view_tree" model="ir.ui.view">
+            <field name="name">sale.order</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <field name="date_order" position="after">
+                    <field name="shop_id"/>
+                    <field name="pos_status"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="shop_sale_shop_shop_add_view_tree" model="ir.ui.view">
+            <field name="name">sale.order</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="shop_id"/>
+                    <field name="pos_status"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="shop_sale_view_order_form" model="ir.ui.view">
+            <field name="name">sale.order</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="shop_id"/>
+                    <field name="pos_status"/>
+                </field>
+                <xpath expr="//header" position="inside">
+                    <button string="Request to POS" name="request_to_pos"
+                            type="object" class="oe_highlight" groups="base.group_user"
+                            attrs="{'invisible': [('pos_status', '!=', 'draft')]}"/>
+                    <button string="Cancel request" name="cancel_request_to_pos"
+                            type="object" class="oe_highlight" groups="base.group_user"
+                            attrs="{'invisible': [('pos_status', '!=', 'request')]}"/>
+                    <button string="Re-Request" name="re_request_to_pos"
+                            type="object" class="oe_highlight" groups="base.group_user"
+                            attrs="{'invisible': [('pos_status', 'not in', ['success', 'cancel'])]}"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="signature_on_report"/>
+                    <field name="signature" widget='image' readonly="1" attrs="{'invisible': [('signature_on_report', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

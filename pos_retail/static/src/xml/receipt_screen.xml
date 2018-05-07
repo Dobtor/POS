@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="XmlReceipt">
+        <!-- combo -->
+        <t t-jquery="t[t-foreach*='orderlines'][t-as*='line']" t-operation="append">
+            <t t-if="line.combo_items">
+                <t t-foreach="line.combo_items" t-as="combo_item">
+                    <line indent='1'>
+                        <left>
+                            <t t-esc="combo_item.product_id[1]"/>
+                            with :
+                            <t t-esc="combo_item.quantity" />
+                        </left>
+                    </line>
+                </t>
+            </t>
+        </t>
+        <t t-jquery="line[class*='total']" t-operation="after">
+            <t t-if="amount_paid">
+                <line class='total' size='double-height'>
+                <left><pre>        Paid</pre></left>
+                <right><value t-att-value-decimals='pos.currency.decimals'><t t-esc='amount_paid' /></value></right>
+            </line>
+            </t>
+            <t t-if="amount_debit">
+                <line class='total' size='double-height'>
+                <left><pre>        Debit</pre></left>
+                <right><value t-att-value-decimals='pos.currency.decimals'><t t-esc='amount_debit' /></value></right>
+            </line>
+            </t>
+        </t>
+        <!-- expire date order and barcode label -->
+        <t t-jquery="t[t-if*='receipt.cashier']" t-operation="after">
+            <t t-if="pos.config.allow_return_order">
+                <t t-if="order.ean13">
+                    <barcode encoding="ean13"><t t-esc='order.ean13'/></barcode>
+                </t>
+                <t t-if="order.expire_date">
+                    <div class='pos-expire-date'>
+                        Expire return: <t t-esc="order.expire_date.toString()"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+
+        <t t-jquery="div[class='after-footer']" t-operation="before">
+            <!-- loyalty plus/redeem point -->
+            <t t-if="receipt.plus_point">
+                <line>
+                    <right><value><t t-esc='receipt.plus_point' /></value></right>
+                </line>
+            </t>
+            <t t-if="receipt.redeem_point">
+                <line>
+                    <right><value><t t-esc='receipt.redeem_point' /></value></right>
+                </line>
+            </t>
+            <!-- Order note -->
+            <t t-if="receipt.note">
+                <div>Note: </div>
+                <div><t t-esc='receipt.note' /></div>
+            </t>
+            <!-- Signature customer -->
+            <t t-if="receipt.signature">
+                <t t-if="receipt.note">
+                    <div>Signature: </div>
+                    <div>
+                        <img class="product-img signature"
+                             t-att-src="widget.pos.get_order().get_signature() || ''"
+                             style="max-height:400px;max-width:100px"
+                        />
+                    </div>
+                </t>
+            </t>
+        </t>
+
+        <!-- price of variant line -->
+        <t t-jquery="t[t-foreach*='orderlines'][t-as*='line']" t-operation="append">
+            <t t-if="line.variants">
+                <t t-foreach="line.variants" t-as="variant">
+                    <line>
+                        <left><t t-esc='variant.value_id[1]' /> : <value t-att-value-decimals='pos.currency.decimals'><t t-esc='variant.price_extra' /></value></left>
+                    </line>
+                </t>
+            </t>
+        </t>
+        <!-- promotion -->
+        <t t-jquery=".total" t-operation="before">
+            <t t-if="pos.config.promotion == true">
+                <line class='total' size='double-height'>
+                    <left><pre>        PROMOTIONS</pre></left>
+                    <right><value><t t-esc='receipt.promotion_amount || 0.00' /></value></right>
+                </line>
+                <br/>
+                <line><right>--------</right></line>
+            </t>
+        </t>
+        <t t-jquery=".after-footer" t-operation="after">
+            <br/>
+            <div font='b'>
+                <div>POS RETAIL V4.0.6, Author thanhchatvn@gmail.com</div>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="xml_receipt_not_show_price">
+        <receipt align='center' width='40' value-thousands-separator='' >
+            <t t-if='receipt.company.logo'>
+                <img t-att-src='receipt.company.logo' />
+                <br/>
+            </t>
+            <t t-if='!receipt.company.logo'>
+                <h1><t t-esc='receipt.company.name' /></h1>
+                <br/>
+            </t>
+            <div font='b'>
+                <t t-if='receipt.company.contact_address'>
+                    <div><t t-esc='receipt.company.contact_address' /></div>
+                </t>
+                <t t-if='receipt.company.phone'>
+                    <div>Tel:<t t-esc='receipt.company.phone' /></div>
+                </t>
+                <t t-if='receipt.company.vat'>
+                    <div>VAT:<t t-esc='receipt.company.vat' /></div>
+                </t>
+                <t t-if='receipt.company.email'>
+                    <div><t t-esc='receipt.company.email' /></div>
+                </t>
+                <t t-if='receipt.company.website'>
+                    <div><t t-esc='receipt.company.website' /></div>
+                </t>
+                <t t-if='receipt.header_xml'>
+                    <t t-raw='receipt.header_xml' />
+                </t>
+                <t t-if='!receipt.header_xml and receipt.header'>
+                    <div><t t-esc='receipt.header' /></div>
+                </t>
+                <t t-if='receipt.cashier'>
+                    <div class='cashier'>
+                        <div>--------------------------------</div>
+                        <div>Served by <t t-esc='receipt.cashier' /></div>
+                    </div>
+                </t>
+            </div>
+            <br /><br />
+
+            <div class='orderlines' line-ratio='0.6'>
+                <t t-foreach='receipt.orderlines' t-as='line'>
+                    <line>
+                        <left><t t-esc='line.product_name_wrapped[0]' /></left>
+                        <right>
+                            <value t-att-value-decimals='pos.dp["Product Unit of Measure"]' value-autoint='on'>
+                                <t t-esc='line.quantity' />
+                            </value>
+                        </right>
+                    </line>
+                    <t t-call="XmlReceiptWrappedProductNameLines"/>
+                </t>
+            </div>
+            <t t-if='receipt.footer_xml'>
+                <t t-raw='receipt.footer_xml' />
+            </t>
+            <t t-if='!receipt.footer_xml and receipt.footer'>
+                <br/>
+                <t t-esc='receipt.footer' />
+                <br/>
+                <br/>
+            </t>
+            <div class='after-footer' />
+            <br/>
+            <div font='b'>
+                <div><t t-esc='receipt.date.localestring' /></div>
+            </div>
+        </receipt>
+    </t>
+
+
+    <!--<t t-extend="XmlReceipt">-->
+        <!--<t t-jquery=".orderlines >t" t-operation="append">-->
+            <!--<t t-if="line.tags">-->
+                <!--<t t-foreach="line.tags" t-as="tag">-->
+                    <!--<line indent='1'>-->
+                        <!--<left>-->
+                            <!--<span class='bus-info' t-att-data-id="tag.id">-->
+                                <!--<i class="fa fa-tag">-->
+                                    <!--<t t-esc="tag.name"/>-->
+                                <!--</i>-->
+                            <!--</span>-->
+                        <!--</left>-->
+                    <!--</line>-->
+                <!--</t>-->
+            <!--</t>-->
+        <!--</t>-->
+    <!--</t>-->
+
+</templates>

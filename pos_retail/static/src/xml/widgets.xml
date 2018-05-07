@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="NewsWidget">
+        <div class="ribbon"><span><t t-esc="title"></t></span></div>
+    </t>
+
+    <!-- count items widget -->
+    <t t-name="CountItemWidget">
+        <div class="oe_status hide_numpad">
+            <div class="js_connected">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+        </div>
+        <div class="oe_status js_proxy">
+            <div class="js_connected oe_icon oe_green">
+                <i class='fa fa-money'></i>
+            </div>
+            <div class="js_connected oe_icon">
+                <span class="js_msg amount_total"></span>
+            </div>
+        </div>
+        <div class="oe_status js_proxy">
+            <div class="js_connected oe_icon oe_green">
+                <i class='fa fa-cart-plus'></i>
+            </div>
+            <div class="js_connected oe_icon">
+                <span class="js_msg count_item"></span>
+            </div>
+        </div>
+        <div class="oe_status js_proxy">
+            <div class="js_connected oe_icon oe_green">
+                <i class='fa fa-gift'></i>
+            </div>
+            <div class="js_connected oe_icon">
+                <span class="js_msg remaining_point"></span>
+            </div>
+        </div>
+    </t>
+
+    <!-- tool tip widget-->
+    <t t-name="product_tooltip">
+        <div class="debug-widget info_tooltip" id="info_tooltip">
+            <div class="toggle close_button"><i class='fa fa-times' /></div>
+            <div class="content">
+                <ul>
+                    <ul>
+                        <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Name: <t t-esc="product.display_name"/></li>
+                        <t t-if="product.default_code">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Internal Ref: <t t-esc="product.default_code"/></li>
+                        </t>
+                        <t t-if="product.barcode">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Barcode: <t t-esc="product.barcode"/></li>
+                        </t>
+                        <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Unit Of Measure: <t t-esc="product.uom_id[1]"/></li>
+                        <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Price: <t t-esc="product.list_price"/></li>
+                        <t t-if="product.volume">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Volume: <t t-esc="product.volume"/></li>
+                        </t>
+                        <t t-if="product.weight">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Weight: <t t-esc="product.weight"/></li>
+                        </t>
+                    </ul>
+                    <ul>
+                        <t t-if="product.description_sale">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Description for Customers: <t t-esc="product.description_sale"/></li>
+                        </t>
+                        <t t-if="product.description_pickingout">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Description for Delivery Orders: <t t-esc="product.description_pickingout"/></li>
+                        </t>
+                        <t t-if="product.description_pickingin">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Description for Receptions: <t t-esc="product.description_pickingin"/></li>
+                        </t>
+                        <t t-if="product.description_picking">
+                            <li class="button tooltip-info"><i class="fa fa-caret-right"></i>Description for Internal Transfers: <t t-esc="product.description_picking"/></li>
+                        </t>
+                    </ul>
+                </ul>
+            </div>
+        </div>
+    </t>
+
+    <!-- promotion -->
+    <t t-name="promotion_recommend_customer">
+        <div class='entry total'>
+            <button class="btn btn-success add_promotions">
+                <i class="fa fa-gift"></i>Add Promotions
+            </button>
+            <button class="btn btn-danger remove_promotions">
+                <i class="fa fa-trash"></i>Remove Promotions
+            </button>
+            <t t-foreach="promotions" t-as="promotion">
+                <ul class="promotion-item">
+                    <li class="info blink">
+                        <i class="fa fa-caret-right"/>
+                        <t t-esc="promotion['name']"/>
+                    </li>
+                </ul>
+            </t>
+        </div>
+    </t>
+
+    <t t-extend="OrderSelectorWidget">
+        <t t-jquery=".selected" t-operation="append">
+            <t t-if="order.session_info">
+                <span t-if="order.session_info and order.session_info.pos" class="pos_selector_info">
+                    <t t-esc="order.session_info.pos.name"/>
+                </span>
+            </t>
+        </t>
+    </t>
+
+    <t t-extend="OrderChangeReceipt">
+        <t t-jquery="receipt left:eq(2)" t-operation="prepend">
+            <t t-if="change.tags">
+                <t t-foreach="change.tags" t-as="tag">
+                    <line indent='1'>
+                        <span class='bus-info' t-att-data-id="tag.id">
+                            <i class="fa fa-tag">
+                                <t t-esc="tag.name"/>
+                            </i>
+                        </span>
+                    </line>
+                </t>
+            </t>
+            <t t-if="change.variants">
+                <t t-foreach="change.variants" t-as="variant">
+                    <line indent='1'>
+                        <t t-esc="variant.value_id[1]"/>
+                    </line>
+                </t>
+            </t>
+        </t>
+    </t>
+
+    <!-- display on hand -->
+    <t t-extend="Product">
+        <t t-jquery=".product-img" t-operation="append">
+            <t t-if="widget.pos.config.display_onhand">
+                <span class="qty_available">
+                    <i class="fa fa-tag"/><t t-esc="product.qty_available"/>
+                </span>
+            </t>
+        </t>
+    </t>
+
+</templates>

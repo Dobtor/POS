@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="ClientDetailsEdit">
+        <t t-jquery=".client-details-right" t-operation="append">
+            <div class='client-detail'>
+                <span class='label'>Pricelist</span>
+                <select class='detail client-address-country needsclick' name='property_product_pricelist'>
+                    <option value=''>None</option>
+                    <t t-foreach='widget.pos.pricelists' t-as='pricelist'>
+                        <option t-att-value='pricelist.id' t-att-selected="pricelist.id ? ( partner.property_product_pricelist and (pricelist.id === partner.property_product_pricelist[0]) ? true : undefined) : undefined">
+                            <t t-esc='pricelist.name'/>
+                        </option>
+                    </t>
+                </select>
+            </div>
+        </t>
+    </t>
+    <t t-extend="ClientDetails">
+        <t t-jquery=".client-details-right" t-operation="append">
+            <div class='client-detail'>
+                <span class='label'>Point</span>
+                <t t-if="partner.pos_loyalty_point">
+                    <span class='detail'><t t-esc='widget.format_currency_no_symbol(partner.pos_loyalty_point)'/></span>
+                </t>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>Wallet</span>
+                <t t-if="partner.wallet">
+                    <span class='detail'><t t-esc='widget.format_currency(partner.wallet)'/></span>
+                </t>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>Credit/Debt Balance</span>
+                <t t-if="partner.balance">
+                    <span class='detail'><t t-esc='widget.format_currency(partner.balance)'/></span>
+                </t>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>Pricelist</span>
+                <t t-if="partner.property_product_pricelist">
+                    <span class='detail'><t t-esc='partner.property_product_pricelist[1]'/></span>
+                </t>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="ClientListScreenWidget">
+        <t t-jquery=".client-list >thead >tr" t-operation="append">
+            <th>Pricelist</th>
+            <th>Point</th>
+            <th>Wallet</th>
+            <th>Credit/Debit Balance</th>
+        </t>
+    </t>
+
+    <t t-extend="ClientLine">
+        <t t-jquery=".client-line" t-operation="append">
+            <td>
+                <t t-if="partner.property_product_pricelist">
+                    <t class='point' t-esc='partner.property_product_pricelist[1]' />
+                </t>
+            </td>
+            <td>
+                <t t-if="partner.pos_loyalty_point">
+                    <t class='point' t-esc='widget.format_currency_no_symbol(partner.pos_loyalty_point)' />
+                </t>
+            </td>
+            <td>
+                <t t-if="partner.wallet">
+                    <t class='point' t-esc='widget.format_currency(partner.wallet)' />
+                </t>
+            </td>
+            <td>
+                <t t-if="partner.balance">
+                    <t class='point' t-esc='widget.format_currency(partner.balance)' />
+                </t>
+            </td>
+        </t>
+    </t>
+
+</templates>

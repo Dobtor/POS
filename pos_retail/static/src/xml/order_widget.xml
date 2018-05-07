@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="ActionpadWidget">
+        <t t-jquery=".button" t-operation="append">
+            <t t-if="widget.pos.get_client()">
+                <div class="credit">[Credit/Debt Balance] <t class="" t-esc="widget.pos.get_balance(widget.pos.get_client())" /></div>
+            </t>
+            <t t-if="widget.pos.get_client()">
+                <div class="wallet">[Wallet] <t class="" t-esc="widget.pos.get_wallet(widget.pos.get_client())" /></div>
+            </t>
+        </t>
+    </t>
+
+    <t t-extend="Orderline">
+        <t t-jquery=".product-name" t-operation="append">
+            <!-- loyalty point -->
+            <t t-if="line.plus_point">
+                <span class="point"> + <t t-esc="line.plus_point"/> point</span>
+            </t>
+            <t t-if="line.redeem_point">
+                <span class="point"> - <t t-esc="line.redeem_point"/> point</span>
+            </t>
+        </t>
+        <t t-jquery=".info-list" t-operation="append">
+            <!-- display amount discount -->
+            <span class="price bus-info">
+                <t t-if="line.get_price_discount() > 0">
+                    <t t-esc="widget.format_currency(line.get_price_discount())"/>
+                </t>
+            </span>
+            <!-- combo items -->
+            <t t-if="line.combo_items">
+                <t t-foreach="line.combo_items" t-as="combo_item">
+                    <ul class="bus-info">
+                        <li class="info">
+                            <i class="fa fa-caret-right"/>
+                            <t t-esc="combo_item.product_id[1]" />
+                            with quantity :
+                            <t t-esc="combo_item.quantity" />
+                            <t t-if="combo_item.lot_number">
+                                ,Lot/Serial Number : <t t-esc="combo_item.lot_number" />
+                            </t>
+                            <t t-if="combo_item.use_date">
+                                Expired date of lot: <t t-esc="combo_item.use_date" />
+                            </t>
+                        </li>
+                    </ul>
+                </t>
+            </t>
+            <!-- return line -->
+            <t t-if="line.is_return">
+                <ul class="bus-info">
+                    <li class="return_line">
+                        <i class="fa fa-bug"/>
+                        Return
+                    </li>
+                </ul>
+            </t>
+            <!-- line note -->
+            <t t-if="line.get_note()">
+                <li class="info orderline-note">
+                    <i class='fa fa-tag'/><t t-esc="line.get_note()" />
+                </li>
+            </t>
+            <!-- variants-->
+            <t t-foreach="line.variants" t-as="variant">
+                <ul class="line-variant">
+                    <li class="info">
+                        <i class="fa fa-caret-right"/>
+                        <t t-esc="variant.value_id[1]" />
+                        <span class='price'>
+                            <i class='fa fa-plus-circle'/>
+                            <t t-esc="widget.format_currency(variant.price_extra, 'Price extra')" />
+                        </span>
+                    </li>
+                </ul>
+            </t>
+            <!-- promotion -->
+            <t t-if="line.promotion">
+                <ul class="promotion-item">
+                    <li class="info">
+                        <i class="fa fa-caret-right"/>
+                        <t t-esc="line.promotion_reason"/>
+                    </li>
+                </ul>
+
+            </t>
+            <!-- display lot number-->
+            <t t-if="line.pack_lot_lines and line.pack_lot_lines.models">
+                <t t-foreach="line.pack_lot_lines.models" t-as="lot_model">
+                    <t t-if="lot_model['attributes']['lot_name']">
+                        <ul class="promotion-item">
+                            <li class="info">
+                                <i class="fa fa-caret-right"/>
+                                Lot/Serial: <t t-esc="lot_model['attributes']['lot_name']"/>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+            </t>
+            <!-- display tags line -->
+            <t t-if="line.tags">
+                <t t-foreach="line.tags" t-as="tag">
+                    <span class='bus-info' t-att-data-id="tag.id">
+                        <i class="fa fa-tag">
+                            <t t-esc="tag.name"/>
+                        </i>
+                    </span>
+                </t>
+            </t>
+            <!-- sync -->
+            <t t-if="widget.pos.config.display_person_add_line">
+                <t t-if="line.session_info and line.session_info.user and line.session_info.date">
+                    <ul class="bus-info">
+                        <li class="info">
+                            <i class="fa fa-caret-right"/>
+                            <t t-esc="line.session_info.user.name"/> added at <t t-esc="line.session_info.date"/>
+                        </li>
+                    </ul>
+                </t>
+            </t>
+        </t>
+    </t>
+
+    <t t-extend="OrderWidget">
+        <t t-jquery=".summary" t-operation="after">
+            <div class="col-md-12">
+                <ul class="timeline timeline-simple">
+                    <li class="timeline-inverted">
+                        <div class="timeline-badge danger">
+                            <i class="material-icons">card_travel</i>
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-body">
+                                <div class="loyalty_plus_point">
+                                    +<span class='value plus_point'><t class="plus_point" t-esc='widget.format_currency_no_symbol(plus_point)'/></span>
+                                </div>
+                                <div class="loyalty_redeem_point">
+                                     -<span class='value redeem_point'><t t-esc='widget.format_currency_no_symbol(redeem_point)'/></span>
+                                </div>
+                                <div class='loyalty_remaining_point'>
+                                    Remaining: <span class='value remaining_point'><t t-esc='widget.format_currency_no_symbol(remaining_point)' /></span>
+                                </div>
+                                <div class="timeline-heading">
+                                    <div class="promotion_recommend_customer"/>
+                                </div>
+                                <div class="timeline-heading">
+                                    <div class='entry total'>
+                                        <span class="label label-success promotion-item">Amount :  <span class="value promotion_amount"> $ </span></span>
+                                    </div>
+                                </div>
+                                <div class="timeline-heading">
+                                    <span class="label label-success">Notes</span>
+                                    <span class="order-note"/>
+                                </div>
+                                <div class="timeline-heading">
+                                    <span class="label label-info">Signature</span>
+                                </div>
+                                <div class="timeline-body">
+                                    <img class="product-img signature"
+                                         src=""
+                                         style="max-height:400px;max-width:400px"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="ProductScreenWidget">
+        <t t-jquery=".control-buttons" t-operation="before">
+            <div class="find_customer">
+                <input class="form-control search_client" placeholder=" Search Customer "/>
+                <span class="search-clear"></span>
+            </div>
+        </t>
+    </t>
+
+</templates>
