@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="dobtor_sfic_wallet_view_account_journal_pos_user_form" model="ir.ui.view">
+            <field name="name">dobtor.sfic.wallet.account.journal.pos.user.form.inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_user']" position="after">
+                    <field name="is_points" attrs="{'invisible': [('type', 'not in', ['bank', 'cash'])]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="dobtor_sfic_wallet_view_account_bank_journal_form_inherited_pos" model="ir.ui.view">
+            <field name="name">dobtor.sfic.wallet.account.bank.journal.form.inherit.pos</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="point_of_sale.view_account_bank_journal_form_inherited_pos"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_user']" position="after">
+                    <field name="is_points"/>
+                </xpath>
+            </field>
+        </record>
+</odoo>

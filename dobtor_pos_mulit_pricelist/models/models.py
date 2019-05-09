@@ -48,27 +48,38 @@ class PosOrder(models.Model):
 
     _inherit = 'pos.order'
 
+    # @api.model
+    # def _order_fields(self, ui_order):
+    #     res = super(PosOrder ,self)._order_fields(ui_order)
+    #     print(ui_order)
+    #     print(res['lines'])
+    #     if res['lines'].display_name:
+    #         print(res['lines'].display_name)
+    #     return res 
+
 class PosOrderLine(models.Model):
 
     _inherit = "pos.order.line"
-    
-    display_name = fields.Char(string='DisplayName',compute='default_display_name')
-    discount_price_unit = fields.Float(string='original_price', digits=0)
-    is_discount_line = fields.Boolean(string='is_discount_line',default=False)
 
+    compute_name = fields.Char(
+        string='Description',
+        compute="default_display_name"
+    )
+    display_name = fields.Char(string='DisplayName')
+    # @api.multi
+    # def _order_line_fields(self, line, session_id=None):
+    #     res = super()._order_line_fields(line, session_id)
+    #     print(res,'res')
+    #     print(line,'line')
+    #     return res 
     @api.multi
     def default_display_name(self):
-        if self.product_id:
-            self.display_name = self.product_id.product_tmpl_id.name
-        else:
-            self.display_name = ''
-
-    @api.multi
-    def rename_orderline(self,name):
-        if name:
-            self.name = name
-            self.display_name = name
-
+        for record in self:
+            print(record.compute_name,'record.compute_name')
+            if record.display_name:
+                record.compute_name = record.display_name
+            elif record.product_id:
+                record.compute_name = record.product_id.product_tmpl_id.name
 
     def compute_product_pricelist(self,product_id,partner_id):
         today = datetime.today()
@@ -84,8 +95,8 @@ class PosOrderLine(models.Model):
                     for item in lst.item_ids:
                         if item.product_tmpl_id and item.product_tmpl_id == product.product_tmpl_id or item.applied_on == '3_global':
                             pricelst.append(lst)
-                        # elif item.applied_on=='2_product_category' and item.categ_id and item.categ_id==product.categ_id:
-                        #     pricelst.append(lst)
+                        elif item.applied_on=='2_product_category' and item.categ_id and item.categ_id==product.categ_id:
+                            pricelst.append(lst)
             sorted_lst = sorted(pricelst,key=lambda x : x.discount_product.sequence)
             return list(set(sorted_lst))
         return 0

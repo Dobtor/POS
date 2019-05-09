@@ -1,0 +1,8 @@
+<odoo>
+    <template id="sfic_wallet_assets" name="sfic wallet assets" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/dobtor_sfic_wallet/static/src/js/screens.js"></script>
+            <script type="text/javascript" src="/dobtor_sfic_wallet/static/src/js/pos.js"></script>
+        </xpath>
+    </template>
+</odoo>

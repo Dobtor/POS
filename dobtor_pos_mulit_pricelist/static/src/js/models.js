@@ -3,7 +3,7 @@ odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
     var rpc = require('web.rpc');
     var models = require('point_of_sale.models');
     var _super_order = models.Order.prototype;
-
+    var _super_orderline = models.Orderline.prototype;
     models.Order = models.Order.extend({
         add_product: function (product, options) {
             _super_order.add_product.apply(this, arguments);
@@ -37,6 +37,7 @@ odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
                         discount_line.product.display_name = this.get_product_name(pricelist_id,product.id) +' (-'+ Math.min(Math.max(parseFloat(discount_rate*100) || 0, 0),100) +'%)'
                         discount_line.order = current_line.order
                         discount_line.main_line = current_line.cid
+                        discount_line.display_name = this.get_product_name(pricelist_id,product.id) +' (-'+ Math.min(Math.max(parseFloat(discount_rate*100) || 0, 0),100) +'%)'
                         discount_line_data.push(discount_line)
                     }
                 }
@@ -53,6 +54,7 @@ odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
                 }
                 if (discount_line_data) {
                     $.each(discount_line_data, function (i,line) {
+                        console.log(line)
                         var dis_line = self.orderlines.add(line);  
                         dis_line.is_discount_line = true
                         dis_line.main_line = current_line.cid
@@ -136,4 +138,13 @@ odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
             this.select_orderline(this.get_last_orderline());
         },
     })  
+    models.Orderline = models.Orderline.extend({
+        export_as_JSON: function() {
+            var res = _super_orderline.export_as_JSON.apply(this, arguments);
+            if(this.display_name){
+                res.display_name = this.display_name
+            }
+            return res
+        },
+    })
 });
