@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="product_discount_department" model="product.product.discount">
+        <field name="name">Discount-Department</field>
+        <field name="type">service</field>
+        <field name="discount_type" eval="True"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="available_in_pos" eval="True"/>
+        <!-- <field name="tax_ids"/> -->
+    </record>
+    <record id="product_discount_outlet" model="product.product.discount">
+        <field name="name">Discount-Outlet</field>
+        <field name="type">service</field>
+        <field name="discount_type" eval="True"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="available_in_pos" eval="True"/>
+        <!-- <field name="tax_ids"/> -->
+    </record>
+    <record id="product_discount_member" model="product.product.discount">
+        <field name="name">Discount-Memeber</field>
+        <field name="type">service</field>
+        <field name="discount_type" eval="True"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="available_in_pos" eval="True"/>
+        <!-- <field name="tax_ids"/> -->
+    </record>
+    <record id="product_discount_activities" model="product.product.discount">
+        <field name="name">Discount-Activities</field>
+        <field name="type">service</field>
+        <field name="discount_type" eval="True"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="available_in_pos" eval="True"/>
+        <!-- <field name="tax_ids"/> -->
+    </record>
+    <record id="product_discount_store" model="product.product.discount">
+        <field name="name">Discount-Stores</field>
+        <field name="type">service</field>
+        <field name="discount_type" eval="True"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="available_in_pos" eval="True"/>
+        <!-- <field name="tax_ids"/> -->
+    </record>
+</odoo>
