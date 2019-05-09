@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.ui.view" id="sales_member_pricelist">
+        <field name="name">sales.member.pricelist</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <field name="member_id" readony="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

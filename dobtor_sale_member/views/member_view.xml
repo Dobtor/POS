@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="act_sales_member_form" model="ir.actions.act_window">
+        <field name="res_model">sales.member</field>
+        <field name="view_type">form</field>
+        <field name="name">Sale Members</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+  <menuitem id="point_of_sale_member_config" name="Member Setting" action="act_sales_member_form" parent="point_of_sale.menu_point_config_product" sequence="10"/>
+
+    <record model="ir.ui.view" id="sales_member_form">
+        <field name="name">sales.member.form</field>
+        <field name="model">sales.member</field>
+        <field name="arch" type="xml">
+            <form string="Sales member">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pricelist_id"/>
+                            <field name="discount_rate" widget="percentage"/>
+                            <field name="threshold"/>
+                            <field name="expired_date"/>
+                        </group>
+                        <group>
+                            <field name="member_ids"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <field name="description"/>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="sales_member_tree">
+        <field name="name">sales.member.tree_view</field>
+        <field name="model">sales.member</field>
+        <field name="arch" type="xml">
+            <tree string="Sales member">
+                <field name="name"/>
+                <field name="threshold"/>
+                <field name="discount_price"/>
+                <field name="discount_rate" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

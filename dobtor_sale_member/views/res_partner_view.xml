@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="sale_member_partner" model="ir.ui.view">
+        <field name="name">sale.member.partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_member_level_up" string="Upgrade" type="object" class="btn-primary" />
+                </header>
+            </xpath>
+            <xpath expr="//group/group" position="inside">
+                <field name="member_id" readonly="1"/>
+                <field name="total_amount" />
+                <field name="validity_period"/>
+                <field name="history_join_ids" widget="many2many_tags"/>
+                <field name="birthday"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
