@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="PaymentScreen-Paymentmethods">
+        <t t-jquery=".button.paymentmethod" t-operation="append">
+            <t t-if="cashregister.journal.is_points">
+                <t t-if="widget.pos.get_client()">
+                    <span>
+                        <t t-esc="' [Paid: ' + widget.pos.get_point_paid() + ']'"/>
+                    </span>
+                </t>
+            </t>
+        </t>
+    </t>
+
+</templates>
