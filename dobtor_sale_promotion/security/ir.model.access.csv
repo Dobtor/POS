@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dobtor_sale_promotion_dobtor_sale_promotion,dobtor_sale_promotion.dobtor_sale_promotion,model_dobtor_sale_promotion_dobtor_sale_promotion,,1,0,0,0
