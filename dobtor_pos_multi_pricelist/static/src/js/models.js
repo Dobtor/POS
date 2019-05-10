@@ -1,4 +1,4 @@
-odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
+odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     "use strict";
     var rpc = require('web.rpc');
     var models = require('point_of_sale.models');
@@ -37,7 +37,7 @@ odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
                         discount_line.product.display_name = this.get_product_name(pricelist_id,product.id) +' (-'+ Math.min(Math.max(parseFloat(discount_rate*100) || 0, 0),100) +'%)'
                         discount_line.order = current_line.order
                         discount_line.main_line = current_line.cid
-                        discount_line.display_name = this.get_product_name(pricelist_id,product.id) +' (-'+ Math.min(Math.max(parseFloat(discount_rate*100) || 0, 0),100) +'%)'
+                        discount_line.line_name = this.get_product_name(pricelist_id,product.id) +' (-'+ Math.min(Math.max(parseFloat(discount_rate*100) || 0, 0),100) +'%)'
                         discount_line_data.push(discount_line)
                     }
                 }
@@ -54,7 +54,6 @@ odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
                 }
                 if (discount_line_data) {
                     $.each(discount_line_data, function (i,line) {
-                        console.log(line)
                         var dis_line = self.orderlines.add(line);  
                         dis_line.is_discount_line = true
                         dis_line.main_line = current_line.cid
@@ -141,8 +140,9 @@ odoo.define('dobtor_pos_mulit_pricelist.models', function (require) {
     models.Orderline = models.Orderline.extend({
         export_as_JSON: function() {
             var res = _super_orderline.export_as_JSON.apply(this, arguments);
-            if(this.display_name){
-                res.display_name = this.display_name
+            res.line_name=null
+            if(this.line_name){
+                res.line_name = this.line_name
             }
             return res
         },

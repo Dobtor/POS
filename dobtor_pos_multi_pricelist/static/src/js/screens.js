@@ -1,4 +1,4 @@
-odoo.define('dobtor_pos_mulit_pricelist.screens', function (require) {
+odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
     "use strict";
 
     var PosBaseWidget = require('point_of_sale.BaseWidget');
