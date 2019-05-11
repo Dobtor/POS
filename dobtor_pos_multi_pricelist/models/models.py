@@ -29,7 +29,9 @@ class ProductDiscount(models.Model):
 class Pricelist(models.Model):
     _inherit = 'product.pricelist'
     
-    discount_product = fields.Many2one('product.product.discount','discount item')
+    discount_product = fields.Many2one('product.product.discount','discount item',
+    required=True,
+    )
     discount_type = fields.Selection('discount_type',related='discount_product.paid_type')
 
     @api.multi
@@ -44,18 +46,7 @@ class Pricelist(models.Model):
             if item.product_tmpl_id == product.product_tmpl_id:
                 name = self.name + ' ' +item.name
         return name
-class PosOrder(models.Model):
 
-    _inherit = 'pos.order'
-
-    # @api.model
-    # def _order_fields(self, ui_order):
-    #     res = super(PosOrder ,self)._order_fields(ui_order)
-    #     print(ui_order)
-    #     print(res['lines'])
-    #     if res['lines'].display_name:
-    #         print(res['lines'].display_name)
-    #     return res 
 
 class PosOrderLine(models.Model):
 
@@ -63,23 +54,15 @@ class PosOrderLine(models.Model):
 
     compute_name = fields.Char(
         string='Description',
-        compute="default_display_name"
+        compute="_default_display_name"
     )
-    display_name = fields.Char(string='DisplayName')
-    # @api.multi
-    # def _order_line_fields(self, line, session_id=None):
-    #     res = super()._order_line_fields(line, session_id)
-    #     print(res,'res')
-    #     print(line,'line')
-    #     return res 
-    @api.multi
-    def default_display_name(self):
-        for record in self:
-            print(record.compute_name,'record.compute_name')
-            if record.display_name:
-                record.compute_name = record.display_name
-            elif record.product_id:
-                record.compute_name = record.product_id.product_tmpl_id.name
+    line_name = fields.Char(string='DisplayName')
+    @api.one
+    def _default_display_name(self):
+        if self.line_name:
+            self.compute_name = self.line_name
+        elif self.product_id:
+            self.compute_name = self.product_id.product_tmpl_id.name
 
     def compute_product_pricelist(self,product_id,partner_id):
         today = datetime.today()

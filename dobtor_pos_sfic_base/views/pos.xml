@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="dobtor_pos_sfic_base_pos_config_view_form" model="ir.ui.view">
+        <field name="name">dobtor.pos.sfic.base.pos.config.form.view</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//h2[@name='order']" position="before">
+                <h2 name="pos_type">General</h2>
+                <div class="row mt16 o_settings_container">
+                  <div class="col-12 col-lg-6 o_setting_box">
+                      <div class="o_setting_right_pane">
+                        <div class="content-group mt16">
+                          <div class="row mt16">
+                            <label for="pos_type" string="Pos type" class="col-lg-3 o_light_label"/>
+                            <field name="pos_type" required="1"/>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+
+  </data>
+</odoo>

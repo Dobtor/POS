@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dobtor_pos_mulit_pricelist",
+    'name': "dobtor_pos_multi_pricelist",
 
     'summary': """
         Using  multi pricelist in POS system""",
