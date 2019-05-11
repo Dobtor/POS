@@ -9,7 +9,7 @@
     'description': """
         Promotion Rule
             - BOGO Offer (Buy One Get One Free Rule)
-            - Clubbed Promotion (Merge two promotional offers to provide additional discounts)
+            - Combo Promotion (Merge two promotional offers to provide additional discounts)
             - Rebate Discount (Set discounts based on Price Range)
     """,
 
@@ -20,13 +20,15 @@
     'version': '0.1',
 
     'depends': [
+        'product',
         'sale'
     ],
 
     # always loaded
     'data': [
+        'security/res_groups.xml',
         # 'security/ir.model.access.csv',
-        # 'views/views.xml',
-        # 'views/templates.xml',
+        'views/product_pricelist_views.xml',
+        'views/res_config_setting.xml',
     ],
 }

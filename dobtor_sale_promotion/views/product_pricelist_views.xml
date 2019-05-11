@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="product_pricelist_item_bogo_offer_form_view" model="ir.ui.view">
+            <field name="name">product.pricelist.item.bogo_offer</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <group col="2" attrs="{'invisible':[('compute_price', '!=', 'bogo_sale')]}">
+                        <field name="bogo_base" colspan="2" string="bogo base on" />
+                    </group>
+                    <group attrs="{'invisible':['|',('bogo_base', '!=', 'bxa_gya_free'),('compute_price', '!=', 'bogo_sale')]}">
+                        <field name="bxa_gya_free_Aproduct_unit" class="oe_inline" />
+                        <field name="bxa_gya_free_Bproduct_unit" class="oe_inline" />
+                    </group>
+                    <group attrs="{'invisible':['|',('bogo_base', '!=', 'bxa_gyb_free'),('compute_price', '!=', 'bogo_sale')]}">
+                        <field name="bxa_gyb_free_Aproduct_unit" class="oe_inline" />
+                        <field name="bxa_gyb_free_products" class="oe_inline" widget="many2many_tags" />
+                        <field name="bxa_gyb_free_Bproduct_unit" class="oe_inline"/>
+                    </group>
+                    <group attrs="{'invisible':['|',('bogo_base', '!=', 'bxa_gyb_discount'),('compute_price', '!=', 'bogo_sale')]}">
+                        <field name="bxa_gyb_discount_Aproduct_unit" class="oe_inline" />
+                        <field name="bxa_gyb_discount_product" class="oe_inline" />
+                        <field name="bxa_gyb_discount_Bproduct_unit" class="oe_inline" />
+                        <field name="bxa_gyb_discount_base_on" class="oe_inline" />
+                        <field name="bxa_gyb_discount_fixed_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'fixed')]}"/>
+                        <field name="bxa_gyb_discount_percentage_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'percentage')]}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

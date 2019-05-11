@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.promotion</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="10"/>
+            <field name="inherit_id" ref="sale.res_config_settings_view_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='module_sale_margin']/parent::div/parent::div" position="after">
+                    <div class="col-12 col-lg-6 o_setting_box" title="promotions.">
+                        <div class="o_setting_left_pane">
+                            <field name="group_sale_promotion"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="group_sale_promotion"/>
+                            <div class="text-muted">
+                                Promotion Rule (Combo Promotion, BOGO Offer), etc.
+                            </div>
+                            <div class="content-group" attrs="{'invisible': [('group_sale_promotion' ,'=', False)]}">
+                                <div class="mt16">
+                                    <label string="Promotion Product" for="promotion_product_id" class="col-lg-3 o_light_label"/>
+                                    <field name="promotion_product_id" domain="[('is_promotion_product', '=', True)]"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+
+
