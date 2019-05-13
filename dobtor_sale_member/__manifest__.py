@@ -23,7 +23,7 @@
         'point_of_sale',
         'product',
         'percentage_widget',
-        'dobtor_pos_sfic_wallet',
+        'dobtor_sfic_wallet',
         ],
 
     # always loaded

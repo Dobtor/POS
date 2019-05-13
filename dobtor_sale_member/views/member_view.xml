@@ -8,7 +8,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-  <menuitem id="point_of_sale_member_config" name="Member Setting" action="act_sales_member_form" parent="point_of_sale.menu_point_config_product" sequence="10"/>
+    <menuitem id="point_of_sale_member_config" name="Member Setting" action="act_sales_member_form" parent="point_of_sale.menu_point_config_product" sequence="10"/>
 
     <record model="ir.ui.view" id="sales_member_form">
         <field name="name">sales.member.form</field>
@@ -25,7 +25,11 @@
                         <group>
                             <field name="pricelist_id"/>
                             <field name="discount_rate" widget="percentage"/>
-                            <field name="threshold"/>
+                            <field name="single_threshold"/>
+                            <field name="annual_threshold"/>
+                            <field name="next_threshold"/>
+                            <field name="birthday_discount_times"/>
+                            <field name="birthday_discount"/>
                             <field name="expired_date"/>
                         </group>
                         <group>
@@ -45,8 +49,11 @@
         <field name="arch" type="xml">
             <tree string="Sales member">
                 <field name="name"/>
-                <field name="threshold"/>
                 <field name="discount_price"/>
+                <field name="single_threshold"/>
+                <field name="annual_threshold"/>
+                <field name="next_threshold"/>
+                <field name="birthday_discount_times"/>
                 <field name="discount_rate" invisible="1"/>
             </tree>
         </field>

@@ -20,7 +20,7 @@
 
     # any module necessary for this one to work correctly
     'depends': [
-        'dobtor_pos_sfic_wallet',
+        'dobtor_sfic_wallet',
         'point_of_sale',
         'dobtor_sale_member',
         ],
