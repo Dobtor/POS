@@ -8,8 +8,8 @@
                 <span class="label"/>
             </div>
             <div class='client-detail'>
-                <span class='label'>Membership</span>
-                <input class='detail client-point' name='member_id' readonly="1" t-att-value='partner.member_id || ""'></input>
+                <span class='label' style="width:95px">Membership</span>
+                <input class='detail client-point' style="width:320px" name='member_id' readonly="1" t-att-value='partner.member_id || ""'></input>
             </div>
             <div class='client-detail'>
                 <span class='label'>Point</span>
@@ -26,8 +26,8 @@
                 <input class='detail client-point' name='Term' readonly="1" t-att-value='partner.expired_date || ""'></input>
             </div>
             <div class='client-detail'>
-                <span class='label'>TotoalAmount</span>
-                <input class='detail client-point' name='total_amount' readonly="1" t-att-value='partner.total_amount'></input>
+                <span class='label'  style="width:95px">TotoalAmount</span>
+                <input class='detail client-point' style="width:320px" name='total_amount' readonly="1" t-att-value='partner.total_amount'></input>
             </div>
         </t>
     </t>
