@@ -6,7 +6,7 @@
        Add member info in POS UI """,
 
     'description': """
-        Add member info in POS UI 
+        Add member info in POS UI
     """,
 
     'author': "Dobtor SI",
@@ -20,7 +20,7 @@
 
     # any module necessary for this one to work correctly
     'depends': [
-        'dobtor_sfic_wallet',
+        'dobtor_pos_sfic_wallet',
         'point_of_sale',
         'dobtor_sale_member',
         ],
