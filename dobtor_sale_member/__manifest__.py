@@ -6,7 +6,7 @@
         POS can create self member system""",
 
     'description': """
-        POS can create self member system, include member level , member discount , member term 
+        POS can create self member system, include member level , member discount , member term
     """,
 
     'author': "Dobtor SI",
@@ -23,7 +23,7 @@
         'point_of_sale',
         'product',
         'percentage_widget',
-        'dobtor_sfic_wallet',
+        'dobtor_pos_sfic_wallet',
         ],
 
     # always loaded
