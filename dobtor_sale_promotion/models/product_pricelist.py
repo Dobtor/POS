@@ -15,7 +15,9 @@ class Pricelist(models.Model):
     bogo_base = fields.Selection([
         ('bxa_gya_free', _('Buy (X Unit) of Product , Get (Y Unit) of Product Free')),
         ('bxa_gyb_free', _('Buy (X Unit) of Product Get (Y Unit) of Another Products Free')),
-        ('bxa_gyb_discount', _('Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))],
+        ('bxa_gyb_discount', _('Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
+        # ('bxa_gyc_free', _('Buy (X Unit) of Product A, Get (Y Unit) of Another Products (Categrory) Free'))
+        ],
         index=True,
         default='bxa_gya_free'
     )
