@@ -6,7 +6,7 @@
        Add member info in POS UI """,
 
     'description': """
-        Add member info in POS UI 
+        Add member info in POS UI
     """,
 
     'author': "Dobtor SI",

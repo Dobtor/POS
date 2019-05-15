@@ -15,14 +15,11 @@ class PosOrder(models.Model):
     @api.model
     def _process_order(self, pos_order):
         order = super(PosOrder, self)._process_order(pos_order)
-        print("PosOrder - _process_order -- order: {}".format(order))
         if order and order.partner_id:
-            print("PosOrder - create -- order.statement_ids: {}".format(order.statement_ids))
             for absl in order.statement_ids:
                 if absl.journal_id.is_points and not order.point_debit_id:
                     pos_type = order.session_id.config_id.pos_type
                     ratio = pos_type.pos_point_ratio if pos_type else 50
-                    print("PosOrder - create -- ratio: {}".format(ratio))
                     txn_id = self.env['pos.point.transaction'].create({
                         'amount': absl.amount * ratio,
                         'partner_id': order.partner_id.id,

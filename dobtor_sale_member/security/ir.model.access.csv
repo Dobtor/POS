@@ -1,5 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dobtor_sale_member_dobtor_sale_member,dobtor_sale_member.dobtor_sale_member,model_sales_member,,1,1,1,1
 access_dobtor_sale_member_member_history_join,dobtor_sale_member.member_history_join,model_sales_history_join,,1,1,1,1
-access_dobtor_sale_member_ResPartner,dobtor_sale_member.ResPartner,model_res_partner,,1,1,1,1
 

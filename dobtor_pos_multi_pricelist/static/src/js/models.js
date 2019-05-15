@@ -4,6 +4,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var models = require('point_of_sale.models');
     var _super_order = models.Order.prototype;
     var _super_orderline = models.Orderline.prototype;
+    var _super_posmodel = models.PosModel.prototype;
     models.Order = models.Order.extend({
         add_product: function (product, options) {
             _super_order.add_product.apply(this, arguments);
@@ -147,4 +148,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             return res
         },
     })
-});
+    models.PosModel = models.PosModel.extend({
+        initialize: function (session, attributes) {
+            models.load_models('pos.order.pricelist', ['before']);
+            _super_posmodel.initialize.apply(this, arguments);
+            },
+        });
+    })

@@ -6,7 +6,7 @@
         POS can create self member system""",
 
     'description': """
-        POS can create self member system, include member level , member discount , member term 
+        POS can create self member system, include member level , member discount , member term
     """,
 
     'author': "Dobtor SI",

@@ -10,11 +10,11 @@ class Pos(models.Model):
 
 
     order_pricelist_id = fields.Many2one(string='order_pricelist_id',comodel_name='pos.order.pricelist')
-    @api.model
-    def _order_fields(self, ui_order):
-        res = super()._order_fields(ui_order)
-        print(res)
-        return res
+    # @api.model
+    # def _order_fields(self, ui_order):
+    #     res = super()._order_fields(ui_order)
+    #     print(res)
+    #     return res
     
 class PosOrderPircelist(models.Model):
     _name = "pos.order.pricelist"
