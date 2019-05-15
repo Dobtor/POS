@@ -21,7 +21,7 @@
                             <div class="content-group" attrs="{'invisible': [('group_sale_promotion' ,'=', False)]}">
                                 <div class="mt16">
                                     <label string="Promotion Product" for="promotion_product_id" class="col-lg-3 o_light_label"/>
-                                    <field name="promotion_product_id" domain="[('is_promotion_product', '=', True)]"/>
+                                    <field name="promotion_product_id" context="{'default_is_promotion_product': True}" domain="[('is_promotion_product', '=', True)]"/>
                                 </div>
                             </div>
                         </div>
