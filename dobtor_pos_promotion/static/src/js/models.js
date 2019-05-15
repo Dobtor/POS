@@ -84,15 +84,12 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
         },
         bogo_merge: function (orderline) {
             var merge = false;
-
-            // window.get_pricelist = orderline.get_product().get_pricelist(orderline.order.pricelist)
             _.each(orderline.get_product().get_pricelist(orderline.order.pricelist), function (pricelist) {
                 window.pricelist = pricelist
                 if (pricelist.compute_price == 'bogo_sale') {
                     merge = true;
                 }
             });
-            // window.merge = merge
             return merge;
         },
         bogo_bxa_gya_free: function (quantity) {
@@ -125,7 +122,6 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                 )
                 this.order.selected_orderline.lock = true;
                 this.order.selected_orderline.set_res_id(self);
-                window.line1 = this.order.selected_orderline
                 this.referce_ids.add(
                     this.order.selected_orderline
                 );
@@ -140,7 +136,6 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                     this.referce_ids.add(
                         this.order.selected_orderline
                     );
-                    window.line1 = this.order.selected_orderline
                 }
                 this.order.select_orderline(self);
             }
@@ -209,10 +204,7 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
             }
         },
         export_as_JSON: function () {
-            var res = _super_orderline.export_as_JSON.apply(this, arguments);
-            $.extend(res ,{
-                res_id: this.get_res_id().id,
-            })
+            var res = _super_orderline.prototype.export_as_JSON.apply(this, arguments);
             return res
         },
     })
