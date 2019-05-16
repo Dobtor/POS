@@ -16,7 +16,8 @@ class ResPartner(models.Model):
     total_amount = fields.Float(string='total_amount',default=0)
     expired_date= fields.Datetime(string='Expired Date',default=fields.Datetime.now,)
     history_join_ids = fields.One2many('sales.history.join','partner_id', string='History Join',readonly=True)
-
+    member_type_name = fields.Char(string='member_type_name',related='member_id.name')
+    
     @api.model
     def _cron_verify_member(self):
         records = self.search([('member_id', '!=', False),('expired_date', '<=', fields.Date.today())])

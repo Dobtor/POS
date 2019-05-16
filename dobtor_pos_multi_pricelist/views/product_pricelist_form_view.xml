@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <record model="ir.ui.view" id="sales_member_pricelist">
-        <field name="name">sales.member.pricelist</field>
+    <record model="ir.ui.view" id="discount_product_pricelist">
+        <field name="name">discount_product.pricelist</field>
         <field name="model">product.pricelist</field>
         <field name="inherit_id" ref="product.product_pricelist_view"/>
         <field name="arch" type="xml">
             <xpath expr="//group" position="inside">
                 <field name="discount_type"/>
-                <field name="discount_product"/>
+                <field name="discount_item"/>
+            </xpath>
+            <xpath expr="//tree/field[@name='name']" position="before">
+                <field name="sequence" widget="handle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="price_list_item_key">
+        <field name="name">price_list_item_key</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <group>
+                    <field name="is_primary_key"/>
+                </group>
             </xpath>
         </field>
     </record>

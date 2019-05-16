@@ -16,7 +16,7 @@ class dobtor_sale_member(models.Model):
     annual_threshold = fields.Float(string="Threshold",required=True)
     next_threshold = fields.Float(string='next Threshold',required=True)
     birthday_discount_times = fields.Integer(string='Birthday Discount Times')
-    birthday_discount = fields.Float(string="Birthday Discount",default=0.7)
+    birthday_discount = fields.Float(string="Birthday Discount",default=0.3)
 
     @api.one
     @api.depends('discount_rate')

@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
         <field name="arch" type="xml">
             <xpath expr="//tree/field[@name='qty']" position="before">
-                <field name="compute_name"/>
+                <field name="line_name"/>
             </xpath>
         </field>
     </record>

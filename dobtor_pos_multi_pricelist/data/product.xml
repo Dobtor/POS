@@ -1,43 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <record id="product_discount_department" model="product.product.discount">
-        <field name="name">Discount-Department</field>
-        <field name="type">service</field>
-        <field name="discount_type" eval="True"/>
-        <field name="sale_ok" eval="True"/>
-        <field name="available_in_pos" eval="True"/>
-        <!-- <field name="tax_ids"/> -->
-    </record>
-    <record id="product_discount_outlet" model="product.product.discount">
-        <field name="name">Discount-Outlet</field>
-        <field name="type">service</field>
-        <field name="discount_type" eval="True"/>
-        <field name="sale_ok" eval="True"/>
-        <field name="available_in_pos" eval="True"/>
-        <!-- <field name="tax_ids"/> -->
-    </record>
-    <record id="product_discount_member" model="product.product.discount">
-        <field name="name">Discount-Memeber</field>
-        <field name="type">service</field>
-        <field name="discount_type" eval="True"/>
-        <field name="sale_ok" eval="True"/>
-        <field name="available_in_pos" eval="True"/>
-        <!-- <field name="tax_ids"/> -->
-    </record>
-    <record id="product_discount_activities" model="product.product.discount">
-        <field name="name">Discount-Activities</field>
-        <field name="type">service</field>
-        <field name="discount_type" eval="True"/>
-        <field name="sale_ok" eval="True"/>
-        <field name="available_in_pos" eval="True"/>
-        <!-- <field name="tax_ids"/> -->
-    </record>
-    <record id="product_discount_store" model="product.product.discount">
-        <field name="name">Discount-Stores</field>
-        <field name="type">service</field>
-        <field name="discount_type" eval="True"/>
-        <field name="sale_ok" eval="True"/>
-        <field name="available_in_pos" eval="True"/>
-        <!-- <field name="tax_ids"/> -->
-    </record>
+    <data noupdate="1">
+
+        <record id="product_discount_department" model="product.product.discount">
+            <field name="name">Discount-Department</field>
+            <field name="type">service</field>
+            <field name="discount_type" eval="True"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="available_in_pos" eval="True"/>
+            <field name="paid_type">debit</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="product_discount_outlet" model="product.product.discount">
+            <field name="name">Discount-Outlet</field>
+            <field name="type">service</field>
+            <field name="discount_type" eval="True"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="available_in_pos" eval="True"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="product_discount_activities" model="product.product.discount">
+            <field name="name">Discount-Activities</field>
+            <field name="type">service</field>
+            <field name="discount_type" eval="True"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="available_in_pos" eval="True"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="product_discount_store" model="product.product.discount">
+            <field name="name">Discount-Stores</field>
+            <field name="type">service</field>
+            <field name="discount_type" eval="True"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="available_in_pos" eval="True"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="product_discount_member" model="product.product.discount">
+            <field name="name">Discount-Member</field>
+            <field name="type">service</field>
+            <field name="discount_type" eval="True"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="available_in_pos" eval="True"/>
+            <field name="sequence">50</field>
+        </record>
+        
+    </data>
 </odoo>

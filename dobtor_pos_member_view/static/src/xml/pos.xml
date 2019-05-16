@@ -9,11 +9,12 @@
             </div>
             <div class='client-detail'>
                 <span class='label' style="width:95px">Membership</span>
-                <input class='detail client-point' style="width:320px" name='member_id' readonly="1" t-att-value='partner.member_id || ""'></input>
+                <input class='detail client-point' style="width:320px" name='member_type_name' readonly="1" t-att-value='partner.member_type_name || ""'></input>
             </div>
             <div class='client-detail'>
                 <span class='label'>Point</span>
                 <input class='detail client-point' name='point' readonly="1"  t-att-value='partner.sfic_point || 0'></input>
+                <!-- <span class='label' name='point' ><t t-esc="partner.sfic_point || 0"/>&#160;&#160;Point</span> -->
             </div>
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">

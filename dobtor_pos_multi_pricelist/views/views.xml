@@ -60,7 +60,7 @@
         <sheet>
           <group>
             <field name="name"/>
-            <field name="discount_product"/>
+            <field name="discount_item"/>
             <field name="discount_rule"/>
             <!-- <field name="base_price"/> -->
             <!-- <field name="discounted_price"/> -->

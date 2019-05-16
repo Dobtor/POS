@@ -23,13 +23,13 @@
                     </div>
                     <group>
                         <group>
-                            <field name="pricelist_id"/>
+                            <field name="pricelist_id" readonly='1'/>
                             <field name="discount_rate" widget="percentage"/>
                             <field name="single_threshold"/>
                             <field name="annual_threshold"/>
                             <field name="next_threshold"/>
                             <field name="birthday_discount_times"/>
-                            <field name="birthday_discount"/>
+                            <field name="birthday_discount" widget="percentage"/>
                             <field name="expired_date"/>
                         </group>
                         <group>

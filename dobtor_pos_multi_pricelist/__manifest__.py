@@ -37,5 +37,6 @@
         'views/assets.xml',
         'views/pos_order_view.xml',
         'views/product_pricelist_form_view.xml',
+        'views/pos_config_view.xml',
     ],
 }
