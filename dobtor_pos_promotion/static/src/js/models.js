@@ -122,13 +122,15 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
             }
 
             var quant = parseFloat(quantity) || 0;
-
+            if (this.get_unit()) {
+                this.set_origin_quantity(quantity);
+            }
             // 尚未處理 multi pricelist 需處理. 
             var get_current_pricelist = self.product.get_pricelist(self.order.pricelist)[0]
-
+            console.log(get_current_pricelist)
             var bxa_gya_free_Aproduct_unit = get_current_pricelist.bxa_gya_free_Aproduct_unit
             var bxa_gya_free_Bproduct_unit = get_current_pricelist.bxa_gya_free_Bproduct_unit
-            if (quant > bxa_gya_free_Aproduct_unit) {
+            if (quant > 1 && quant >= bxa_gya_free_Aproduct_unit) {
                 var add_newproduct_qty = parseInt(quant / bxa_gya_free_Aproduct_unit) * bxa_gya_free_Bproduct_unit
                 this.order.add_product(
                     this.product, {
@@ -143,16 +145,17 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                 this.referce_ids.add(
                     this.order.selected_orderline
                 );
+                var price = this.order.selected_orderline.price
                 if (this.pos.db.get_promotion_product()) {
                     this.order.add_product(
                         this.pos.db.get_promotion_product(), {
-                            'price': -this.order.selected_orderline.price,
                             'quantity': {
                                 'quantity': add_newproduct_qty,
                                 'gift': 'promotion'
                             }
                         }
                     )
+                    this.order.selected_orderline.set_unit_price(-price)
                     this.order.selected_orderline.lock = true;
                     this.order.selected_orderline.set_res_id(self);
                     this.referce_ids.add(
@@ -160,9 +163,7 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                     );
                 }
                 this.order.select_orderline(self);
-            }
-
-            this.set_origin_quantity(quantity);
+            }        
 
         },
         bogo_bxa_gyb_free: function (quantity) {
@@ -175,14 +176,16 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
             }
 
             var quant = parseFloat(quantity) || 0;
-
+            if (this.get_unit()) {
+                this.set_origin_quantity(quantity);
+            }
             // 尚未處理 multi pricelist 需處理. 
             var get_current_pricelist = self.product.get_pricelist(self.order.pricelist)[0]
 
-            var bxa_gya_free_Aproduct_unit = get_current_pricelist.bxa_gyb_free_Aproduct_unit
-            var bxa_gya_free_Bproduct_unit = get_current_pricelist.bxa_gyb_free_Bproduct_unit
-            if (quant > bxa_gya_free_Aproduct_unit) {
-                var add_newproduct_qty = parseInt(quant / bxa_gya_free_Aproduct_unit) * bxa_gya_free_Bproduct_unit
+            var bxa_gyb_free_Aproduct_unit = get_current_pricelist.bxa_gyb_free_Aproduct_unit
+            var bxa_gyb_free_Bproduct_unit = get_current_pricelist.bxa_gyb_free_Bproduct_unit
+            if (quant > 1 && quant > bxa_gyb_free_Aproduct_unit) {
+                var add_newproduct_qty = parseInt(quant / bxa_gyb_free_Aproduct_unit) * bxa_gyb_free_Bproduct_unit
                 var porudct = this.pos.db.get_product_by_id(get_current_pricelist.bxa_gyb_free_products)
                 if (porudct) {
                     this.order.add_product(
@@ -202,13 +205,13 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                     if (this.pos.db.get_promotion_product()) {
                         this.order.add_product(
                             this.pos.db.get_promotion_product(), {
-                                'price': -this.order.selected_orderline.price,
                                 'quantity': {
                                     'quantity': add_newproduct_qty,
                                     'gift': 'promotion'
                                 }
                             }
                         )
+                        this.order.selected_orderline.set_unit_price(-this.order.selected_orderline.price)
                         this.order.selected_orderline.lock = true;
                         this.order.selected_orderline.set_res_id(self);
                         this.referce_ids.add(
@@ -216,10 +219,15 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                         );
                     }
                 }
-
                 this.order.select_orderline(self);
             }
-            this.set_origin_quantity(quantity);
+        },
+        bogo_bxa_gyb_discount: function() {
+            var self = this;
+            var quant = parseFloat(quantity) || 0;
+            if (this.get_unit()) {
+                this.set_origin_quantity(quantity);
+            }
         },
         set_quantity: function (quantity) {
             var self = this;
@@ -249,16 +257,30 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                 this.order.remove_orderline(this);
                 return;
             }
-
+            console.log(gift)
             if ((self.bogo_merge(this)) && (!gift)) {
-                if (self.product.get_pricelist(self.order.pricelist)[0].bogo_base === 'bxa_gya_free') {
-                    this.bogo_bxa_gya_free(quantity);
-                } else if (self.product.get_pricelist(self.order.pricelist)[0].bogo_base === 'bxa_gyb_free') {
-                    this.bogo_bxa_gyb_free(quantity);
+                var pricelist = self.product.get_pricelist(self.order.pricelist)
+                var promotion_rule = _.find(pricelist, function (rule) {
+                    if (rule.compute_price == "bogo_sale") {
+                        return true;
+                    }
+                    return false;
+                })
+                switch (promotion_rule.bogo_base) {
+                    case 'bxa_gya_free':
+                        this.bogo_bxa_gya_free(quantity);
+                        break;
+                    case 'bxa_gyb_free':
+                        this.bogo_bxa_gyb_free(quantity);
+                        break;
+                    case 'bxa_gyb_free':
+                        this.bogo_bxa_gyb_discount(quantity);
+                        break;
+                    default:
+                        console.log('bogo_sale is empty or otherwise');
+                        break;
                 }
-
             } else {
-
                 _super_orderline.prototype.set_quantity.apply(this, [quantity])
             }
         },
