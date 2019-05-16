@@ -1,4 +1,4 @@
-odoo.define('point_of_sale.models', function (require) {
+odoo.define('dobtor.pos.promotion.db', function (require) {
     "use strict";
 
     var PosDB = require('point_of_sale.DB');
@@ -15,6 +15,4 @@ odoo.define('point_of_sale.models', function (require) {
             return undefined;
         },
     })
-
-    return result;
 })
