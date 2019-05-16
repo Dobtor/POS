@@ -5,6 +5,19 @@ from odoo import models, fields, api, _
 class Pricelist(models.Model):
     _inherit = 'product.pricelist.item'
 
+    applied_on = fields.Selection(
+        selection_add=[
+            ('02_variant_value', _('Variant Value')),
+        ]
+    )
+    
+    variant_id = fields.Many2one(
+        string=_('Variant Value'),
+        comodel_name='product.attribute.value',
+        ondelete='cascade',
+        help="Specify a variant value if this rule only applies to one product. Keep empty otherwise."
+    )
+    
     compute_price = fields.Selection(
         selection_add=[
             # ('combo_sale', _('Combo Promotion')),
@@ -15,9 +28,10 @@ class Pricelist(models.Model):
     bogo_base = fields.Selection([
         ('bxa_gya_free', _('Buy (X Unit) of Product , Get (Y Unit) of Product Free')),
         ('bxa_gyb_free', _('Buy (X Unit) of Product Get (Y Unit) of Another Products Free')),
-        ('bxa_gyb_discount', _('Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
+        ('bxa_gyb_discount', _(
+            'Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
         # ('bxa_gyc_free', _('Buy (X Unit) of Product A, Get (Y Unit) of Another Products (Categrory) Free'))
-        ],
+    ],
         index=True,
         default='bxa_gya_free'
     )
@@ -39,15 +53,22 @@ class Pricelist(models.Model):
         string=_("Discounted Product Qty"),
         default=1
     )
-    bxa_gyb_free_products = fields.Many2many(
+    
+    bxa_gyb_free_products = fields.Many2one(
+        string = _("Discounted Products"),
         comodel_name='product.product',
-        relation='bxa_gyb_free_products_rel',
-        column1='product_id',
-        column2='pricelist_id',
-        string=_("Discounted Products"),
         ondelete='cascade',
-        domain="[('type','!=','service')]"
+        domain="[('type','!=','service')]",
     )
+    # bxa_gyb_free_products = fields.Many2one(
+    #     comodel_name='product.product',
+    #     relation='bxa_gyb_free_products_rel',
+    #     column1='product_id',
+    #     column2='pricelist_id',
+    #     string=_("Discounted Products"),
+    #     ondelete='cascade',
+    #     domain="[('type','!=','service')]"
+    # )
     # bxa_gyb_discount
     bxa_gyb_discount_Aproduct_unit = fields.Integer(
         string=_("Product Qty"),
@@ -79,13 +100,23 @@ class Pricelist(models.Model):
                  'pricelist_id', 'percent_price', 'price_discount', 'price_surcharge')
     def _get_pricelist_item_name_price(self):
         super()._get_pricelist_item_name_price()
+
+        if self.variant_id:
+            self.name = self.variant_id.name
+
         #  TODO :
         # if self.compute_price == 'combo_sale':
         #     self.price = ("%s %s") % (self.fixed_price, self.pricelist_id.currency_id.name)
+       
         if self.compute_price == 'bogo_sale':
             self.price = _("bogo offer")
         # elif self.compute_price == 'other_sale':
         #     self.price = _("%s %% discount") % (self.percent_price)
+
+    @api.onchange('applied_on')
+    def _onchange_applied_on(self):
+        if self.applied_on != '02_variant_value':
+            self.variant_id = False
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
@@ -129,4 +160,3 @@ class Pricelist(models.Model):
             self.bxa_gyb_discount_fixed_price = 0.0
         if self.bxa_gyb_discount_base_on != 'percentage':
             self.bxa_gyb_discount_percentage_price = 0.0
-
