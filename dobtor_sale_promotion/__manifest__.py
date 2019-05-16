@@ -27,7 +27,8 @@
     # always loaded
     'data': [
         'security/res_groups.xml',
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
+        'views/product_views.xml',
         'views/product_pricelist_views.xml',
         'views/res_config_setting.xml',
     ],
