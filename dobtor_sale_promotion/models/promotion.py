@@ -38,7 +38,7 @@ class SalePromotion(models.Model):
             ('over', 'Over base Discount')
         ],
         index=True,
-        default='price'
+        default='range'
     )
     range_based_ids = fields.One2many(
         string=_('Range Rule Lines'),
@@ -54,7 +54,7 @@ class SalePromotionRuleRangeBased(models.Model):
 
     promotion_id = fields.Many2one(
         string=_('Promotion Reference'),
-        comodel_name='model.name',
+        comodel_name='sale.promotion.rule',
         ondelete='cascade',
         index=True,
     )
@@ -67,7 +67,7 @@ class SalePromotionRuleRangeBased(models.Model):
         string=_('Start')
     )
     end = fields.Float(
-        string=_('End')
+        string=_('End'),
         help=_('-1 Express infinite')
     )
     based_on = fields.Selection(

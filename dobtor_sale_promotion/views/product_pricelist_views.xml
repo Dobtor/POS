@@ -42,7 +42,7 @@
                     </group>
                     <group attrs="{'invisible':['|',('bogo_base', '!=', 'bxa_gyb_free'),('compute_price', '!=', 'bogo_sale')]}">
                         <field name="bxa_gyb_free_Aproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_free_products" class="oe_inline" widget="many2many_tags" />
+                        <field name="bxa_gyb_free_products" class="oe_inline" />
                         <field name="bxa_gyb_free_Bproduct_unit" class="oe_inline"/>
                     </group>
                     <group attrs="{'invisible':['|',('bogo_base', '!=', 'bxa_gyb_discount'),('compute_price', '!=', 'bogo_sale')]}">
