@@ -3,6 +3,14 @@ from odoo import models, fields, api, _
 
 
 class Pricelist(models.Model):
+    _inherit = 'product.pricelist'
+
+    sale_promotion_ids = fields.Many2one(
+        string=_('promotion rule'),
+        comodel_name='sale.promotion.rule',
+    )
+
+class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
 
     applied_on = fields.Selection(
@@ -20,7 +28,6 @@ class Pricelist(models.Model):
     
     compute_price = fields.Selection(
         selection_add=[
-            # ('combo_sale', _('Combo Promotion')),
             ('bogo_sale', _('BOGO Offer')),
             # ('other_sale', _('Other Promotion')),
         ]
@@ -28,8 +35,7 @@ class Pricelist(models.Model):
     bogo_base = fields.Selection([
         ('bxa_gya_free', _('Buy (X Unit) of Product , Get (Y Unit) of Product Free')),
         ('bxa_gyb_free', _('Buy (X Unit) of Product Get (Y Unit) of Another Products Free')),
-        ('bxa_gyb_discount', _(
-            'Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
+        ('bxa_gyb_discount', _('Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
         # ('bxa_gyc_free', _('Buy (X Unit) of Product A, Get (Y Unit) of Another Products (Categrory) Free'))
     ],
         index=True,
@@ -127,7 +133,8 @@ class Pricelist(models.Model):
     def _get_default_bxa_gyb_free_value(self):
         self.bxa_gyb_free_Aproduct_unit = 1
         self.bxa_gyb_free_Bproduct_unit = 1
-        self.bxa_gyb_free_products = [(6, 0, [])]
+        self.bxa_gyb_free_products = False
+        # self.bxa_gyb_free_products = [(6, 0, [])]
 
     @api.multi
     def _get_default_bxa_gyb_discount_value(self):
