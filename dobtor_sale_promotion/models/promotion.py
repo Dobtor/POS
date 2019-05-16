@@ -3,6 +3,16 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
+
+class BogoItem(models.Model):
+    """ 
+    Buy one, get one 50% off. 
+    Buy two, get another one 40% off.
+    """
+    _name = 'sale.promotion.bogo_offer.item'
+    _description = 'BOGO Offer Item'
+
+
 class SalePromotion(models.Model):
     _name = 'sale.promotion.rule'
     _description = 'Promotion Rule'
