@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="product.product_pricelist_item_tree_view" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="variant_id" groups="product.group_product_variant"/>
+                    <field name="variant_ids" groups="product.group_product_variant"/>
                 </xpath>
             </field>
         </record>
@@ -19,7 +19,7 @@
             <field name="inherit_id" ref="product.product_pricelist_item_form_view" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='applied_on']/parent::group" position="inside">
-                    <field name="variant_id" attrs="{'invisible':[('applied_on', '!=', '02_variant_value')],'required':[('applied_on', '=', '02_variant_value')]}"/>
+                    <field name="variant_ids" widget="many2many_tags" attrs="{'invisible':[('applied_on', '!=', '02_variant_value')],'required':[('applied_on', '=', '02_variant_value')]}"/>
                 </xpath>
             </field>
         </record>
@@ -29,9 +29,6 @@
             <field name="model">product.pricelist.item</field>
             <field name="inherit_id" ref="product.product_pricelist_item_form_view" />
             <field name="arch" type="xml">
-                <!-- <xpath expr="//field[@name='applied_on']/parent::group" position="inside">
-                    <field name="variant_id" attrs="{'invisible':[('applied_on', '!=', '02_variant_value')],'required':[('applied_on', '=', '02_variant_value')]}"/>
-                </xpath> -->
                 <xpath expr="//form" position="inside">
                     <group col="2" attrs="{'invisible':[('compute_price', '!=', 'bogo_sale')]}">
                         <field name="bogo_base" colspan="2" string="bogo base on" />
@@ -53,6 +50,28 @@
                         <field name="bxa_gyb_discount_fixed_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'fixed')]}"/>
                         <field name="bxa_gyb_discount_percentage_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'percentage')]}"/>
                     </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_pricelist_pormotion_rule_view" model="ir.ui.view">
+            <field name="name">product.pricelist.promotion.rule.form</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@groups='product.group_pricelist_item']" position="after">
+                    <dev groups="product.group_pricelist_item" name="promotion_rule">
+                        <separator string="Promotion Rule Items" />
+                        <field name="sale_promotion_ids">
+                            <tree string="Pricelist Items">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                                <field name="base_on" />
+                            </tree>
+                        </field>
+                    </dev>
                 </xpath>
             </field>
         </record>

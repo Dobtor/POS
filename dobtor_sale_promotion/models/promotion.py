@@ -18,6 +18,12 @@ class SalePromotion(models.Model):
     _description = 'Promotion Rule'
     _order = "sequence"
 
+    pricelist_id = fields.Many2one(
+        string=_('Referce Pricelist'),
+        comodel_name='product.pricelist',
+        ondelete='set null',
+    )
+    
     name = fields.Char(
         string=_('Promotion Rule Name'),
         required=True
@@ -38,10 +44,12 @@ class SalePromotion(models.Model):
         string=_('Promotion Method'),
         selection=[
             ('range', _('Range based Discount')),
-            # ('combo_sale', _('Combo Promotion')),
+            ('combo_sale', _('Combo Promotion')),
         ],
+        default='range', 
         help='Promotion rule applicable on selected option'
     )
+    # Not for form views yet.
     range_based_on = fields.Selection(
         selection=[
             ('range', 'Range based Discount'),
@@ -55,12 +63,17 @@ class SalePromotion(models.Model):
         comodel_name='sale.promotion.rule.range.based',
         inverse_name='promotion_id',
     )
+    combo_sale_ids = fields.One2many(
+        string=_('Combo Rule Lines'),
+        comodel_name='sale.promotion.rule.combo.sale',
+        inverse_name='promotion_id',
+    )
 
 
 class SalePromotionRuleRangeBased(models.Model):
     _name = 'sale.promotion.rule.range.based'
     _description = 'Promotion rule range based'
-    _order = "start desc"
+    _order = "start"
 
     promotion_id = fields.Many2one(
         string=_('Promotion Reference'),
@@ -110,3 +123,16 @@ class SalePromotionRuleRangeBased(models.Model):
             if record.based_on in ['percentage']:
                 if record.based_on_percentage < 0.0:
                     raise ValidationError(_("Please enter Some Value for Calculation"))
+
+
+class SalePromotionRuleCombo(models.Model):
+    _name = 'sale.promotion.rule.range.based'
+    _description = 'Promotion rule range based'
+    _order = "start"
+
+    promotion_id = fields.Many2one(
+        string=_('Promotion Reference'),
+        comodel_name='sale.promotion.rule',
+        ondelete='cascade',
+        index=True,
+    )
