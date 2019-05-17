@@ -148,10 +148,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             return res
         },
     })
-    // models.PosModel = models.PosModel.extend({
-    //     initialize: function (session, attributes) {
-    //         models.load_models('pos.order.pricelist', ['before']);
-    //         _super_posmodel.initialize.apply(this, arguments);
-    //         },
-    //     });
+    models.PosModel = models.PosModel.extend({
+        initialize: function (session, attributes) {
+            models.load_models('pos.order.pricelist', ['before']);
+            _super_posmodel.initialize.apply(this, arguments);
+            },
+        });
     })
