@@ -5,12 +5,13 @@ from odoo import models, fields, api, _
 class Pricelist(models.Model):
     _inherit = 'product.pricelist'
 
-    sale_promotion_ids = fields.Many2one(
+    sale_promotion_ids = fields.One2many(
         string=_('promotion rule'),
         comodel_name='sale.promotion.rule',
+        inverse_name='pricelist_id',
     )
 
-class PricelistItem(models.Model):
+class PricelistItem_Variant(models.Model):
     _inherit = 'product.pricelist.item'
 
     applied_on = fields.Selection(
@@ -25,7 +26,23 @@ class PricelistItem(models.Model):
         ondelete='cascade',
         help="Specify a variant value if this rule only applies to one product. Keep empty otherwise."
     )
+
+    @api.one
+    @api.depends('categ_id', 'product_tmpl_id', 'product_id', 'compute_price', 'fixed_price',
+                 'pricelist_id', 'percent_price', 'price_discount', 'price_surcharge')
+    def _get_pricelist_item_name_price(self):
+        super()._get_pricelist_item_name_price()
+        if self.variant_id:
+            self.name = self.variant_id.name
     
+    @api.onchange('applied_on')
+    def _onchange_applied_on(self):
+        if self.applied_on != '02_variant_value':
+            self.variant_id = False
+
+class PricelistItem_BOGO(models.Model):
+    _inherit = 'product.pricelist.item'
+
     compute_price = fields.Selection(
         selection_add=[
             ('bogo_sale', _('BOGO Offer')),
@@ -107,9 +124,6 @@ class PricelistItem(models.Model):
     def _get_pricelist_item_name_price(self):
         super()._get_pricelist_item_name_price()
 
-        if self.variant_id:
-            self.name = self.variant_id.name
-
         #  TODO :
         # if self.compute_price == 'combo_sale':
         #     self.price = ("%s %s") % (self.fixed_price, self.pricelist_id.currency_id.name)
@@ -119,10 +133,6 @@ class PricelistItem(models.Model):
         # elif self.compute_price == 'other_sale':
         #     self.price = _("%s %% discount") % (self.percent_price)
 
-    @api.onchange('applied_on')
-    def _onchange_applied_on(self):
-        if self.applied_on != '02_variant_value':
-            self.variant_id = False
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):

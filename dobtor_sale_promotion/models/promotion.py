@@ -18,6 +18,12 @@ class SalePromotion(models.Model):
     _description = 'Promotion Rule'
     _order = "sequence"
 
+    pricelist_id = fields.Many2one(
+        string=_('Referce Pricelist'),
+        comodel_name='product.pricelist',
+        ondelete='set null',
+    )
+    
     name = fields.Char(
         string=_('Promotion Rule Name'),
         required=True
