@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.ui.view" id="dobtor_pos_multi_pricelist_config">
+        <field name="name">dobtor_pos_multi_pricelist_config</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='pricelist_setting']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="multi_pricelists_setting" title="Choose multi pricelists for the Point Of Sale" groups="product.group_sale_pricelist">
+                    <div class="o_setting_left_pane">
+                        <field name="use_multi_pricelists"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="use_multi_pricelists" string="Multi Pricelists"/>
+                        <div class="text-muted">
+                                    Set shop-specific prices, seasonal discounts, etc with different pricelist.
+                        </div>
+                        <div class="content-group mt16" attrs="{'invisible': [('use_multi_pricelists','=',False)], 'required' : [('use_multi_pricelists', '=', True)]}">
+                            <div class="row mt16">
+                                <label string="Available Multi Pricelists" for="multi_pricelist_ids" class="col-lg-3 o_light_label"/>
+                                <field name="multi_pricelist_ids" widget="many2many_tags"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

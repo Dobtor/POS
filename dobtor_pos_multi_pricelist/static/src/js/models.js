@@ -3,68 +3,155 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var rpc = require('web.rpc');
     var models = require('point_of_sale.models');
     var _super_order = models.Order.prototype;
+    var _super_orderline = models.Orderline.prototype;
     var _super_posmodel = models.PosModel.prototype;
-    var utils = require('web.utils');
-    var round_pr = utils.round_precision;
-    var exports = models
-    var _super_posmodel = exports.PosModel;
-
-    exports.PosModel = exports.PosModel.extend({
-        initialize: function (session, attributes) {
-            _super_posmodel.prototype.initialize.apply(this, arguments);
-            // exports.load_models('product.product.discount', ['before'])
-            exports.load_fields('pos.order.line', ['line_name'])
-            exports.load_fields('product.pricelist', ['discount_item', 'discount_product'])
-        },
-    })
-    var _super_orderline = exports.Orderline;
-    exports.Orderline = exports.Orderline.extend({
-        get_pricelist_discount_product: function (pricelist) {
-            if (pricelist) {
-                return this.pos.db.get_product_by_id(pricelist.discount_product[0])
+    models.Order = models.Order.extend({
+        add_product: function (product, options) {
+            _super_order.add_product.apply(this, arguments);
+            this.assert_editable();
+            var current_line = null;
+            var product = arguments[0]
+            this.orderlines.each(function (line) {
+                if (line.product.cid == product.cid) {
+                    current_line = line
+                    current_line.main_line = current_line.cid
+                    current_line.is_discount_line = false
+                }
+            });
+            var partner_id = this.get_client() ? this.get_client().id : false
+            var self = this
+            var discount_line_data = []
+            if (current_line) {
+                var price_data = this.compute_product_price(product.id, current_line.quantity,partner_id)
+                var temp_price = 0
+                for (var i = 0; i < price_data.length; i++) {
+                    var discount_rate = price_data[i][0]
+                    var pricelist_id = price_data[i][1]
+                    var discount_product_id = this.get_discount_product(pricelist_id)
+                    var discount_product = this.pos.db.get_product_by_id(discount_product_id)
+                    if (discount_rate > 0 && current_line.quantity > 0) {
+                        var discount_line = current_line.clone()
+                        discount_line.price = - (current_line.price-temp_price) * discount_rate
+                        temp_price = -discount_line.price
+                        var discount_product2 = $.extend(true, {}, discount_product);
+                        discount_line.product = discount_product2
+                        discount_line.product.display_name = this.get_product_name(pricelist_id,product.id) +' (-'+ Math.min(Math.max(parseFloat(discount_rate*100) || 0, 0),100) +'%)'
+                        discount_line.order = current_line.order
+                        discount_line.main_line = current_line.cid
+                        discount_line.line_name = this.get_product_name(pricelist_id,product.id) +' (-'+ Math.min(Math.max(parseFloat(discount_rate*100) || 0, 0),100) +'%)'
+                        discount_line_data.push(discount_line)
+                    }
+                }
+                var need_to_delete = []
+                this.orderlines.each(function (line) {
+                    if(line.is_discount_line && line.main_line==current_line.cid){
+                        need_to_delete.push(line)
+                    }
+                });
+                if (need_to_delete) {
+                    $.each(need_to_delete, function(i, line)  {
+                        self.orderlines.remove(line);
+                    })
+                }
+                if (discount_line_data) {
+                    $.each(discount_line_data, function (i,line) {
+                        var dis_line = self.orderlines.add(line);  
+                        dis_line.is_discount_line = true
+                        dis_line.main_line = current_line.cid
+                    })
+                }
+                this.select_orderline(current_line);
             }
         },
-        get_discount_product_price: function (product, pricelist, quantity) {
-            var new_price = product.get_price(pricelist, quantity)
-            var origin_price = product.lst_price
-            var rate = round_pr(((origin_price-new_price)/origin_price), self.pos.currency.rounding)
-            return new_price - origin_price
-        },
-        add_discount_product: function (quantity, pricelist) {
-            var self = this;
-            var price = round_pr(self.get_discount_product_price(self.product, pricelist, quantity), self.pos.currency.rounding)
-            var product = self.get_pricelist_discount_product(pricelist)
-            if ((product) && (price != 0)) {
-                // self.order.add_product(product, {
-                //     'price': price,
-                //     'quantity': {
-                //         'quantity': quantity,
-                //         'is_discount': true
-                //     },
-                // })
-            }
-            this.order.select_orderline(self);
+        compute_product_price: function (product_id, qty,partner_id) {
+            var discount_rate = null
+            rpc.query({
+                model: 'pos.order.line',
+                method: 'compute_product_price',
+                args: [
+                    [],
+                    product_id, qty,partner_id
+                ],
+            }, {
+                async: false,
+            }).then(function (data) {
+                discount_rate = data
+            })
+            return discount_rate
 
         },
-        set_quantity: function (quantity) {
-            var objectConstructor = {}.constructor;
-            var is_discount = null;
-            if (quantity.constructor === objectConstructor) {
-                is_discount = quantity.is_discount;
-                quantity = quantity.quantity;
-            }
-            if (is_discount != true) {
-                _super_orderline.prototype.set_quantity.apply(this, [quantity])
-                var self = this
-                var product = this.product
-                var pricelists = this.pos.pricelists;
-                $.each(pricelists, function (index, pricelist) {
-                    self.add_discount_product(quantity, pricelist)
+        get_discount_product: function (pricelist_id) {
+            var discount_product = null
+            rpc.query({
+                model: 'product.pricelist',
+                method: 'get_discount_product',
+                args: [
+                    [pricelist_id],
+                ]
+            }, {
+                async: false,
+            }).then(function (data) {
+                discount_product = data
+            })
+            return discount_product
+        },
+        get_product_name: function (pricelist_id,product_id) {
+            var name = null
+            rpc.query({
+                model: 'product.pricelist',
+                method: 'get_discount_displayname',
+                args: [[pricelist_id],product_id],
+            }, {
+                async: false,
+            }).then(function (data) {
+                name = data
+            })
+            return name
+        },
+        rename_orderline: function (line_id) {
+            rpc.query({
+                model: 'pos.order.line',
+                method: 'rename_orderline',
+                args:[[line_id]],
+            }, {
+                async: false,
+            })
+            return true
 
+        },
+        remove_orderline: function( line ){
+            this.assert_editable();
+            var self =this;
+            var need_to_delete = []
+            this.orderlines.each(function (sub_line) {
+                if(sub_line.main_line ==line.cid){
+                    need_to_delete.push(sub_line)
+                }
+            });
+            this.orderlines.remove(line);
+            if (need_to_delete) {
+                $.each(need_to_delete, function(i, sub_line)  {
+                    self.orderlines.remove(sub_line);
                 })
             }
+            
+            this.select_orderline(this.get_last_orderline());
+        },
+    })  
+    models.Orderline = models.Orderline.extend({
+        export_as_JSON: function() {
+            var res = _super_orderline.export_as_JSON.apply(this, arguments);
+            res.line_name=null
+            if(this.line_name){
+                res.line_name = this.line_name
+            }
+            return res
         },
     })
-
-    return exports;
-})
+    models.PosModel = models.PosModel.extend({
+        initialize: function (session, attributes) {
+            models.load_models('pos.order.pricelist', ['before']);
+            _super_posmodel.initialize.apply(this, arguments);
+            },
+        });
+    })
