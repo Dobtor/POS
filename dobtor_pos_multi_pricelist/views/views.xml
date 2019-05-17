@@ -7,17 +7,17 @@
     <field name="name">Discount Product Setting</field>
     <field name="view_mode">tree,form</field>
   </record>
-
+<!-- 
   <record id="act_order_pricelist_form" model="ir.actions.act_window">
     <field name="res_model">pos.order.pricelist</field>
     <field name="view_type">form</field>
     <field name="name">Pos Order Pricelist Setting</field>
     <field name="view_mode">tree,form</field>
-  </record>
+  </record> -->
 
 
   <menuitem id="discount_product_config" name="Discount Setting" action="act_discount_product_form" parent="point_of_sale.menu_point_config_product" sequence="10"/>
-  <menuitem id="order_pricelist_config" name="Order Pricelist Setting" action="act_order_pricelist_form" parent="point_of_sale.menu_point_config_product" sequence="20"/>
+  <!-- <menuitem id="order_pricelist_config" name="Order Pricelist Setting" action="act_order_pricelist_form" parent="point_of_sale.menu_point_config_product" sequence="20"/> -->
 
   <record model="ir.ui.view" id="dobtor_pos_multi_pricelist.config_discount_product">
     <field name="name">DiscountSetting</field>
@@ -50,8 +50,10 @@
       </tree>
     </field>
   </record>
+  
 
 
+<!-- 
   <record model="ir.ui.view" id="dobtor_pos_multi_pricelist.order_pricelist_config_form">
     <field name="name">Order Pricelist Form</field>
     <field name="model">pos.order.pricelist</field>
@@ -62,8 +64,6 @@
             <field name="name"/>
             <field name="discount_item"/>
             <field name="discount_rule"/>
-            <!-- <field name="base_price"/> -->
-            <!-- <field name="discounted_price"/> -->
           </group>
         </sheet>
       </form>
@@ -77,7 +77,6 @@
       <tree string="Pos Order Pricelist">
         <field name="name"/>
         <field name="discount_rule"/>
-        <!-- <field name="discounted_price"/> -->
       </tree>
     </field>
   </record>
@@ -123,6 +122,6 @@
       </form>
     </field>
   </record>
-
+ -->
 
 </odoo>
