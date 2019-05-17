@@ -126,8 +126,8 @@ class SalePromotionRuleRangeBased(models.Model):
 
 
 class SalePromotionRuleCombo(models.Model):
-    _name = 'sale.promotion.rule.range.based'
-    _description = 'Promotion rule range based'
+    _name = 'sale.promotion.rule.combo.sale'
+    _description = 'Promotion rule combo sale'
     _order = "start"
 
     promotion_id = fields.Many2one(
