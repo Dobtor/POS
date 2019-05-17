@@ -5,16 +5,12 @@ from odoo import models, fields, api
 class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
 
-    referce_ids = fields.One2many(
-        string='referce_ids',
-        comodel_name='pos.order.line',
-        inverse_name='res_id',
+    main_line = fields.Char(
+        string="Main Line"
     )
     
-    res_id = fields.Many2one(
-        string='promotion id',
-        comodel_name='pos.order.line',
-        ondelete='cascade',
+    sub_line = fields.Char(
+        string="Sub Line"
     )
     
     # discount_price = fields.

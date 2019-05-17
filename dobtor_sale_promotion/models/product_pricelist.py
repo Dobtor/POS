@@ -34,8 +34,6 @@ class PricelistItem_Variant(models.Model):
                  'pricelist_id', 'percent_price', 'price_discount', 'price_surcharge')
     def _get_pricelist_item_name_price(self):
         super()._get_pricelist_item_name_price()
-        if self.variant_id:
-            self.name = self.variant_id.name
     
     @api.onchange('applied_on')
     def _onchange_applied_on(self):
