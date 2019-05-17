@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="product.product_template_form_view" />
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='description']" position="before">
-                    <group string="Promotion" name="promotion">
+                    <group string="Promotion" name="promotion" groups="dobtor_sale_promotion.group_sale_promotion">
                         <field name="is_promotion_product" />
                     </group>
                 </xpath>
