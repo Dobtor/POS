@@ -8,13 +8,14 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet>
+                        <separator string="Promotion Rule Name"/>
                         <h1>
                             <field name="name" required="1" />
                         </h1>
                         <group>
                             <group>
                                 <field name="base_on" widget="radio"/>
-                                <field name="range_based_on" attrs="{'invisible':[('base_on', '!=', 'range')]}" widget="radio" />
+                                <!-- <field name="range_based_on" attrs="{'invisible':[('base_on', '!=', 'range')]}" widget="radio" /> -->
                             </group>
                             <group>
                                 <field name="date_start"/>
