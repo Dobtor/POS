@@ -19,11 +19,13 @@ class PricelistItem_Variant(models.Model):
             ('02_variant_value', _('Variant Value')),
         ]
     )
-    
-    variant_id = fields.Many2one(
+
+    variant_ids = fields.Many2many(
         string=_('Variant Value'),
         comodel_name='product.attribute.value',
-        ondelete='cascade',
+        relation='pricelist_variant_rel',
+        column1='pricelist_id',
+        column2='variant_id',
         help="Specify a variant value if this rule only applies to one product. Keep empty otherwise."
     )
 
