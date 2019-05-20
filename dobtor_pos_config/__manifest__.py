@@ -3,10 +3,10 @@
     'name': "dobtor_pos_config",
 
     'summary': """
-        Link POS to Multi Pricelist""",
+        Link POS to Pricelist""",
 
     'description': """
-        Let pos can choose to the multi price list
+       Let pos be able to set up multiple price lists, price list can also choose POS
     """,
 
     'author': "Dobtor SI",
