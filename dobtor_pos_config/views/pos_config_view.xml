@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <record model="ir.ui.view" id="dobtor_pos_multi_pricelist_config">
-        <field name="name">dobtor_pos_multi_pricelist_config</field>
+    <record model="ir.ui.view" id="dobtor_pos_config">
+        <field name="name">dobtor_pos_config</field>
         <field name="model">pos.config</field>
         <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
         <field name="arch" type="xml">

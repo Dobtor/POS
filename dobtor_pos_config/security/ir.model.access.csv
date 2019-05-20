@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dobtor_pos_config_dobtor_pos_config,dobtor_pos_config.dobtor_pos_config,model_dobtor_pos_config_dobtor_pos_config,,1,0,0,0

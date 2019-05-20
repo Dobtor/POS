@@ -13,38 +13,48 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
     var QWeb = core.qweb;
     var _t = core._t;
     var ajax = require('web.ajax');
-    
+
     var round_pr = utils.round_precision;
     screens.ProductListWidget.include({
 
-    render_product: function(product){
-        var res = this._super(product);
-        res = this.render_product_template(res, product)
-        return res;
-    },
-    order_product:function(){
-        var res = this._super();
+        render_product: function (product) {
+            var res = this._super(product);
+            res = this.render_product_template(res, product)
+            return res;
+        },
+        order_product: function () {
+            var res = this._super();
 
-        return res  
-    },
-    render_product_template:function(res, product){
-        var $resobj = null;
-        var product =this.get_product(product).then(function(response) {
-            if (response) {
-                $resobj = $(res)
-                $resobj.css({'display':'none'})
-            }
-        });
-        return $resobj ? $resobj[0]: res;
-    },
-    get_product: function(product) {
-        return rpc.query({
-            model: 'product.product',
-            method: 'get_discount_type',
-            args: [[product.id]],
-        },{
-            async: false,
-        })
-    },
+            return res
+        },
+        render_product_template: function (res, product) {
+            var $resobj = null;
+            var product = this.get_product(product).then(function (response) {
+                if (response) {
+                    $resobj = $(res)
+                    $resobj.css({
+                        'display': 'none'
+                    })
+                }
+            });
+            return $resobj ? $resobj[0] : res;
+        },
+        get_product: function (product) {
+            return rpc.query({
+                model: 'product.product',
+                method: 'get_discount_type',
+                args: [
+                    [product.id]
+                ],
+            }, {
+                async: false,
+            })
+        },
+    })
+    screens.ProductScreenWidget.include({
+        click_product: function (product) {
+            var res = this._super(product);
+            return res
+        },
     })
 })
