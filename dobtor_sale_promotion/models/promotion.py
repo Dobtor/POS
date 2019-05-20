@@ -78,3 +78,37 @@ class SalePromotionRuleCombo(models.Model):
         ondelete='cascade',
         index=True,
     )
+
+    product_id = fields.Many2one(
+        string=_('Product'),
+        comodel_name='product.product',
+        ondelete='cascade',
+    )
+    based_on = fields.Selection(
+        selection=[
+            ('price', _('Fix Price (Specify a Price)')),
+            ('percentage', _('Percentage (discount)'))],
+        index=True,
+        default='price'
+    )
+    based_on_price = fields.Float(
+        string=_('Price'),
+        default=0.0
+    )
+    based_on_percentage = fields.Float(
+        string=_('Percentage'),
+        default=0.0
+    )
+    
+    @api.constrains('based_on', 'based_on_price', 'based_on_percentage')
+    def _check_rule_validation(self):
+        """  validation at promotion create time. """
+        for record in self:
+            if record.based_on_percentage > 99:
+                raise ValidationError(_("It has to be less then 100"))
+            if record.based_on in ['price']:
+                if record.based_on_price < 0.0:
+                    raise ValidationError(_("Please enter Some Value for Calculation"))
+            if record.based_on in ['percentage']:
+                if record.based_on_percentage < 0.0:
+                    raise ValidationError(_("Please enter Some Value for Calculation"))

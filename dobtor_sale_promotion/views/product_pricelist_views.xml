@@ -44,6 +44,16 @@
                             </tree>
                         </field>
                     </group>
+                    <group attrs="{'invisible':['|',('base_on', '!=', 'combo_sale'),('level_on', '!=', 'order')]}">
+                        <field name="combo_sale_ids">
+                            <tree string="Rule Lines" editable="bottom">
+                                <field name="product_id" />
+                                <field name="based_on"/>
+                                <field name="based_on_price" attrs="{'invisible':[('based_on', '!=', 'price')]}" />
+                                <field name="based_on_percentage" attrs="{'invisible':[('based_on', '!=', 'percentage')]}" />
+                            </tree>
+                        </field>
+                    </group>
                 </xpath>
                 <xpath expr="//field[@name='compute_price']/parent::div/parent::group/parent::group" position="attributes">
                     <attribute name="attrs">{'invisible':[('level_on', '!=', 'line')]}</attribute>
@@ -51,7 +61,6 @@
                 <xpath expr="//group[@col='6']" position="attributes">
                     <attribute name="attrs">{'invisible':['|',('compute_price', '!=', 'formula'), ('level_on', '!=', 'line')]}</attribute>
                 </xpath>
-
             </field>
         </record>
 
@@ -84,28 +93,6 @@
                 </xpath>
             </field>
         </record>
-
-        <!-- <record id="product_pricelist_pormotion_rule_view" model="ir.ui.view">
-            <field name="name">product.pricelist.promotion.rule.form</field>
-            <field name="model">product.pricelist</field>
-            <field name="inherit_id" ref="product.product_pricelist_view" />
-            <field name="arch" type="xml">
-                <xpath expr="//div[@groups='product.group_pricelist_item']" position="after">
-                    <dev groups="product.group_pricelist_item" name="promotion_rule">
-                        <separator string="Promotion Rule Items" />
-                        <field name="sale_promotion_ids">
-                            <tree string="Pricelist Items">
-                                <field name="sequence" widget="handle"/>
-                                <field name="name"/>
-                                <field name="date_start"/>
-                                <field name="date_end"/>
-                                <field name="base_on" />
-                            </tree>
-                        </field>
-                    </dev>
-                </xpath>
-            </field>
-        </record> -->
 
     </data>
 </odoo>
