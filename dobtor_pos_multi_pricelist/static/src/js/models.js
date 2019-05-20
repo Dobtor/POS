@@ -84,13 +84,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             var product = self.product;
             var temp_price = 0;
             var origin_price = product.lst_price * quantity
-            
+
             // // 需要修正 不確定是否算Line的價格這樣算會不會有影響(ex: discount or round_pr())
             $.each(pricelists, function (index, pricelist) {
                 var discount_product = self.get_pricelist_discount_product(pricelist)
                 var rate = self.get_discount_rate(product, pricelist, quantity)
-                if (rate > 0 && quantity>1) {
-                    console.log('index',index)
+                if (rate > 0 && quantity > 1) {
+                    console.log('index', index)
                     // var discount_price =  round_pr(this.get_unit_price() * quantity * (1 - rate/100), this.pos.currency.rounding);
                     var discount_price = (origin_price - temp_price) * rate
                     // 需先判斷有沒有sub_line，有的話刪除
@@ -106,6 +106,14 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             })
         },
         check_rule: function () {},
+        check_order: function () {
+            var order = this.get_order();
+            $.each(order,function(index,line){
+                if(line.check_discount()){
+                    line.add_discount_product()
+                }
+            })
+        },
         set_quantity: function (quantity) {
             this.order.assert_editable();
             if (quantity === 'remove') {
