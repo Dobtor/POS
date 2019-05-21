@@ -12,67 +12,67 @@ class BogoItem(models.Model):
     _description = 'BOGO Offer Item'
 
 
-class SalePromotion(models.Model):
-    _name = 'sale.promotion.rule'
-    _description = 'Promotion Rule'
-    _order = "sequence"
+# class SalePromotion(models.Model):
+#     _name = 'sale.promotion.rule'
+#     _description = 'Promotion Rule'
+#     _order = "sequence"
 
-    pricelist_id = fields.Many2one(
-        string=_('Referce Pricelist'),
-        comodel_name='product.pricelist',
-        ondelete='set null',
-    )
-    name = fields.Char(
-        string=_('Promotion Rule Name'),
-        required=True
-    )
-    sequence = fields.Integer(
-        string='Sequence',
-        default=10
-    )
-    applied_on = fields.Selection([
-        ('3_global', 'Global'),
-        ('2_product_category', ' Product Category'),
-        ('1_product', 'Product'),
-        ('0_product_variant', 'Product Variant')], "Apply On",
-        default='3_global', required=True,
-        help='Pricelist Item applicable on selected option')
-    date_start = fields.Date(
-        string=_('Start Date'),
-        help="Starting date for the pricelist item validation"
-    )
-    date_end = fields.Date(
-        string=_('End Date'),
-        help="Ending valid for the pricelist item validation"
-    )
-    base_on = fields.Selection(
-        string=_('Promotion Method'),
-        selection=[
-            ('range', _('Range based Discount')),
-            ('combo_sale', _('Combo Promotion')),
-        ],
-        default='range',
-        help='Promotion rule applicable on selected option'
-    )
-    # Not for form views yet.
-    range_based_on = fields.Selection(
-        selection=[
-            ('range', 'Range based Discount'),
-            ('over', 'Over base Discount')
-        ],
-        index=True,
-        default='range'
-    )
-    range_based_ids = fields.One2many(
-        string=_('Range Rule Lines'),
-        comodel_name='sale.promotion.rule.range.based',
-        inverse_name='promotion_id',
-    )
-    combo_sale_ids = fields.One2many(
-        string=_('Combo Rule Lines'),
-        comodel_name='sale.promotion.rule.combo.sale',
-        inverse_name='promotion_id',
-    )
+#     pricelist_id = fields.Many2one(
+#         string=_('Referce Pricelist'),
+#         comodel_name='product.pricelist',
+#         ondelete='set null',
+#     )
+#     name = fields.Char(
+#         string=_('Promotion Rule Name'),
+#         required=True
+#     )
+#     sequence = fields.Integer(
+#         string='Sequence',
+#         default=10
+#     )
+#     applied_on = fields.Selection([
+#         ('3_global', 'Global'),
+#         ('2_product_category', ' Product Category'),
+#         ('1_product', 'Product'),
+#         ('0_product_variant', 'Product Variant')], "Apply On",
+#         default='3_global', required=True,
+#         help='Pricelist Item applicable on selected option')
+#     date_start = fields.Date(
+#         string=_('Start Date'),
+#         help="Starting date for the pricelist item validation"
+#     )
+#     date_end = fields.Date(
+#         string=_('End Date'),
+#         help="Ending valid for the pricelist item validation"
+#     )
+#     base_on = fields.Selection(
+#         string=_('Promotion Method'),
+#         selection=[
+#             ('range', _('Range based Discount')),
+#             ('combo_sale', _('Combo Promotion')),
+#         ],
+#         default='range',
+#         help='Promotion rule applicable on selected option'
+#     )
+#     # Not for form views yet.
+#     range_based_on = fields.Selection(
+#         selection=[
+#             ('range', 'Range based Discount'),
+#             ('over', 'Over base Discount')
+#         ],
+#         index=True,
+#         default='range'
+#     )
+#     range_based_ids = fields.One2many(
+#         string=_('Range Rule Lines'),
+#         comodel_name='sale.promotion.rule.range.based',
+#         inverse_name='promotion_id',
+#     )
+#     combo_sale_ids = fields.One2many(
+#         string=_('Combo Rule Lines'),
+#         comodel_name='sale.promotion.rule.combo.sale',
+#         inverse_name='promotion_id',
+#     )
 
 class SalePromotionRuleRangeBased(models.Model):
     _name = 'sale.promotion.rule.range.based'
@@ -81,7 +81,7 @@ class SalePromotionRuleRangeBased(models.Model):
 
     promotion_id = fields.Many2one(
         string=_('Promotion Reference'),
-        comodel_name='sale.promotion.rule',
+        comodel_name='product.pricelist.item',
         ondelete='cascade',
         index=True,
     )
@@ -136,7 +136,7 @@ class SalePromotionRuleCombo(models.Model):
 
     promotion_id = fields.Many2one(
         string=_('Promotion Reference'),
-        comodel_name='sale.promotion.rule',
+        comodel_name='product.pricelist.item',
         ondelete='cascade',
         index=True,
     )

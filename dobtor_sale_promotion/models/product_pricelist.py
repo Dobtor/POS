@@ -2,57 +2,105 @@
 from odoo import models, fields, api, _
 
 
-class Pricelist(models.Model):
-    _inherit = 'product.pricelist'
+# class Pricelist(models.Model):
+#     _inherit = 'product.pricelist'
 
-    sale_promotion_ids = fields.One2many(
-        string=_('promotion rule'),
-        comodel_name='sale.promotion.rule',
-        inverse_name='pricelist_id',
+#     sale_promotion_ids = fields.One2many(
+#         string=_('promotion rule'),
+#         comodel_name='sale.promotion.rule',
+#         inverse_name='pricelist_id',
+#     )
+
+class SalePromotionRuleCombo(models.Model):
+    _name = 'test'
+    _description = 'Promotion rule combo sale'
+    _order = "start"
+
+    promotion_id = fields.Many2one(
+        string=_('Promotion Reference'),
+        comodel_name='product.pricelist.item',
+        ondelete='cascade',
+        index=True,
     )
+
+    product_id = fields.Many2one(
+        string=_('Product'),
+        comodel_name='product.product',
+        ondelete='cascade',
+    )
+    based_on = fields.Selection(
+        selection=[
+            ('price', _('Fix Price (Specify a Price)')),
+            ('percentage', _('Percentage (discount)'))],
+        index=True,
+        default='price'
+    )
+    based_on_price = fields.Float(
+        string=_('Price'),
+        default=0.0
+    )
+    based_on_percentage = fields.Float(
+        string=_('Percentage'),
+        default=0.0
+    )
+
+    @api.constrains('based_on', 'based_on_price', 'based_on_percentage')
+    def _check_rule_validation(self):
+        """  validation at promotion create time. """
+        for record in self:
+            if record.based_on_percentage > 99:
+                raise ValidationError(_("It has to be less then 100"))
+            if record.based_on in ['price']:
+                if record.based_on_price < 0.0:
+                    raise ValidationError(
+                        _("Please enter Some Value for Calculation"))
+            if record.based_on in ['percentage']:
+                if record.based_on_percentage < 0.0:
+                    raise ValidationError(
+                        _("Please enter Some Value for Calculation"))
 
 
 class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
 
     # level
-    # level_on = fields.Selection(
-    #     string=_('level on'),
-    #     selection=[
-    #         ('order', 'Applied on Order'), 
-    #         ('line', 'Per Product or Line')
-    #     ], 
-    #     index=True,
-    #     default='line'
-    # )
-    # base_on = fields.Selection(
-    #     string=_('Promotion Method'),
-    #     selection=[
-    #         ('range', _('Range based Discount')),
-    #         ('combo_sale', _('Combo Promotion')),
-    #     ],
-    #     default='range',
-    #     help='Promotion rule applicable on selected option'
-    # )
-    # # Not for form views yet.
-    # range_based_on = fields.Selection(
-    #     selection=[
-    #         ('range', 'Range based Discount'),
-    #         ('over', 'Over base Discount')
-    #     ],
-    #     index=True,
-    #     default='range'
-    # )
-    # range_based_ids = fields.One2many(
-    #     string=_('Range Rule Lines'),
-    #     comodel_name='sale.promotion.rule.range.based',
-    #     inverse_name='promotion_id',
-    # )
-    # combo_sale_ids = fields.One2many(
-    #     string=_('Combo Rule Lines'),
-    #     comodel_name='sale.promotion.rule.combo.sale',
-    #     inverse_name='promotion_id',
-    # )
+    level_on = fields.Selection(
+        string=_('level on'),
+        selection=[
+            ('order', 'Applied on Order'), 
+            ('line', 'Per Product or Line')
+        ], 
+        index=True,
+        default='line'
+    )
+    base_on = fields.Selection(
+        string=_('Promotion Method'),
+        selection=[
+            ('range', _('Range based Discount')),
+            ('combo_sale', _('Combo Promotion')),
+        ],
+        default='range',
+        help='Promotion rule applicable on selected option'
+    )
+    # Not for form views yet.
+    range_based_on = fields.Selection(
+        selection=[
+            ('range', 'Range based Discount'),
+            ('over', 'Over base Discount')
+        ],
+        index=True,
+        default='range'
+    )
+    range_based_ids = fields.One2many(
+        string=_('Range Rule Lines'),
+        comodel_name='sale.promotion.rule.range.based',
+        inverse_name='promotion_id',
+    )
+    combo_sale_ids = fields.One2many(
+        string=_('Combo Rule Lines'),
+        comodel_name='sale.promotion.rule.combo.sale',
+        inverse_name='promotion_id',
+    )
 
     # variant
     applied_on = fields.Selection(
@@ -160,10 +208,10 @@ class PricelistItem(models.Model):
         # elif self.compute_price == 'other_sale':
         #     self.price = _("%s %% discount") % (self.percent_price)
 
-    # @api.onchange('level_on')
-    # def _onchange_level_on(self):
-    #     if self.level_on == 'line':
-    #         self.compute_price = 'fixed'
+    @api.onchange('level_on')
+    def _onchange_level_on(self):
+        if self.level_on == 'line':
+            self.compute_price = 'fixed'
 
     @api.onchange('applied_on')
     def _onchange_applied_on(self):
