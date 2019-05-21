@@ -85,6 +85,12 @@ class SalePromotionRuleRangeBased(models.Model):
         ondelete='cascade',
         index=True,
     )
+    pricelist_id = fields.Many2one(
+        string=_('Referce pricelist'),
+        related='promotion_id.pricelist_id',
+        readonly=True, 
+        store=True
+    )
     range_based_on = fields.Selection(
         readonly=True, 
         related='promotion_id.range_based_on',
@@ -132,7 +138,7 @@ class SalePromotionRuleRangeBased(models.Model):
 class SalePromotionRuleCombo(models.Model):
     _name = 'sale.promotion.rule.combo.sale'
     _description = 'Promotion rule combo sale'
-    _order = "start"
+    # _order = "start"
 
     promotion_id = fields.Many2one(
         string=_('Promotion Reference'),
@@ -140,7 +146,12 @@ class SalePromotionRuleCombo(models.Model):
         ondelete='cascade',
         index=True,
     )
-
+    pricelist_id = fields.Many2one(
+        string=_('Referce pricelist'),
+        related='promotion_id.pricelist_id',
+        readonly=True,
+        store=True
+    )
     product_id = fields.Many2one(
         string=_('Product'),
         comodel_name='product.product',
