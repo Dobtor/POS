@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="sale_promotion_rule_form_view" model="ir.ui.view">
+            <field name="name">sale.promotion.rule.form</field>
+            <field name="model">sale.promotion.rule</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <separator string="Promotion Rule Name"/>
+                        <h1>
+                            <field name="name" required="1" />
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="base_on" widget="radio"/>
+                                <!-- <field name="range_based_on" attrs="{'invisible':[('base_on', '!=', 'range')]}" widget="radio" /> -->
+                            </group>
+                            <group>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
+                        </group>
+                        <separator string="Rule Item"/>
+                        <group attrs="{'invisible':[('base_on', '!=', 'range')]}">
+                            <field name="range_based_ids" >
+                                <tree string="Rule Lines" editable="bottom">
+                                    <field name="start"/>
+                                    <field name="end"/>
+                                    <field name="based_on"/>
+                                    <field name="based_on_rebate" attrs="{'invisible':[('based_on', '!=', 'rebate')]}" />
+                                    <field name="based_on_percentage" attrs="{'invisible':[('based_on', '!=', 'percentage')]}" />
+                                </tree>
+                            </field>
+                        </group>
+                        <group attrs="{'invisible':[('base_on', '!=', 'combo_sale')]}">
+                            <field name="combo_sale_ids">
+                                <tree string="Rule Lines" editable="bottom">
+                                    <field name="product_id" />
+                                    <field name="based_on"/>
+                                    <field name="based_on_price" attrs="{'invisible':[('based_on', '!=', 'price')]}" />
+                                    <field name="based_on_percentage" attrs="{'invisible':[('based_on', '!=', 'percentage')]}" />
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

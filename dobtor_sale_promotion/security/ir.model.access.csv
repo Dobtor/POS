@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sale_promotion_bogo_offer_item_all,Promotion : Bogo Item,dobtor_sale_promotion.model_sale_promotion_bogo_offer_item,,1,1,1,1
+access_sale_promotion_rule_all,Promotion : Promotion Rule,dobtor_sale_promotion.model_sale_promotion_rule,,1,1,1,1
 access_sale_promotion_rule_range_based_all,Promotion : Promotion Rule Range Based,dobtor_sale_promotion.model_sale_promotion_rule_range_based,,1,1,1,1
 access_sale_promotion_rule_combo_sale_all,Promotion : Promotion Rule Combo Sale,dobtor_sale_promotion.model_sale_promotion_rule_combo_sale,,1,1,1,1

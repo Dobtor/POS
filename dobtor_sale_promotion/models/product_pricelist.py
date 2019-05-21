@@ -2,57 +2,57 @@
 from odoo import models, fields, api, _
 
 
-# class Pricelist(models.Model):
-#     _inherit = 'product.pricelist'
+class Pricelist(models.Model):
+    _inherit = 'product.pricelist'
 
-#     sale_promotion_ids = fields.One2many(
-#         string=_('promotion rule'),
-#         comodel_name='sale.promotion.rule',
-#         inverse_name='pricelist_id',
-#     )
+    sale_promotion_ids = fields.One2many(
+        string=_('promotion rule'),
+        comodel_name='sale.promotion.rule',
+        inverse_name='pricelist_id',
+    )
 
 
 class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
 
     # level
-    level_on = fields.Selection(
-        string=_('level on'),
-        selection=[
-            ('order', 'Applied on Order'), 
-            ('line', 'Per Product or Line')
-        ], 
-        index=True,
-        default='line'
-    )
-    base_on = fields.Selection(
-        string=_('Promotion Method'),
-        selection=[
-            ('range', _('Range based Discount')),
-            ('combo_sale', _('Combo Promotion')),
-        ],
-        default='range',
-        help='Promotion rule applicable on selected option'
-    )
-    # Not for form views yet.
-    range_based_on = fields.Selection(
-        selection=[
-            ('range', 'Range based Discount'),
-            ('over', 'Over base Discount')
-        ],
-        index=True,
-        default='range'
-    )
-    range_based_ids = fields.One2many(
-        string=_('Range Rule Lines'),
-        comodel_name='sale.promotion.rule.range.based',
-        inverse_name='promotion_id',
-    )
-    combo_sale_ids = fields.One2many(
-        string=_('Combo Rule Lines'),
-        comodel_name='sale.promotion.rule.combo.sale',
-        inverse_name='promotion_id',
-    )
+    # level_on = fields.Selection(
+    #     string=_('level on'),
+    #     selection=[
+    #         ('order', 'Applied on Order'), 
+    #         ('line', 'Per Product or Line')
+    #     ], 
+    #     index=True,
+    #     default='line'
+    # )
+    # base_on = fields.Selection(
+    #     string=_('Promotion Method'),
+    #     selection=[
+    #         ('range', _('Range based Discount')),
+    #         ('combo_sale', _('Combo Promotion')),
+    #     ],
+    #     default='range',
+    #     help='Promotion rule applicable on selected option'
+    # )
+    # # Not for form views yet.
+    # range_based_on = fields.Selection(
+    #     selection=[
+    #         ('range', 'Range based Discount'),
+    #         ('over', 'Over base Discount')
+    #     ],
+    #     index=True,
+    #     default='range'
+    # )
+    # range_based_ids = fields.One2many(
+    #     string=_('Range Rule Lines'),
+    #     comodel_name='sale.promotion.rule.range.based',
+    #     inverse_name='promotion_id',
+    # )
+    # combo_sale_ids = fields.One2many(
+    #     string=_('Combo Rule Lines'),
+    #     comodel_name='sale.promotion.rule.combo.sale',
+    #     inverse_name='promotion_id',
+    # )
 
     # variant
     applied_on = fields.Selection(
@@ -160,10 +160,10 @@ class PricelistItem(models.Model):
         # elif self.compute_price == 'other_sale':
         #     self.price = _("%s %% discount") % (self.percent_price)
 
-    @api.onchange('level_on')
-    def _onchange_level_on(self):
-        if self.level_on == 'line':
-            self.compute_price = 'fixed'
+    # @api.onchange('level_on')
+    # def _onchange_level_on(self):
+    #     if self.level_on == 'line':
+    #         self.compute_price = 'fixed'
 
     @api.onchange('applied_on')
     def _onchange_applied_on(self):
