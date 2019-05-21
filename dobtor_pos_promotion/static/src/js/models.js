@@ -8,7 +8,7 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
     var _t = core._t;
 
     var exports = models
-    exports.load_models_replace = function (model_name, fields) {
+    exports.load_fields_extend = function (model_name, fields) {
         if (!(fields instanceof Array)) {
             fields = [fields];
         }
@@ -17,8 +17,6 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
         for (var i = 0; i < models.length; i++) {
             var model = models[i];
             if (model.model === model_name) {
-                // if 'fields' is empty all fields are loaded, so we do not need
-                // to modify the array
                 if ((model.fields instanceof Array) && model.fields.length > 0) {
                     model.fields = model.fields.concat(fields || []);
                 } else {
@@ -28,14 +26,19 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
                 }
             }
         }
-
     };
 
-    models.load_models_replace('product.pricelist.item', ['product_tmpl_id', 'product_id',
+    models.load_fields_extend('product.pricelist.item', ['product_tmpl_id', 'product_id',
                 'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
                 'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
                 'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
                 'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
+
+    models.load_fields_extend('product.pricelist.item', ['level_on', 'base_on',
+        'applied_on', 'compute_price', 'bogo_base', 'bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
+        'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit', 'bxa_gyb_free_products', 'bxa_gyb_discount_Aproduct_unit',
+        'bxa_gyb_discount_Bproduct_unit', 'bxa_gyb_discount_base_on', 'bxa_gyb_discount_product', 'bxa_gyb_discount_fixed_price',
+        'bxa_gyb_discount_percentage_price']);
 
     // var exports = models
     var _super_posmodel = exports.PosModel;
@@ -43,23 +46,8 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
         initialize: function (session, attributes) {
             _super_posmodel.prototype.initialize.apply(this, arguments);
             exports.load_fields('product.product', ['is_promotion_product']);
-
-            // not using 
-            // exports.load_fields('product.pricelist.item', ['product_tmpl_id', 'product_id', 
-            // 'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
-            // 'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
-            // 'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
-            // 'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
         },
     })
-
-    models.load_models_replace([{
-        model: 'product.pricelist.item',
-    }], ['product_tmpl_id', 'product_id',
-        'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
-        'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
-        'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
-        'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
 
     // models.load_models([{
     //     model: 'product.pricelist',
