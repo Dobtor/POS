@@ -8,37 +8,93 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
     var _t = core._t;
 
     var exports = models
+    exports.load_models_replace = function (model_name, fields) {
+        if (!(fields instanceof Array)) {
+            fields = [fields];
+        }
+
+        var models = exports.PosModel.prototype.models;
+        for (var i = 0; i < models.length; i++) {
+            var model = models[i];
+            if (model.model === model_name) {
+                // if 'fields' is empty all fields are loaded, so we do not need
+                // to modify the array
+                if ((model.fields instanceof Array) && model.fields.length > 0) {
+                    model.fields = model.fields.concat(fields || []);
+                } else {
+                    $.extend(model, {
+                        fields: fields
+                    });
+                }
+            }
+        }
+
+    };
+
+    models.load_models_replace('product.pricelist.item', ['product_tmpl_id', 'product_id',
+                'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
+                'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
+                'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
+                'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
+
+    // var exports = models
     var _super_posmodel = exports.PosModel;
     exports.PosModel = exports.PosModel.extend({
         initialize: function (session, attributes) {
             _super_posmodel.prototype.initialize.apply(this, arguments);
             exports.load_fields('product.product', ['is_promotion_product']);
-            // exports.load_fields('product.product', ['is_promotion_product']);
+
+            // not using 
+            // exports.load_fields('product.pricelist.item', ['product_tmpl_id', 'product_id', 
+            // 'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
+            // 'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
+            // 'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
+            // 'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
         },
     })
 
+    models.load_models_replace([{
+        model: 'product.pricelist.item',
+    }], ['product_tmpl_id', 'product_id',
+        'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
+        'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
+        'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
+        'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
 
     // models.load_models([{
-    //     model: 'sale.promotion.rule.combo.sale',
-    //     loaded: function (self, promotion_rules) {
-    //         var item_by_id = {};
-    //         _.each(self.pricelists, function (pricelist) {
-    //             _.each(pricelist.items, function (item) {
-    //                 item_by_id[item.id] = item;
-    //             });
+    //     model: 'product.pricelist',
+    //     fields: ['name', 'display_name'],
+    //     domain: function (self) {
+    //         return [
+    //             ['id', 'in', self.config.available_pricelist_ids]
+    //         ];
+    //     },
+    //     loaded: function (self, pricelists) {
+    //         _.map(pricelists, function (pricelist) {
+    //             pricelist.items = [];
     //         });
-
-    //         _.each(promotion_rules, function (rule) {
-    //             var pricelist_item = item_by_id[rule.promotion_id[0]];
-    //             pricelist_item.combo_rules.push(rule);
+    //         _.map(pricelists, function (pricelist) {
+    //             pricelist.items = [];
     //         });
+    //         self.default_pricelist = _.findWhere(pricelists, {
+    //             id: self.config.pricelist_id[0]
+    //         });
+    //         self.pricelists = pricelists;
+    //         window.pricelists = pricelists
     //     },
     // }], {
-    //     'after': 'product.pricelist.item'
+    //     'after': 'product.pricelist'
     // });
+
 
     // models.load_models([{
     //     model: 'sale.promotion.rule.range.based',
+    //     fields: ['name', 'display_name'],
+    //     domain: function (self) {
+    //         return [
+    //             ['promotion_id', 'in', _.pluck(self.pricelists, 'id')]
+    //         ];
+    //     },
     //     loaded: function (self, promotion_rules) {
     //         var item_by_id = {};
     //         _.each(self.pricelists, function (pricelist) {
@@ -49,7 +105,7 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
 
     //         _.each(promotion_rules, function (rule) {
     //             var pricelist_item = item_by_id[rule.promotion_id[0]];
-    //             pricelist_item.range_rules.push(rule);
+    //             pricelist_item.items.push(item);
     //         });
     //     },
     // }], {
@@ -85,9 +141,9 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
             // })
             return pricelist_items
         },
-        get_price: function (pricelist, quantity) {
-            return _super_orderline.prototype.set_quantity.apply(this, [pricelist, quantity])
-        }
+        // get_price: function (pricelist, quantity) {
+        //     return _super_orderline.prototype.set_quantity.apply(this, [pricelist, quantity])
+        // }
     })
 
     var OrderlineCollection = Backbone.Collection.extend({
