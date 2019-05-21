@@ -28,59 +28,51 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
         }
     };
 
-    models.load_fields_extend('product.pricelist.item', ['product_tmpl_id', 'product_id',
-                'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
-                'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
-                'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
-                'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
+    exports.load_product_price_item_init_inhert = function () {
+        var models = exports.PosModel.prototype.models;
+        for (var i = 0; i < models.length; i++) {
+            var model = models[i];
+            if (model.model === 'product.pricelist.item') {
+                model.loaded = function() {
+                    var pricelist_by_id = {};
+                    _.each(self.pricelists, function (pricelist) {
+                        pricelist_by_id[pricelist.id] = pricelist;
+                    });
 
-    models.load_fields_extend('product.pricelist.item', ['level_on', 'base_on',
-        'applied_on', 'compute_price', 'bogo_base', 'bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
-        'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit', 'bxa_gyb_free_products', 'bxa_gyb_discount_Aproduct_unit',
-        'bxa_gyb_discount_Bproduct_unit', 'bxa_gyb_discount_base_on', 'bxa_gyb_discount_product', 'bxa_gyb_discount_fixed_price',
-        'bxa_gyb_discount_percentage_price']);
+                    _.each(pricelist_items, function (item) {
+                        var pricelist = pricelist_by_id[item.pricelist_id[0]];
+                        pricelist.items.push(item);
+                        item.base_pricelist = pricelist_by_id[item.base_pricelist_id[0]];
+                        item.range_based = []
+                        item.combo_sale = []
+                    });
+                }
+            }
+        }
+    };
 
-    // var exports = models
-    var _super_posmodel = exports.PosModel;
-    exports.PosModel = exports.PosModel.extend({
-        initialize: function (session, attributes) {
-            _super_posmodel.prototype.initialize.apply(this, arguments);
-            exports.load_fields('product.product', ['is_promotion_product']);
-        },
-    })
+    // models.load_fields_extend('product.pricelist.item', ['product_tmpl_id', 'product_id',
+    //             'categ_id', 'min_quantity', 'applied_on', 'base', 'base_pricelist_id', 
+    //             'pricelist_id', 'price_surcharge', 'price_discount', 'price_round', 
+    //             'price_min_margin', 'price_max_margin', 'company_id', 'currency_id', 
+    //             'date_start', 'date_end', 'compute_price', 'fixed_price', 'percent_price', 'name', 'price']);
 
-    // models.load_models([{
-    //     model: 'product.pricelist',
-    //     fields: ['name', 'display_name'],
-    //     domain: function (self) {
-    //         return [
-    //             ['id', 'in', self.config.available_pricelist_ids]
-    //         ];
-    //     },
-    //     loaded: function (self, pricelists) {
-    //         _.map(pricelists, function (pricelist) {
-    //             pricelist.items = [];
-    //         });
-    //         _.map(pricelists, function (pricelist) {
-    //             pricelist.items = [];
-    //         });
-    //         self.default_pricelist = _.findWhere(pricelists, {
-    //             id: self.config.pricelist_id[0]
-    //         });
-    //         self.pricelists = pricelists;
-    //         window.pricelists = pricelists
-    //     },
-    // }], {
-    //     'after': 'product.pricelist'
-    // });
+    // models.load_fields_extend('product.pricelist.item', ['level_on', 'base_on',
+    //     'applied_on', 'compute_price', 'bogo_base', 'bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
+    //     'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit', 'bxa_gyb_free_products', 'bxa_gyb_discount_Aproduct_unit',
+    //     'bxa_gyb_discount_Bproduct_unit', 'bxa_gyb_discount_base_on', 'bxa_gyb_discount_product', 'bxa_gyb_discount_fixed_price',
+    //     'bxa_gyb_discount_percentage_price']);
 
+    // models.load_product_price_item_init_inhert()
+
+    models.load_fields('product.product', ['is_promotion_product']);
 
     // models.load_models([{
     //     model: 'sale.promotion.rule.range.based',
-    //     fields: ['name', 'display_name'],
+    //     fields: ['promotion_id', 'pricelist_id', 'range_based_on', 'start', 'end', 'based_on', 'based_on_rebate', 'based_on_percentage'],
     //     domain: function (self) {
     //         return [
-    //             ['promotion_id', 'in', _.pluck(self.pricelists, 'id')]
+    //             ['pricelist_id', 'in', _.pluck(self.pricelists, 'id')]
     //         ];
     //     },
     //     loaded: function (self, promotion_rules) {
@@ -93,7 +85,46 @@ odoo.define('dobtor.pos.promotion.models', function (require) {
 
     //         _.each(promotion_rules, function (rule) {
     //             var pricelist_item = item_by_id[rule.promotion_id[0]];
-    //             pricelist_item.items.push(item);
+
+    //             if ((pricelist_item.range_based instanceof Array) && pricelist_item.range_based.length > 0) {
+    //                 pricelist_item.range_based.push(rule)
+    //             } else {
+    //                 $.extend(pricelist_item, {
+    //                     range_based: [rule]
+    //                 });
+    //             }
+    //         });
+    //     },
+    // }], {
+    //     'after': 'product.pricelist.item'
+    // });
+
+    // models.load_models([{
+    //     model: 'sale.promotion.rule.combo.sale',
+    //     fields: ['promotion_id', 'pricelist_id', 'product_id', 'based_on', 'based_on_price', 'based_on_percentage'],
+    //     domain: function (self) {
+    //         return [
+    //             ['pricelist_id', 'in', _.pluck(self.pricelists, 'id')]
+    //         ];
+    //     },
+    //     loaded: function (self, promotion_rules) {
+    //         var item_by_id = {};
+    //         _.each(self.pricelists, function (pricelist) {
+    //             _.each(pricelist.items, function (item) {
+    //                 item_by_id[item.id] = item;
+    //             });
+    //         });
+
+    //         _.each(promotion_rules, function (rule) {
+    //             var pricelist_item = item_by_id[rule.promotion_id[0]];
+
+    //             if ((pricelist_item.combo_sale instanceof Array) && pricelist_item.combo_sale.length > 0) {
+    //                 pricelist_item.combo_sale.push(rule)
+    //             } else {
+    //                 $.extend(pricelist_item, {
+    //                     combo_sale: [rule]
+    //                 });
+    //             }
     //         });
     //     },
     // }], {
