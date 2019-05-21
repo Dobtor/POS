@@ -1,0 +1,14 @@
+<odoo>
+  <data>
+        <record model="ir.ui.view" id="pricelist_posconfig">
+        <field name="name">posconfig_ids.pricelist</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <field name="posconfig_ids" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+  </data>
+</odoo>

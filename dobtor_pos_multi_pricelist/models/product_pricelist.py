@@ -9,20 +9,10 @@ class Pricelist(models.Model):
     discount_type = fields.Selection('discount_type',related='discount_item.paid_type')
     discount_product = fields.Many2one(string='related_discount_product',comodel_name='product.product',related='discount_item.product_id')
     
-    
     @api.multi
     def get_discount_product(self):
         return self.discount_item.product_id.id
 
-    @api.multi
-    def get_discount_displayname(self,product_id):
-        product = self.env['product.product'].browse(product_id)
-        name = self.name
-        for item in self.item_ids:
-            if item.product_tmpl_id == product.product_tmpl_id:
-                name = self.name + ' ' +item.name
-        return name
-    
 
 class PricelistItem(models.Model):
     
