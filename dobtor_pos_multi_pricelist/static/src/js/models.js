@@ -9,7 +9,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var field_utils = require('web.field_utils');
     var round_di = utils.round_decimals;
     var utils = require('web.utils');
-    var _t = core._t;
 
     exports.PosModel = exports.PosModel.extend({
         initialize: function (session, attributes) {
