@@ -46,12 +46,6 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             })
         },
     })
-    screens.ProductScreenWidget.include({
-        click_product: function (product) {
-            var res = this._super(product);
-            return res
-        },
-    })
     screens.ActionpadWidget.include({
         renderElement: function() {
             var self = this;

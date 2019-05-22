@@ -10,17 +10,16 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var round_di = utils.round_decimals;
     var utils = require('web.utils');
 
-    // exports.load_models({
-    //     model:  'product.pricelist',
-    //     fields: ['name', 'display_name'],
-    //     domain: function(self) { return [['id', 'in', self.config.multi_pricelist_ids]]; },
-    //     loaded: function(self, pricelists){
-    //         _.map(pricelists, function (pricelist) { pricelist.items = []; });
-    //         self.default_pricelist = _.findWhere(pricelists, {id: self.config.pricelist_id[0]});
-    //         self.pricelists = pricelists;
-    //     },
-    // })
-    exports.load_fields('product.pricelist', ['discount_item', 'discount_product'])
+    exports.load_models({
+        model:  'product.pricelist',
+        fields: ['name', 'display_name','discount_item', 'discount_product'],
+        domain: function(self) { return [['id', 'in', self.config.multi_pricelist_ids]]; },
+        loaded: function(self, pricelists){
+            _.map(pricelists, function (pricelist) { pricelist.items = []; });
+            self.default_pricelist = _.findWhere(pricelists, {id: self.config.pricelist_id[0]});
+            self.pricelists = pricelists;
+        },
+    },{'after':'product.pricelist'})
     exports.load_fields('product.product', ['discount_type'])
 
     exports.Order = exports.Order.extend({
@@ -51,6 +50,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         items.push(item)
                     })
                 })
+                console.log('items')
+                console.log(items)
                 if (items.length > 0) {
                     if (items.length == 1) {
                         var result = line.get_price_byitem(items[0])
@@ -96,8 +97,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             $.each(items, function (i, item) {
                                 var result = line.get_price_byitem(item)
                                 console.log(result)
-                                var discount_rate = result.discount
-                                if (discount_rate > 0) {
+                                var discount_rate = result.discount/100
+                                if (result.discount > 0) {
                                     var discount_price = -discount_rate * temp_price
                                     self.add_product(product, {
                                         'price': discount_price,
