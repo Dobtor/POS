@@ -5,7 +5,7 @@ odoo.define('dobtor_pos_config.screens', function (require) {
     screens.set_pricelist_button.include({
         init: function (parent, options) {
             this._super(parent, options);
-            this.css("display", "none");
+            // this.css("display", "none");
         },
         button_click:function(){}
     })

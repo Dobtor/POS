@@ -9,32 +9,26 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var field_utils = require('web.field_utils');
     var round_di = utils.round_decimals;
     var utils = require('web.utils');
-    var _t = core._t;
 
-    exports.PosModel = exports.PosModel.extend({
-        initialize: function (session, attributes) {
-            exports.load_fields('product.pricelist', ['discount_item', 'discount_product', ])
-            exports.load_fields('product.product', ['discount_type'])
-            _super_posmodel.prototype.initialize.apply(this, arguments);
-        },
-    })
-    exports.Product = exports.Product.extend({
-        get_discount_rate: function (item, quantity) {
-            var rate = 1
-            var origin_price = this.lst_price * quantity
-            var discount = this.get_price_byitem(item, quantity)
-            rate = discount / origin_price
-            return rate
-        }
-    })
-
+    // exports.load_models({
+    //     model:  'product.pricelist',
+    //     fields: ['name', 'display_name'],
+    //     domain: function(self) { return [['id', 'in', self.config.multi_pricelist_ids]]; },
+    //     loaded: function(self, pricelists){
+    //         _.map(pricelists, function (pricelist) { pricelist.items = []; });
+    //         self.default_pricelist = _.findWhere(pricelists, {id: self.config.pricelist_id[0]});
+    //         self.pricelists = pricelists;
+    //     },
+    // })
+    exports.load_fields('product.pricelist', ['discount_item', 'discount_product'])
+    exports.load_fields('product.product', ['discount_type'])
 
     exports.Order = exports.Order.extend({
 
         remove_discount: function () {
             var orderlines = this.orderlines;
             // find all discount product and remove all. 
-            var discount_line = _.filter(orderlines, function (line) {
+            var discount_line = _.filter(orderlines.models, function (line) {
                 var product = line.product;
                 return product.discount_type;
             });
@@ -46,7 +40,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
         },
         check_order_discount: function () {
             var self = this;
-            var pricelists = this.pos.pricelists
+            var pricelists = this.pos.pricelists;
             self.remove_discount();
             $.each(this.orderlines.models, function (i, line) {
                 var product = line.product;
@@ -61,11 +55,20 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     if (items.length == 1) {
                         var result = line.get_price_byitem(items[0])
                         if (result.quantity > 0) {
-                            if (result.type == 'discount') {
-                                self.add_product(items[0].related_product, {
+                            if (result.type == 'price') {
+                                console.log(this.pos.pricelists)
+                                // console.log(items[0)
+                                console.log(result)
+                                console.log(result.price)
+                                console.log(result.quantity)
+                                self.add_product(product, {
                                     'price': round_pr((result.price - product.lst_price), 1),
                                     'quantity': result.quantity,
                                 })
+                                // self.add_product(items[0].related_product, {
+                                //     'price': round_pr((result.price - product.lst_price), 1),
+                                //     'quantity': result.quantity,
+                                // })
                             }
                             if (result.type == 'bogo') {
                                 self.add_product(items[0].related_product, {
@@ -79,21 +82,31 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             return item.is_primary_key;
                         });
                         if (pk) {
-                            self.add_product(pk.related_product, {
-                                'price': round_pr((line.get_price_byitem(pk).price - line.price), 1),
-                                'quantity': line.get_price_byitem(pk).quantity,
-                            })
+                            console.log(line.get_price_byitem(pk).price,'in here')
+                            self.add_product(product, {
+                                    'price': round_pr((line.get_price_byitem(pk).price - line.price), 1),
+                                    'quantity': line.get_price_byitem(pk).quantity,
+                                })
+                            // self.add_product(pk.related_product, {
+                            //     'price': round_pr((line.get_price_byitem(pk).price - line.price), 1),
+                            //     'quantity': line.get_price_byitem(pk).quantity,
+                            // })
                         } else {
                             var temp_price = line.price
                             $.each(items, function (i, item) {
                                 var result = line.get_price_byitem(item)
+                                console.log(result)
                                 var discount_rate = result.discount
                                 if (discount_rate > 0) {
                                     var discount_price = -discount_rate * temp_price
-                                    self.add_product(item.related_product, {
+                                    self.add_product(product, {
                                         'price': discount_price,
                                         'quantity': result.quantity
                                     })
+                                    // self.add_product(item.related_product, {
+                                    //     'price': discount_price,
+                                    //     'quantity': result.quantity
+                                    // })
                                     temp_price = temp_price + discount_price
                                 }
 
