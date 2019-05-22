@@ -15,7 +15,10 @@ from odoo import models, fields, api, _
 
 class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
-
+    _order = "sequence"
+    
+    is_primary_key = fields.Boolean(string='Primary key', default=False)
+    sequence = fields.Integer(string='sequence', default=10)
     # level
     level_on = fields.Selection(
         string=_('level on'),
