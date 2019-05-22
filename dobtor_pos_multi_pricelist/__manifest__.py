@@ -34,11 +34,8 @@
     'data': [
         'security/ir.model.access.csv',
         'data/product.xml',
-        'views/views.xml',
+        'views/product_discount.xml',
         'views/assets.xml',
-        # 'views/pos_order_view.xml',
         'views/product_pricelist_form_view.xml',
-        # 'views/pos_config_view.xml',
     ],
-    'qweb': ['static/src/xml/pos_check.xml'],
 }

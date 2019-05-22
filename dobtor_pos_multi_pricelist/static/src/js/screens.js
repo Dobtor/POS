@@ -22,11 +22,6 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             res = this.render_product_template(res, product)
             return res;
         },
-        order_product: function () {
-            var res = this._super();
-
-            return res
-        },
         render_product_template: function (res, product) {
             var $resobj = null;
             var product = this.get_product(product).then(function (response) {
@@ -56,5 +51,46 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             var res = this._super(product);
             return res
         },
+    })
+    screens.ActionpadWidget.include({
+        renderElement: function() {
+            var self = this;
+            this._super();
+            this.$('.pay').click(function(){
+                var order = self.pos.get_order();
+                order.check_order_discount();
+                self.gui.show_popup('confirm',{
+                    'title': _t('Confirm'),
+                    'body':  _t('Confirm to go to the payment page?.'),
+                    confirm: function(){
+                        self.gui.show_screen('payment');
+                    },
+                });
+                var has_valid_product_lot = _.every(order.orderlines.models, function(line){
+                    return line.has_valid_product_lot();
+                });
+                if(!has_valid_product_lot){
+                    self.gui.show_popup('confirm',{
+                        'title': _t('Empty Serial/Lot Number'),
+                        'body':  _t('One or more product(s) required serial/lot number.'),
+                        confirm: function(){
+                            self.gui.show_screen('payment');
+                        },
+                    });
+                }else{
+                    self.gui.show_screen('payment');
+                }
+            });
+            this.$('.set-customer').click(function(){
+                self.gui.show_screen('clientlist');
+            });
+        }
+    })
+    screens.set_pricelist_button.include({
+        init: function (parent, options) {
+            this._super(parent, options);
+            this.css("display", "none");
+        },
+        button_click:function(){}
     })
 })

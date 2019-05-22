@@ -19,13 +19,17 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': [
+        'product', 
+        'point_of_sale',
+    ],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
         'views/pos_config_view.xml',
         'views/product_pricelist.xml',
+        'views/assets.xml'
 
     ],
     # only loaded in demonstration mode
