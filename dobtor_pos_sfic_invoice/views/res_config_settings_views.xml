@@ -1,0 +1,27 @@
+<odoo>
+  <data>
+    <record id="dobtor_pos_sfic_invoice_res_config_settings_view_form" model="ir.ui.view">
+      <field name="name">dobtor.pos.sfic.invoice.res.config.settings.view.form</field>
+      <field name="model">res.config.settings</field>
+      <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//div[@id='invoicing_settings']" position="inside">
+          <div class="col-12 col-lg-6 o_setting_box" id="dobtor_pos_sfic_invoice_round_off">
+            <div class="o_setting_left_pane">
+              <field name="round_off"/>
+            </div>
+            <div class="o_setting_right_pane">
+              <label for="round_off"/>
+              <div class="content-group mt16">
+                <div class="row mt16">
+                  <label for="round_off_account" string="Round Off Account" class="col-lg-3 o_light_label" attrs="{'invisible': [('round_off', '=', False)], 'required': [('round_off', '=', True)]}"/>
+                  <field name="round_off_account" attrs="{'invisible': [('round_off', '=', False)], 'required': [('round_off', '=', True)]}"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
