@@ -17,7 +17,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
     exports.load_domain('product.pricelist', function (self) {
         var multi_pricelist_ids = self.config.multi_pricelist_ids;
-        multi_pricelist_ids.push(self.config.pricelist_id[0]);
+        if (!multi_pricelist_ids.includes(self.config.pricelist_id[0])) {
+            multi_pricelist_ids.push(self.config.pricelist_id[0]);
+        }
         return [
             ['id', 'in', multi_pricelist_ids]
         ];

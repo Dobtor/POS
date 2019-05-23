@@ -15,7 +15,7 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="price_list_item_key">
+    <!-- <record model="ir.ui.view" id="price_list_item_key">
         <field name="name">price_list_item_key</field>
         <field name="model">product.pricelist.item</field>
         <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
@@ -26,5 +26,5 @@
                 </group>
             </xpath>
         </field>
-    </record>
+    </record> -->
 </odoo>

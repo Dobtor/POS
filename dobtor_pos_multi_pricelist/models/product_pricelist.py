@@ -18,7 +18,7 @@ class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
     _order = "sequence"
 
-    is_primary_key = fields.Boolean( string='is_primary_key',default=False)
+    # is_primary_key = fields.Boolean( string='is_primary_key',default=False)
     sequence = fields.Integer(string='sequence',default=10)
     
 
