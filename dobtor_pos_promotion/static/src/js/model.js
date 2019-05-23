@@ -214,9 +214,9 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         resultC_quantity = add_newproductC_qty;
                     }
                     var new_pirceC = productC.lst_price;
-                    if (rule.bxa_gyb_discount_percentage_price === 'percentage') {
+                    if (rule.bxa_gyb_discount_base_on === 'percentage') {
                         new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
-                    } else if (rule.bxa_gyb_discount_fixed_price === 'fixed') {
+                    } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
                         new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
                     }
                     return {
