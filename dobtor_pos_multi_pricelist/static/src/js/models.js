@@ -75,7 +75,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             'price': round_pr((result.price - product.lst_price), 1),
                             'quantity': result.quantity,
                         });
-                        console.log('done 5')
                     }
                 }
                 // if (result.type == '')
@@ -118,16 +117,14 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 if (line.quantity > 0) {
                                     var result_m = line.get_price_byitem(item)
                                     var discount_rate = result_m.discount / 100
-                                    if (result_m.discount > 0 && item.related_product[0]) {
+                                    var discount_product = self.pos.db.get_product_by_id(item.related_product[0])
+                                    if (result_m.discount > 0 && discount_product) {
                                         var discount_price = round_pr(-discount_rate * temp_price,1)
-                                        console.log(item.related_product[0])
-                                        console.log(self.pos.db.get_product_by_id(item.related_product[0]))
-                                        self.add_product(self.pos.db.get_product_by_id(item.related_product[0]), {
+                                        self.add_product(discount_product, {
                                             'price': discount_price,
                                             'quantity': result_m.quantity
                                         })
                                         temp_price = temp_price + discount_price
-                                        console.log('done 6')
                                     }
                                 }
                             });
