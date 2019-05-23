@@ -13,7 +13,7 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
         },
         render_product_template: function (res, product) {
             var $resobj = null;
-            if(this.get_product(product)){
+            if (this.get_product(product)) {
                 $resobj = $(res).css({
                     'display': 'none'
                 })
@@ -26,34 +26,38 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
     })
 
     screens.ActionpadWidget.include({
-        renderElement: function() {
+        renderElement: function () {
             var self = this;
             this._super();
             this.$('.pay').off('click');
-            this.$('.pay').on('click',function(){
+            this.$('.pay').on('click', function () {
                 var order = self.pos.get_order();
                 order.check_order_discount();
-                
+                console.log('done 001 ')
                 var r = confirm("Confirm to go to the payment page?.");
                 if (r == true) {
-                   var has_valid_product_lot = _.every(order.orderlines.models, function (line) {
-                       return line.has_valid_product_lot();
-                   });
-                   if (!has_valid_product_lot) {
-                       self.gui.show_popup('confirm', {
-                           'title': _t('Empty Serial/Lot Number'),
-                           'body': _t('One or more product(s) required serial/lot number.'),
-                           confirm: function () {
-                               self.gui.show_screen('payment');
-                           },
-                       });
-                   } else {
-                       self.gui.show_screen('payment');
-                   }
+                    console.log('done 002 ')
+                    var has_valid_product_lot = _.every(order.orderlines.models, function (line) {
+                        return line.has_valid_product_lot();
+                    });
+                    console.log('done 003 ')
+                    if (!has_valid_product_lot) {
+                        console.log('done 004-1 ')
+                        self.gui.show_popup('confirm', {
+                            'title': _t('Empty Serial/Lot Number'),
+                            'body': _t('One or more product(s) required serial/lot number.'),
+                            confirm: function () {
+                                self.gui.show_screen('payment');
+                            },
+                        });
+                    } else {
+                        console.log('done 004-2 ')
+                        self.gui.show_screen('payment');
+                    }
                 }
-                
+
             });
-            this.$('.set-customer').click(function(){
+            this.$('.set-customer').click(function () {
                 self.gui.show_screen('clientlist');
             });
         }

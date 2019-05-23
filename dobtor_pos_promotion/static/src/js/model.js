@@ -138,6 +138,10 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             return res
         },
         get_price_byitem: function (rule) {
+            // price : discount price  
+            // bogo : buy something, get product pirce
+            // compute : range
+
             var self = this;
             var price = self.product.lst_price;
             var order = self.order;
@@ -155,6 +159,14 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
 
             if (rule.level_on === 'order') {
+                // if (rule.base_on === '') {
+                //     return {
+                //         type: 'compute',
+                //         price: price,
+                //         discount: 0,
+                //         quantity: 0,
+                //     };
+                // }
                 return {
                     type: 'price',
                     price: price,

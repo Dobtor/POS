@@ -24,17 +24,22 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
         ];
     });
 
-    // var _super_orderline = exports.Orderline;
-    // exports.Orderline = exports.Orderline.extend({
-    //     can_be_merged_with: function (orderline) {
-    //         var self = this;
-    //         if (self.get_product().id == self.pos.db.get_discount_product().id) { //only orderline of the same product can be merged
-    //             return false;
-    //         }
-    //         if (_super_orderline.prototype.can_be_merged_with.apply(this, arguments))
-    //             return true;
-    //     },
-    // });
+    var _super_orderline = exports.Orderline;
+    exports.Orderline = exports.Orderline.extend({
+        initialize: function (attr, options) {
+            var self = this;
+            _super_orderline.prototype.initialize.apply(self, arguments);
+            self.compute_name = self.get_product().display_name;
+        },
+        // can_be_merged_with: function (orderline) {
+        //     var self = this;
+        //     if (self.get_product().id == self.pos.db.get_discount_product().id) { //only orderline of the same product can be merged
+        //         return false;
+        //     }
+        //     if (_super_orderline.prototype.can_be_merged_with.apply(this, arguments))
+        //         return true;
+        // },
+    });
     exports.load_fields('product.pricelist', ['discount_item', 'discount_product']);
     exports.load_fields('product.product', ['discount_type'])
     exports.load_fields('res.partner', ['birthday', 'member_id']);
@@ -53,11 +58,34 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 });
             }
         },
+        add_discount_product: function(self, line, rule) {
+            var result = line.get_price_byitem(rule);
+            var product = line.product;
+            if (result.quantity > 0) {
+                if (result.type == 'bogo') {
+                    self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
+                        'price': -result.price,
+                        'quantity': result.quantity,
+                        // 'discription': 'somgthing'
+                    });
+                } else if (result.type == 'price') {
+                    if (round_pr((result.price - product.lst_price), 1)) {
+                        self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
+                            'price': round_pr((result.price - product.lst_price), 1),
+                            'quantity': result.quantity,
+                        });
+                    }
+                }
+                // if (result.type == '')
+            }
+        },
         check_order_discount: function () {
             var self = this;
             var pricelists = self.pos.pricelists;
             var customer = this.get_client();
             self.remove_discount();
+            var sum = 0;
+            // Per Line
             $.each(self.orderlines.models, function (i, line) {
                 var product = line.product;
                 var items = [];
@@ -72,41 +100,14 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     // if only one pricelist item
                     if (items.length == 1) {
                         console.log('only one')
-                        var result = line.get_price_byitem(items[0]);
-                        if (result.quantity > 0) {
-                            if (result.type == 'bogo') {
-                                self.add_product(self.pos.db.get_product_by_id(items[0].related_product), {
-                                    'price': -result.price,
-                                    'quantity': result.quantity,
-                                });
-                            } else if (result.type == 'price' && round_pr((result.price - product.lst_price), 1)) {
-                                self.add_product(self.pos.db.get_product_by_id(items[0].related_product), {
-                                    'price': round_pr((result.price - product.lst_price), 1),
-                                    'quantity': result.quantity,
-                                });
-                            }
-                        }
+                        self.add_discount_product(self, line, items[0])
                     } else {
                         var pk = _.find(items, function (item) {
                             return item.is_primary_key;
                         });
                         if (pk) {
                             console.log('pk')
-                            var result_pk = line.get_price_byitem(pk);
-                            if (result_pk.quantity > 0) {
-                                if (result_pk.type == 'bogo') {
-                                    self.add_product(self.pos.db.get_product_by_id(pk.related_product[0]), {
-                                        'price': -result_pk.price,
-                                        'quantity': result_pk.quantity,
-                                    });
-                                } else if (result_pk.type == 'price' && round_pr((result.price - product.lst_price), 1)) {
-                                    self.add_product(self.pos.db.get_product_by_id(pk.related_product[0]), {
-                                        'price': round_pr((result_pk.price - product.lst_price), 1),
-                                        'quantity': result_pk.quantity,
-                                    });
-                                }
-
-                            }
+                            self.add_discount_product(self, line, pk)
                         } else {
                             // multi 
                             console.log('multi')
@@ -126,10 +127,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 }
                             });
                         }
-
                     }
                 }
-            })
+            });
+            // Per Order
         }
     });
 })
