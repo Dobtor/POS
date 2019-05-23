@@ -20,8 +20,22 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             self.pricelists = pricelists;
         },
     },{'after':'product.pricelist'})
-    exports.load_fields('product.product', ['discount_type'])
+    exports.load_models({
+        model:'sales.member',
+        loaded: function(self, members){
+            var partner_by_id = {};
+            _.each(self.partners, function (partner) {
+                partner_by_id[partner.id] = partner;
+            });
 
+            _.each(members, function (member) {
+                var partner = partner_by_id[member.partner_id[0]];
+                partner.member_id.push(member);
+            });
+        },
+    })
+    exports.load_fields('product.product', ['discount_type'])
+    exports.load_fields('res.partner', ['birthday','member_id']);
     exports.Order = exports.Order.extend({
 
         remove_discount: function () {
@@ -40,6 +54,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
         check_order_discount: function () {
             var self = this;
             var pricelists = this.pos.pricelists;
+            var customer = this.get_client();
             self.remove_discount();
             $.each(this.orderlines.models, function (i, line) {
                 var product = line.product;
@@ -50,8 +65,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         items.push(item)
                     })
                 })
-                console.log('items')
-                console.log(items)
                 if (items.length > 0) {
                     if (items.length == 1) {
                         var result = line.get_price_byitem(items[0])
@@ -62,10 +75,24 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 console.log(result)
                                 console.log(result.price)
                                 console.log(result.quantity)
+                                var limit_discount = 0.6
+                                if(customer.member_id && limit_discount > line.discount ){
+                                    var original_price = round_pr((result.price - product.lst_price), 1)
+                                    self.add_product(product, {
+                                        'price': original_price,
+                                        'quantity': result.quantity,
+                                    })
+                                    self.add_product(member_discount_product,{
+                                        'price':original_price * (1-member_discount_rate),
+                                        'quantity':1
+                                    })
+                                }
+                                else{
                                 self.add_product(product, {
                                     'price': round_pr((result.price - product.lst_price), 1),
                                     'quantity': result.quantity,
                                 })
+                            }
                                 // self.add_product(items[0].related_product, {
                                 //     'price': round_pr((result.price - product.lst_price), 1),
                                 //     'quantity': result.quantity,
