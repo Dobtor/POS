@@ -129,7 +129,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
 
             var price = self.lst_price;
             price = this.get_rule_price(pricelist_items, quantity, price);
-            console.log('price :', price);
             return price;
         },
     });
