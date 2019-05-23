@@ -120,11 +120,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                     var discount_rate = result_m.discount / 100
                                     if (result_m.discount > 0 && item.related_product) {
                                         var discount_price = round_pr(-discount_rate * temp_price,1)
-                                        self.add_product(self.pos.db.get_product_by_id(item.related_product[0]), {
+                                        console.log(item.related_product[0])
+                                        self.add_product(self.pos.db.get_product_by_id(), {
                                             'price': discount_price,
                                             'quantity': result_m.quantity
                                         })
                                         temp_price = temp_price + discount_price
+                                        console.log('done 6')
                                     }
                                 }
                             });
