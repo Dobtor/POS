@@ -172,7 +172,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         quantity: add_newproduct_qty,
                     };
                 }
-                if (rule.bogo_base === 'bxa_gyx_free') {
+                if (rule.bogo_base === 'bxa_gyb_free') {
                     var can_productB_free_qty = parseInt(quant / rule.bxa_gyb_free_Aproduct_unit) * rule.bxa_gyb_free_Bproduct_unit;
                     var add_newproductB_qty = 0
                     var productB;
