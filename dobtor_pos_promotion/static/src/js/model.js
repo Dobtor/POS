@@ -135,6 +135,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         },
         export_as_JSON: function () {
             var res = _super_orderline.prototype.export_as_JSON.apply(this, arguments);
+            console.log('Orderline : ', res);
             return res
         },
         get_price_byitem: function (rule) {
@@ -159,7 +160,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
 
             if (rule.level_on === 'order') {
-                // if (rule.base_on === '') {
+                // if (rule.base_on === 'combo_sale') {
                 //     return {
                 //         type: 'compute',
                 //         price: price,
