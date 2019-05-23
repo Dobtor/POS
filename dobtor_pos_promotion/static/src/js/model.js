@@ -179,7 +179,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     var result_quantity = 0;
                     $.each(order.orderlines.models, function(i, line) {
                         var product_id = line.product.id;
-                        if (product_id == rule.bxa_gyb_free_products) {
+                        if (product_id == rule.bxa_gyb_free_products[0]) {
                             add_newproductB_qty = line.quantity;
                             productB = line.product;
                         }
@@ -203,7 +203,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     var resultC_quantity = 0;
                     $.each(order.orderlines.models, function (i, line) {
                         var product_id = line.product.id;
-                        if (product_id == rule.bxa_gyb_discount_product) {
+                        if (product_id == rule.bxa_gyb_discount_product[0]) {
                             add_newproductC_qty = line.quantity;
                             productC = line.product;
                         }
