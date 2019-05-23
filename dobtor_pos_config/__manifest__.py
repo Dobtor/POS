@@ -29,7 +29,7 @@
         # 'security/ir.model.access.csv',
         'views/pos_config_view.xml',
         'views/product_pricelist.xml',
-        'views/assets.xml'
+        # 'views/assets.xml'
 
     ],
     # only loaded in demonstration mode

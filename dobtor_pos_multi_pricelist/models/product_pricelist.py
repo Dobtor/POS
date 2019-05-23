@@ -22,11 +22,8 @@ class PricelistItem(models.Model):
     sequence = fields.Integer(string='sequence',default=10)
     
 
-    related_product = fields.Many2one(
-        string='related_product',
-        comodel_name='product.product',
-        related='pricelist_id.discount_product'
-    )
+    related_item = fields.Many2one( string='related_product',comodel_name='product.product.discount',related='pricelist_id.discount_item')
+    related_product = fields.Many2one(string='related_discount_product',comodel_name='product.product',related='related_item.product_id')
     
         
     
