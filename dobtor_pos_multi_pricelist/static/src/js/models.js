@@ -16,8 +16,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     }
 
     exports.load_domain('product.pricelist', function (self) {
+        var multi_pricelist_ids = self.config.multi_pricelist_ids;
+        multi_pricelist_ids.push(self.config.pricelist_id[0]);
         return [
-            ['id', 'in', self.config.multi_pricelist_ids]
+            ['id', 'in', multi_pricelist_ids]
         ];
     });
 
@@ -93,7 +95,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         if (result.quantity > 0) {
                             if (result.type == 'bogo') {
                                 self.add_product(discount_product, {
-                                    'price': result.price,
+                                    'price': -result.price,
                                     'quantity': result.quantity,
                                 });
                             } else if (result.type == 'price' && round_pr((result.price - product.lst_price), 1)) {
@@ -113,7 +115,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             if (result_pk.quantity > 0) {
                                 if (result_pk.type == 'bogo') {
                                     self.add_product(discount_product, {
-                                        'price': result_pk.price,
+                                        'price': -result_pk.price,
                                         'quantity': result_pk.quantity,
                                     });
                                 }
