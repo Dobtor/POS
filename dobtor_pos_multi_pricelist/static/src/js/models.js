@@ -4,6 +4,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var utils = require('web.utils');
     var round_pr = utils.round_precision;
     var exports = models;
+    var time = require('web.time');
 
     exports.load_domain = function (model_name, domain) {
         var models = exports.PosModel.prototype.models;
@@ -86,7 +87,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
         },
         export_as_JSON: function () {
             var res = _super_order.prototype.export_as_JSON.apply(this, arguments);
-            console.log('Order : ', res);
             return res
         },
         remove_discount: function () {
@@ -164,6 +164,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             // multi 
                             console.log('multi')
                             var temp_price = line.price
+                            var sub_rate =1;
                             $.each(items, function (i, item) {
                                 if (line.quantity > 0) {
                                     var result_m = line.get_price_byitem(item)
@@ -175,11 +176,29 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             'price': discount_price,
                                             'quantity': result_m.quantity
                                         })
+                                        console.log(discount_rate,'rate')
+                                        sub_rate = sub_rate *(1-discount_rate)
                                         discount_line.compute_name = self.add_line_description(item, line, result_m.discount)
                                         temp_price = temp_price + discount_price
                                     }
                                 }
                             });
+                            if(sub_rate>=0.6){
+                                // if(customer.member_id){
+                                //     var member = this.pos.get_member_by_id(customer.member_id)
+                                //     var Today=new Date(); 
+                                //     if(customer.birthday ==Today&& customer.birthday_discount_times>0){
+                                //         self.add_product(discount_product, {
+                                //             'price': discount_price,
+                                //             'quantity': result_m.quantity
+                                //         })
+        
+                                //     }
+                                //     if()
+                                // }
+                                console.log('此product總折扣大於6折，如果有會員要折扣')
+                            }
+                            
                         }
                     }
                 }
