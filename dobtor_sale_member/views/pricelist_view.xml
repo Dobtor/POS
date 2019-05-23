@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="product.product_pricelist_view"/>
         <field name="arch" type="xml">
             <xpath expr="//group" position="inside">
-                <field name="member_id" readony="1"/>
+                <!-- <field name="member_id" readony="1"/> -->
             </xpath>
         </field>
     </record>

@@ -2,10 +2,10 @@
 
 from odoo import models, fields, api
 
-class PriceList(models.Model):
-    _inherit = "product.pricelist"
+# class PriceList(models.Model):
+#     _inherit = "product.pricelist"
 
-    member_id = fields.Many2one(string='member_id',comodel_name='sales.member',readonly=True)
+#     member_id = fields.Many2one(string='member_id',comodel_name='sales.member',readonly=True)
     
     # @api.multi
     # def write(self,value):
