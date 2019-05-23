@@ -133,11 +133,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         get_discount_price: function () {
             return this.discount_price;
         },
-        export_as_JSON: function () {
-            var res = _super_orderline.prototype.export_as_JSON.apply(this, arguments);
-            console.log('Orderline : ', res);
-            return res
-        },
         get_price_byitem: function (rule) {
             // price : discount price  
             // bogo : buy something, get product pirce

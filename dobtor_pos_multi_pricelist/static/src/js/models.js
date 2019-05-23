@@ -45,11 +45,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     exports.load_fields('res.partner', ['birthday', 'member_id']);
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
-        export_as_JSON: function () {
-            var res = _super_order.prototype.export_as_JSON.apply(this, arguments);
-            console.log('Order : ', res);
-            return res
-        },
         remove_discount: function () {
             var self = this;
             var orderlines = self.orderlines;
