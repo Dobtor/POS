@@ -1,0 +1,16 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="dobtor_pos_sfic_invoice_extend_round_off_view">
+      <field name="name">dobtor.pos.sfic.invoice.extend.round.off.view</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='amount_tax']" position="after">
+          <field name="round_active" invisible="1"/>
+          <field name="rounded_total" attrs="{'invisible': True}"/>
+          <field name="round_off_value"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

@@ -70,8 +70,11 @@
             <field name="inherit_id" ref="product.product_pricelist_item_form_view" />
             <field name="arch" type="xml">
                 <xpath expr="//form" position="inside">
+                    <group>
+                        <field name="is_primary_key"/>
+                    </group>
                     <group col="2" attrs="{'invisible':['|','|',('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
-                        <field name="bogo_base" colspan="2" string="bogo base on" />
+                        <field name="bogo_base" colspan="2" string="bogo base on" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gya_free_Aproduct_unit" class="oe_inline" />
@@ -79,14 +82,14 @@
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gyb_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gyb_free_Aproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_free_products" class="oe_inline" />
+                        <field name="bxa_gyb_free_products" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_free')]}"/>
                         <field name="bxa_gyb_free_Bproduct_unit" class="oe_inline"/>
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gyb_discount'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gyb_discount_Aproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_discount_product" class="oe_inline" />
+                        <field name="bxa_gyb_discount_product" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_discount')]}"/>
                         <field name="bxa_gyb_discount_Bproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_discount_base_on" class="oe_inline" />
+                        <field name="bxa_gyb_discount_base_on" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_discount')]}"/>
                         <field name="bxa_gyb_discount_fixed_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'fixed')]}"/>
                         <field name="bxa_gyb_discount_percentage_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'percentage')]}"/>
                     </group>

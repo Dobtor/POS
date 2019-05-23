@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dobtor_pos_config",
+    'name': "dobtor_pos_sfic_invoice",
 
     'summary': """
-        Link POS to Pricelist""",
+        SFIC Invoice with Point""",
 
     'description': """
-       Let pos be able to set up multiple price lists, price list can also choose POS
+        
     """,
 
-    'author': "Dobtor SI",
+    'author': "Dobtor",
     'website': "http://www.dobtor.com",
 
     # Categories can be used to filter modules in modules listing
@@ -19,19 +19,18 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': [
-        'product', 
-        'point_of_sale',
-    ],
+    'depends': ['base', 'account', 'dobtor_pos_sfic_wallet', 'dobtor_pos_multi_pricelist'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/pos_config_view.xml',
-        'views/product_pricelist.xml',
-        # 'views/assets.xml'
-
+        'views/views.xml',
+        'views/templates.xml',
+        'views/res_config_settings_views.xml',
+        'views/account_invoice_views.xml',
     ],
     # only loaded in demonstration mode
-
+    'demo': [
+        'demo/demo.xml',
+    ],
 }

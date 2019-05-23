@@ -28,6 +28,7 @@
         'point_of_sale',
         'dobtor_sale_member',
         'dobtor_pos_config',
+        'dobtor_pos_promotion'
     ],
 
     # always loaded
