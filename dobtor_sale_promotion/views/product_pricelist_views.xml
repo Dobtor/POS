@@ -69,10 +69,13 @@
             <field name="model">product.pricelist.item</field>
             <field name="inherit_id" ref="product.product_pricelist_item_form_view" />
             <field name="arch" type="xml">
-                <xpath expr="//form" position="inside">
+                <xpath expr="//group" position="before">
                     <group>
                         <field name="is_primary_key"/>
                     </group>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    
                     <group col="2" attrs="{'invisible':['|','|',('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bogo_base" colspan="2" string="bogo base on" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
                     </group>
@@ -97,26 +100,5 @@
             </field>
         </record>
 
-        <!-- <record id="product_pricelist_pormotion_rule_view" model="ir.ui.view">
-            <field name="name">product.pricelist.promotion.rule.form</field>
-            <field name="model">product.pricelist</field>
-            <field name="inherit_id" ref="product.product_pricelist_view" />
-            <field name="arch" type="xml">
-                <xpath expr="//div[@groups='product.group_pricelist_item']" position="after">
-                    <dev groups="product.group_pricelist_item" name="promotion_rule">
-                        <separator string="Promotion Rule Items" />
-                        <field name="sale_promotion_ids">
-                            <tree string="Pricelist Items">
-                                <field name="sequence" widget="handle"/>
-                                <field name="name"/>
-                                <field name="date_start"/>
-                                <field name="date_end"/>
-                                <field name="base_on" />
-                            </tree>
-                        </field>
-                    </dev>
-                </xpath>
-            </field>
-        </record> -->
     </data>
 </odoo>

@@ -2,16 +2,6 @@
 from odoo import models, fields, api, _
 
 
-# class Pricelist(models.Model):
-#     _inherit = 'product.pricelist'
-
-#     sale_promotion_ids = fields.One2many(
-#         string=_('promotion rule'),
-#         comodel_name='sale.promotion.rule',
-#         inverse_name='pricelist_id',
-#     )
-
-
 class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
     _order = "sequence"
@@ -183,8 +173,11 @@ class PricelistItem(models.Model):
     def _onchange_applied_on(self):
         if self.base_on != 'combo_sale':
             self.combo_sale_ids = [(6, 0, [])]
+            self.is_primary_key = False
         if self.base_on != 'range':
             self.range_based_ids = [(6, 0, [])]
+        if self.base_on == 'combo_sale':
+            self.is_primary_key = True
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
@@ -214,6 +207,7 @@ class PricelistItem(models.Model):
             self._get_default_bxa_gya_free_value()
             self._get_default_bxa_gyb_free_value()
             self._get_default_bxa_gyb_discount_value()
+            self.is_primary_key = False
         if self.compute_price == 'bogo_sale':
             self.is_primary_key = True
             self.sequence = 1
