@@ -24,6 +24,5 @@ class PricelistItem(models.Model):
 
     related_item = fields.Many2one( string='related_product',comodel_name='product.product.discount',related='pricelist_id.discount_item')
     related_product = fields.Many2one(string='related_discount_product',comodel_name='product.product',related='related_item.product_id')
-    
-        
+    related_discount_name = fields.Char(string="related_discount_name", related='pricelist_id.name')
     
