@@ -168,10 +168,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 if (line.quantity > 0) {
                                     var result_m = line.get_price_byitem(item)
                                     var discount_rate = result_m.discount / 100
-                                    if (result_m.discount > 0 && item.related_product) {
-                                        var discount_price = round_pr(-discount_rate * temp_price, 1)
-                                        var item_product = self.pos.db.get_product_by_id(item.related_product[0])
-                                        var discount_line = self.add_product(item_product, {
+                                    var discount_product = self.pos.db.get_product_by_id(item.related_product[0])
+                                    if (result_m.discount > 0 && discount_product) {
+                                        var discount_price = round_pr(-discount_rate * temp_price,1)
+                                        self.add_product(discount_product, {
                                             'price': discount_price,
                                             'quantity': result_m.quantity
                                         })
