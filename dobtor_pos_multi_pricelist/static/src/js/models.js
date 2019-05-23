@@ -23,23 +23,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             ['id', 'in', multi_pricelist_ids]
         ];
     });
-
-    var _super_orderline = exports.Orderline;
-    exports.Orderline = exports.Orderline.extend({
-        initialize: function (attr, options) {
-            var self = this;
-            _super_orderline.prototype.initialize.apply(self, arguments);
-            self.compute_name = self.get_product().display_name;
-        },
-        // can_be_merged_with: function (orderline) {
-        //     var self = this;
-        //     if (self.get_product().id == self.pos.db.get_discount_product().id) { //only orderline of the same product can be merged
-        //         return false;
-        //     }
-        //     if (_super_orderline.prototype.can_be_merged_with.apply(this, arguments))
-        //         return true;
-        // },
-    });
     exports.load_fields('product.pricelist', ['discount_item', 'discount_product']);
     exports.load_fields('product.product', ['discount_type'])
     exports.load_fields('res.partner', ['birthday', 'member_id']);
@@ -129,24 +112,23 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         'price': -result.price,
                         'quantity': result.quantity,
                     });
-                    discount_line.add_line_description(rule, line)
+                    discount_line.compute_name = self.add_line_description(rule, line)
                 } else if (result.type == 'price') {
                     if (round_pr((result.price - product.lst_price), 1)) {
                         var discount_line = self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
                             'price': round_pr((result.price - product.lst_price), 1),
                             'quantity': result.quantity,
                         });
-                        discount_line.add_line_description(rule, line)
+                        discount_line.compute_name = self.add_line_description(rule, line)
                     }
                 }
-                // if (result.type == '')
             }
         },
         add_line_description: function (item, line, discount) {
             if (discount) {
-                this.compute_name = item.related_discount_name + ' ' + line.product.display_name + ' ( -' + discount + ' %)'
+                return item.related_discount_name + ' ' + line.product.display_name + ' ( -' + discount + ' %)'
             } else {
-                this.compute_name = item.related_discount_name + ' ' + line.product.display_name
+                return item.related_discount_name + ' ' + line.product.display_name
             }
         },
         check_order_discount: function () {
@@ -193,7 +175,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             'price': discount_price,
                                             'quantity': result_m.quantity
                                         })
-                                        discount_line.add_line_description(item, line, result_m.discount)
+                                        discount_line.compute_name = self.add_line_description(item, line, result_m.discount)
                                         temp_price = temp_price + discount_price
                                     }
                                 }
