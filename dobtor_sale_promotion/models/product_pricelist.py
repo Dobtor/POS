@@ -12,20 +12,25 @@ from odoo import models, fields, api, _
 #     )
 
 
-
 class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
     _order = "sequence"
-    
-    is_primary_key = fields.Boolean(string='Primary key', default=False)
-    sequence = fields.Integer(string='sequence', default=10)
+
+    is_primary_key = fields.Boolean(
+        string=_('Primary key'),
+        default=False)
+
+    sequence = fields.Integer(
+        string=_('sequence'),
+        default=10
+    )
     # level
     level_on = fields.Selection(
         string=_('level on'),
         selection=[
-            ('order', 'Applied on Order'), 
+            ('order', 'Applied on Order'),
             ('line', 'Per Product or Line')
-        ], 
+        ],
         index=True,
         default='line'
     )
@@ -145,9 +150,12 @@ class PricelistItem(models.Model):
         domain="[('type','!=','service')]",
         ondelete='cascade',
     )
-    bxa_gyb_discount_fixed_price = fields.Float(string=_("Fixed Discount"))
+    bxa_gyb_discount_fixed_price = fields.Float(
+        string=_("Fixed Discount")
+    )
     bxa_gyb_discount_percentage_price = fields.Float(
-        string=_("Percentage Discount"))
+        string=_("Percentage Discount")
+    )
 
     @api.one
     @api.depends('categ_id', 'product_tmpl_id', 'product_id', 'compute_price', 'fixed_price',
@@ -198,9 +206,13 @@ class PricelistItem(models.Model):
     def _onchange_compute_price(self):
         super()._onchange_compute_price()
         if self.compute_price != 'bogo_sale':
+            self.bogo_base = 'bxa_gya_free'
             self._get_default_bxa_gya_free_value()
             self._get_default_bxa_gyb_free_value()
             self._get_default_bxa_gyb_discount_value()
+        if self.compute_price == 'bogo_sale':
+            self.is_primary_key = True
+            self.sequence = 1
 
     @api.onchange('bogo_base')
     def _onchange_bogo_base(self):
@@ -217,3 +229,30 @@ class PricelistItem(models.Model):
             self.bxa_gyb_discount_fixed_price = 0.0
         if self.bxa_gyb_discount_base_on != 'percentage':
             self.bxa_gyb_discount_percentage_price = 0.0
+
+    @api.constrains('bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
+                    'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit', 
+                    'bxa_gyb_discount_Aproduct_unit', 'bxa_gyb_discount_Bproduct_unit',  'bxa_gyb_discount_percentage_price')
+    def _check_rule_validation(self):
+        """  validation at promotion create time. """
+        for record in self:
+            # bxa_gya_free
+            if not (record.bxa_gya_free_Aproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            if not (record.bxa_gya_free_Bproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            # bxa_gyb_free
+            if not (record.bxa_gyb_free_Aproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            if not (record.bxa_gyb_free_Bproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            # bxa_gyb_discount
+            if not (record.bxa_gyb_discount_Aproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            if not (record.bxa_gyb_discount_Bproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            if record.bxa_gyb_discount_percentage_price > 99:
+                raise ValidationError(_("It has to be less than 100"))
+            if record.bxa_gyb_discount_base_on == 'percentage':
+                if record.bxa_gyb_discount_percentage_price < 0.0:
+                    raise ValidationError(_("Please enter Some Value for Calculation"))

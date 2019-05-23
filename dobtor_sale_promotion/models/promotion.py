@@ -124,7 +124,7 @@ class SalePromotionRuleRangeBased(models.Model):
         """  validation at promotion create time. """
         for record in self:
             if record.based_on_percentage > 99:
-                raise ValidationError(_("It has to be less then 100"))
+                raise ValidationError(_("It has to be less than 100"))
             if record.end < -1 or record.start < -1 or record.end == 0 or record.start == 0:
                 raise ValidationError(_("Please enter valid Start or End number"))
             if record.based_on in ['rebate']:
