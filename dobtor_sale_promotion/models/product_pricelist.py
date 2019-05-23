@@ -178,6 +178,8 @@ class PricelistItem(models.Model):
             self.range_based_ids = [(6, 0, [])]
         if self.base_on == 'combo_sale':
             self.is_primary_key = True
+        if self.base_on == 'range':
+            self.sequence = 99
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):

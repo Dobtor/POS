@@ -14,7 +14,7 @@ class BogoItem(models.Model):
 class SalePromotionRuleRangeBased(models.Model):
     _name = 'sale.promotion.rule.range.based'
     _description = 'Promotion rule range based'
-    _order = "start"
+    _order = "start DESC"
 
     promotion_id = fields.Many2one(
         string=_('Promotion Reference'),

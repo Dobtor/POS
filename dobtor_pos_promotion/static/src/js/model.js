@@ -9,6 +9,34 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
 
     var exports = models
 
+    models.load_models([{
+        model: 'sale.promotion.rule.combo.sale',
+        domain: function (self) {
+            return [
+                ['pricelist_id', 'in', _.pluck(self.pricelists, 'id')]
+            ];
+        },
+        loaded: function (self, promotion_rules) {
+            self.combo_promotion = promotion_rules;
+        },
+    }], {
+        'after': 'product.product'
+    });
+
+    models.load_models([{
+        model: 'sale.promotion.rule.range.based',
+        domain: function (self) {
+            return [
+                ['pricelist_id', 'in', _.pluck(self.pricelists, 'id')]
+            ];
+        },
+        loaded: function (self, promotion_rules) {
+            self.range_promotion = promotion_rules;
+        },
+    }], {
+        'after': 'product.product'
+    });
+
     models.load_fields('product.product', ['attribute_value_ids']);
 
     var _super_product = exports.Product;
@@ -136,7 +164,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         get_price_byitem: function (rule) {
             // price : discount price  
             // bogo : buy something, get product pirce
-            // compute : range
+            // range : range
 
             var self = this;
             var price = self.product.lst_price;
@@ -155,14 +183,14 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
 
             if (rule.level_on === 'order') {
-                // if (rule.base_on === 'combo_sale') {
-                //     return {
-                //         type: 'compute',
-                //         price: price,
-                //         discount: 0,
-                //         quantity: 0,
-                //     };
-                // }
+                if (rule.base_on === 'range') {
+                    return {
+                        type: 'range',
+                        price: price,
+                        discount: 0,
+                        quantity: quantity,
+                    };
+                }
                 return {
                     type: 'price',
                     price: price,
