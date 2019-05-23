@@ -75,6 +75,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             'price': round_pr((result.price - product.lst_price), 1),
                             'quantity': result.quantity,
                         });
+                        console.log('done 5')
                     }
                 }
                 // if (result.type == '')
