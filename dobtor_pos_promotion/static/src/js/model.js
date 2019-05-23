@@ -16,6 +16,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         get_pricelist: function (pricelist) {
             // console.log(this.pos.currency.rounding);
             var self = this;
+            var date = moment().startOf('day');
             var sortpicelist = pricelist.items;
             // var sortpicelist = _.sortBy(pricelist.items, 'sequence');
             var pricelist_items = _.filter(sortpicelist, function (item) {
@@ -83,7 +84,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         },
         get_price: function (pricelist, quantity) {
             var self = this;
-            var date = moment().startOf('day');
             if (pricelist === undefined) {
                 alert(_t(
                     'An error occurred when loading product prices. ' +
@@ -104,29 +104,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             return price;
         },
     });
-
-    // var _super_order = exports.Order;
-    // exports.Order = Backbone.Model.extend({
-    //     get_product_pricelist: function (pricelist, product) {
-    //         var pricelist_items = _.filter(pricelist.items, function (item) {
-    //             var merge_variant = false;
-    //             if ((item.variant_ids instanceof Array) && item.variant_ids.length > 0) {
-    //                 $.each(product.attribute_value_ids, function (index, attr) {
-    //                     if (item.variant_ids.includes(attr)) {
-    //                         merge_variant = true;
-    //                     }
-    //                 });
-    //             }
-    //             return (!item.product_tmpl_id || item.product_tmpl_id[0] === product.product_tmpl_id) &&
-    //                 (!item.product_id || item.product_id[0] === product.id) &&
-    //                 (!item.categ_id || _.contains(category_ids, item.categ_id[0])) &&
-    //                 (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
-    //                 (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
-    //                 (!item.attribute_value_ids || merge_variant);
-    //         });
-    //         return pricelist_items;
-    //     }
-    // });
 
     var OrderlineCollection = Backbone.Collection.extend({
         model: exports.Orderline,
