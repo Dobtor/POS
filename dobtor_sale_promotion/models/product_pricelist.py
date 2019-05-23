@@ -119,7 +119,7 @@ class PricelistItem(models.Model):
         ondelete='cascade',
         domain="[('type','!=','service')]",
     )
-    # bxa_gyb_free_products = fields.Many2one(
+    # bxa_gyb_free_products = fields.Many2many(
     #     comodel_name='product.product',
     #     relation='bxa_gyb_free_products_rel',
     #     column1='product_id',
@@ -162,15 +162,12 @@ class PricelistItem(models.Model):
                  'pricelist_id', 'percent_price', 'price_discount', 'price_surcharge')
     def _get_pricelist_item_name_price(self):
         super()._get_pricelist_item_name_price()
-
-        #  TODO :
-        # if self.compute_price == 'combo_sale':
-        #     self.price = ("%s %s") % (self.fixed_price, self.pricelist_id.currency_id.name)
-
+        if self.base_on == 'combo_sale':
+            self.price = _('Combo Promotion')
+        if self.base_on == 'range':
+            self.price = _('Range based Discount')
         if self.compute_price == 'bogo_sale':
             self.price = _("bogo offer")
-        # elif self.compute_price == 'other_sale':
-        #     self.price = _("%s %% discount") % (self.percent_price)
 
     @api.onchange('level_on')
     def _onchange_level_on(self):
@@ -181,6 +178,13 @@ class PricelistItem(models.Model):
     def _onchange_applied_on(self):
         if self.applied_on != '02_variant_value':
             self.variant_id = False
+
+    @api.onchange('base_on')
+    def _onchange_applied_on(self):
+        if self.base_on != 'combo_sale':
+            self.combo_sale_ids = [(6, 0, [])]
+        if self.base_on != 'range':
+            self.range_based_ids = [(6, 0, [])]
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
