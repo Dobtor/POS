@@ -187,9 +187,9 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             var quant = parseFloat(quantity) || 0;
             if (rule.compute_price === 'bogo_sale') {
                 if (rule.bogo_base === 'bxa_gya_free') {
-                    var add_newproduct_qty = parseInt(quant / rule.bxa_gya_free_Aproduct_unit + rule.bxa_gya_free_Bproduct_unit);
+                    var add_newproduct_qty = parseInt(quant / (rule.bxa_gya_free_Aproduct_unit + rule.bxa_gya_free_Bproduct_unit));
                     return {
-                        type: 'price',
+                        type: 'bogo',
                         price: price,
                         discount: 0,
                         quantity: add_newproduct_qty,
@@ -213,7 +213,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         result_quantity = add_newproductB_qty;
                     }
                     return {
-                        type: 'price',
+                        type: 'bogo',
                         price: productB.lst_price,
                         discount: 0,
                         quantity: result_quantity,
@@ -243,7 +243,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
                     }
                     return {
-                        type: 'price',
+                        type: 'bogo',
                         price: new_pirceC,
                         discount: 0,
                         quantity: resultC_quantity,

@@ -7,10 +7,6 @@ class Product(models.Model):
 
     discount_type = fields.Boolean('discount_type',defult=False)
 
-    @api.multi
-    def get_discount_type(self):
-        return self.discount_type
-
 class ProductDiscount(models.Model):
     _name = "product.product.discount"
     _order = "sequence"
