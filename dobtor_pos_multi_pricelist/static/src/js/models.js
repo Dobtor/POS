@@ -127,7 +127,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 }
             }
         },
-        add_line_description: function (item, line, discount) {
+        add_line_description: function (item, line, discount=0) {
             if (discount) {
                 return item.related_discount_name + ' ' + line.product.display_name + ' ( -' + discount + ' %)'
             } else {
