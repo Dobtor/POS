@@ -61,7 +61,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     price = price - (price * (rule.percent_price / 100));
                     price = round_pr(price, 1);
                     return true;
-                } else {
+                } else if (rule.compute_price === 'formula') {
                     var price_limit = price;
                     price = price - (price * (rule.price_discount / 100));
                     if (rule.price_round) {
@@ -101,6 +101,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
 
             var price = self.lst_price;
             price = this.get_rule_price(pricelist_items, quantity, price);
+            console.log('price :', price);
             return price;
         },
     });
@@ -134,16 +135,21 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         },
         export_as_JSON: function () {
             var res = _super_orderline.prototype.export_as_JSON.apply(this, arguments);
+            console.log('Orderline : ', res);
             return res
         },
         get_price_byitem: function (rule) {
+            // price : discount price  
+            // bogo : buy something, get product pirce
+            // compute : range
+
             var self = this;
             var price = self.product.lst_price;
             var order = self.order;
             var quantity = self.quantity;
             var new_price = 0;
 
-            
+
             if (rule.min_quantity && quantity < rule.min_quantity) {
                 return {
                     type: 'price',
@@ -154,6 +160,14 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
 
             if (rule.level_on === 'order') {
+                // if (rule.base_on === 'combo_sale') {
+                //     return {
+                //         type: 'compute',
+                //         price: price,
+                //         discount: 0,
+                //         quantity: 0,
+                //     };
+                // }
                 return {
                     type: 'price',
                     price: price,
@@ -177,24 +191,26 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     var add_newproductB_qty = 0
                     var productB;
                     var result_quantity = 0;
-                    $.each(order.orderlines.models, function(i, line) {
+                    $.each(order.orderlines.models, function (i, line) {
                         var product_id = line.product.id;
                         if (product_id == rule.bxa_gyb_free_products[0]) {
                             add_newproductB_qty = line.quantity;
                             productB = line.product;
                         }
                     });
-                    if (add_newproductB_qty >= can_productB_free_qty) {
-                        result_quantity = can_productB_free_qty;
-                    } else {
-                        result_quantity = add_newproductB_qty;
+                    if (productB && add_newproductB_qty) {
+                        if (add_newproductB_qty >= can_productB_free_qty) {
+                            result_quantity = can_productB_free_qty;
+                        } else {
+                            result_quantity = add_newproductB_qty;
+                        }
+                        return {
+                            type: 'bogo',
+                            price: productB.lst_price,
+                            discount: 0,
+                            quantity: result_quantity,
+                        };
                     }
-                    return {
-                        type: 'bogo',
-                        price: productB.lst_price,
-                        discount: 0,
-                        quantity: result_quantity,
-                    };
                 }
                 if (rule.bogo_base === 'bxa_gyb_discount') {
                     var can_productC_free_qty = parseInt(quant / rule.bxa_gyb_discount_Aproduct_unit) * rule.bxa_gyb_discount_Bproduct_unit;
@@ -208,24 +224,32 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                             productC = line.product;
                         }
                     });
-                    if (add_newproductC_qty >= can_productC_free_qty) {
-                        resultC_quantity = can_productC_free_qty;
-                    } else {
-                        resultC_quantity = add_newproductC_qty;
+                    if (productC && add_newproductC_qty) {
+                        if (add_newproductC_qty >= can_productC_free_qty) {
+                            resultC_quantity = can_productC_free_qty;
+                        } else {
+                            resultC_quantity = add_newproductC_qty;
+                        }
+                        var new_pirceC = productC.lst_price;
+                        if (rule.bxa_gyb_discount_base_on === 'percentage') {
+                            new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
+                        } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
+                            new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
+                        }
+                        return {
+                            type: 'bogo',
+                            price: new_pirceC,
+                            discount: 0,
+                            quantity: resultC_quantity,
+                        };
                     }
-                    var new_pirceC = productC.lst_price;
-                    if (rule.bxa_gyb_discount_percentage_price === 'percentage') {
-                        new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
-                    } else if (rule.bxa_gyb_discount_fixed_price === 'fixed') {
-                        new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
-                    }
-                    return {
-                        type: 'bogo',
-                        price: new_pirceC,
-                        discount: 0,
-                        quantity: resultC_quantity,
-                    };
                 }
+                return {
+                    type: 'bogo',
+                    price: 0,
+                    discount: 0,
+                    quantity: 0,
+                };
             }
             if (rule.base === 'pricelist') {
                 new_price = self.get_price(rule.base_pricelist, quantity);
