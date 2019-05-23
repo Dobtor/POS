@@ -113,6 +113,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         'quantity': result.quantity,
                     });
                     discount_line.compute_name = self.add_line_description(rule, line)
+                    
                 } else if (result.type == 'price') {
                     if (round_pr((result.price - product.lst_price), 1)) {
                         var discount_line = self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
@@ -120,6 +121,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             'quantity': result.quantity,
                         });
                         discount_line.compute_name = self.add_line_description(rule, line)
+                        discount_line.product.display_name = discount_line.compute_name
+                        // 名稱先這樣給，測試目前沒問題，但重整問題還在
                     }
                 }
             }
@@ -179,6 +182,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                         console.log(discount_rate,'rate')
                                         sub_rate = sub_rate *(1-discount_rate)
                                         discount_line.compute_name = self.add_line_description(item, line, result_m.discount)
+                                        discount_line.product.display_name = discount_line.compute_name
+                                        // 名稱先這樣給，測試目前沒問題，但重整問題還在
                                         temp_price = temp_price + discount_price
                                     }
                                 }
