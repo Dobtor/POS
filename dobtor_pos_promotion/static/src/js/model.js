@@ -9,34 +9,88 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
 
     var exports = models
 
+    models.load_models([{
+        model: 'sale.promotion.rule.combo.sale',
+        domain: function (self) {
+            return [
+                ['pricelist_id', 'in', _.pluck(self.pricelists, 'id')]
+            ];
+        },
+        loaded: function (self, promotion_rules) {
+            self.combo_promotion = promotion_rules;
+        },
+    }], {
+        'after': 'product.product'
+    });
+
+    models.load_models([{
+        model: 'sale.promotion.rule.range.based',
+        domain: function (self) {
+            return [
+                ['pricelist_id', 'in', _.pluck(self.pricelists, 'id')]
+            ];
+        },
+        loaded: function (self, promotion_rules) {
+            self.range_promotion = promotion_rules;
+        },
+    }], {
+        'after': 'product.product'
+    });
+
     models.load_fields('product.product', ['attribute_value_ids']);
 
     var _super_product = exports.Product;
     exports.Product = exports.Product.extend({
-        get_pricelist: function (pricelist) {
-            // console.log(this.pos.currency.rounding);
+        inner_join_variant: function (rule) {
+            var self = this;
+            var find_variant = false;
+            if ((rule.variant_ids instanceof Array) && rule.variant_ids.length > 0) {
+                $.each(self.attribute_value_ids, function (index, attr) {
+                    if (rule.variant_ids.includes(attr)) {
+                        find_variant = true;
+                    }
+                });
+            }
+            return find_variant;
+        },
+        inner_join_combo_product: function (rule, pos) {
+            var combo_promotion = [];
+            var get_combo_promotion;
+            if (pos) {
+                get_combo_promotion = _.filter(pos.combo_promotion, function (combo) {
+                    if (combo.promotion_id[0] == rule.id) {
+                        return true;
+                    }
+                    return false;
+                });
+                if (get_combo_promotion) {
+                    combo_promotion = _.pluck(_.pluck(get_combo_promotion, 'product_id'), 0);
+                }
+            }
+            return combo_promotion;
+        },
+        get_pricelist: function (pricelist, pos=undefined) {
             var self = this;
             var date = moment().startOf('day');
             var sortpicelist = pricelist.items;
             // var sortpicelist = _.sortBy(pricelist.items, 'sequence');
             var pricelist_items = _.filter(sortpicelist, function (item) {
-                var merge_variant = false;
-                if ((item.variant_ids instanceof Array) && item.variant_ids.length > 0) {
-                    $.each(self.attribute_value_ids, function (index, attr) {
-                        if (item.variant_ids.includes(attr)) {
-                            merge_variant = true;
-                        }
-                    });
-                }
 
+                // handle variant.
+                var find_variant = self.inner_join_variant(item);
+                // handle combo promotion.
+                var combo_promotion = self.inner_join_combo_product(item, pos);
+                
+                // Relationship items
                 return (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id) &&
                     (!item.product_id || item.product_id[0] === self.id) &&
                     (!item.categ_id || _.contains(category_ids, item.categ_id[0])) &&
                     (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
                     (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
-                    (!((item.variant_ids instanceof Array) && item.variant_ids.length) || merge_variant);
+                    (!((item.variant_ids instanceof Array) && item.variant_ids.length) || find_variant) &&
+                    (!combo_promotion.length || combo_promotion.includes(self.id));
             });
-            return pricelist_items
+            return pricelist_items;
         },
         get_rule_price: function (pricelist_items, quantity, price) {
             _.find(pricelist_items, function (rule) {
@@ -101,7 +155,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
 
             var price = self.lst_price;
             price = this.get_rule_price(pricelist_items, quantity, price);
-            console.log('price :', price);
             return price;
         },
     });
@@ -133,11 +186,12 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         get_discount_price: function () {
             return this.discount_price;
         },
-        export_as_JSON: function () {
-            var res = _super_orderline.prototype.export_as_JSON.apply(this, arguments);
-            return res
-        },
         get_price_byitem: function (rule) {
+            // price : discount price  
+            // bogo : buy something, get product pirce
+            // range : range
+            // combo : combo
+
             var self = this;
             var price = self.product.lst_price;
             var order = self.order;
@@ -155,6 +209,22 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
 
             if (rule.level_on === 'order') {
+                if (rule.base_on === 'range') {
+                    return {
+                        type: 'range',
+                        price: price,
+                        discount: 0,
+                        quantity: quantity,
+                    };
+                } else if (rule.base_on === 'combo_sale') {
+                    return {
+                        type: 'combo',
+                        price: price,
+                        discount: 0,
+                        quantity: quantity,
+                        product: self.product
+                    };
+                }
                 return {
                     type: 'price',
                     price: price,
@@ -169,8 +239,9 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     return {
                         type: 'bogo',
                         price: price,
-                        discount: 0,
+                        discount: 100,
                         quantity: add_newproduct_qty,
+                        gift: self.product,
                     };
                 }
                 if (rule.bogo_base === 'bxa_gyb_free') {
@@ -194,8 +265,10 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         return {
                             type: 'bogo',
                             price: productB.lst_price,
-                            discount: 0,
+                            discount: 100,
                             quantity: result_quantity,
+                            // product: self.product,
+                            gift: self.pos.db.get_product_by_id(rule.bxa_gyb_free_products[0]),
                         };
                     }
                 }
@@ -218,16 +291,20 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                             resultC_quantity = add_newproductC_qty;
                         }
                         var new_pirceC = productC.lst_price;
+                        var discount = 0;
                         if (rule.bxa_gyb_discount_base_on === 'percentage') {
                             new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
+                            discount = rule.bxa_gyb_discount_percentage_price;
                         } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
                             new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
+                            discount = round_pr((((productC.lst_price - new_pirceC) / productC.lst_price) *100), 1);
                         }
                         return {
                             type: 'bogo',
                             price: new_pirceC,
-                            discount: 0,
+                            discount: discount,
                             quantity: resultC_quantity,
+                            gift: self.pos.db.get_product_by_id(rule.bxa_gyb_discount_product[0]),
                         };
                     }
                 }
