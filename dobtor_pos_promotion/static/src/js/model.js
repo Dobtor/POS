@@ -70,7 +70,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             return combo_promotion;
         },
         get_pricelist: function (pricelist, pos=undefined) {
-            // console.log(this.pos.currency.rounding);
             var self = this;
             var date = moment().startOf('day');
             var sortpicelist = pricelist.items;

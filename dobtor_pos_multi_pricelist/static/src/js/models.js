@@ -170,7 +170,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 if (line.quantity > 0) {
                                     var result_m = line.get_price_byitem(item)
                                     var discount_rate = result_m.discount / 100
-                                    var discount_product = self.pos.db.get_product_by_id(item.related_product[0])
+                                    var discount_product = self.pos.db.get_product_by_id(item.related_product[0]);
                                     var temp_product = $.extend(true, {}, discount_product);
                                     var discount_price = round_pr(-discount_rate * temp_price, 1)
                                     if (result_m.type == 'price' && result_m.discount > 0 && temp_product && discount_price) {
@@ -256,22 +256,15 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
             // Per Order (Combo)
             var group_combo = _.groupBy(combo_list, 'rule_id');
-            console.log('group_combo : ', group_combo);
             $.each(Object.keys(group_combo), function (i, t) {
                 var pluck_product = _.pluck(group_combo[t], 'combo_product');
                 var this_rule = group_combo[t][0].rule;
-                console.log('pluck_product : ', pluck_product);
-                console.log('this_rule : ', this_rule);
-                console.log('pluck_product.length : ', pluck_product.length);
-                console.log('this_rule.combo_sale_ids.length : ', self.inner_join_combo_product(this_rule, self.pos).length);
                 if (pluck_product.length && pluck_product.length == self.inner_join_combo_product(this_rule, self.pos).length) {
                     var sort_min_qty_product = _.sortBy(pluck_product, 'quantity');
                     var min_combo_qty = sort_min_qty_product[0].quantity;
-                    console.log('sort_min_qty_product : ', sort_min_qty_product);
                     if (min_combo_qty > 0) {
                         
                         $.each(sort_min_qty_product, function (i, item) {
-                            console.log('product info : ',item)
                             var get_combo_promotion = _.find(self.pos.combo_promotion, function (combo) {
                                 if (combo.promotion_id[0] == group_combo[t][0].rule_id) {
                                     return combo.product_id[0] == item.product.id;
