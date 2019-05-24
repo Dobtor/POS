@@ -16,17 +16,15 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
             var customers;
             query = query.replace(/[\[\]\(\)\+\*\?\.\-\!\&\^\$\|\~\_\{\}\:\,\\\/]/g,'');
             var patt = new RegExp(/^09\d{8}$|^(02)?[1-9]{1}\d{7}$/);   
-            if(query){
-                if(patt.test(query)){
-                    customers = this.pos.db.search_partner(query);
-                    this.display_client_details('hide');
-                    if ( associate_result && customers.length === 1){
-                        this.new_client = customers[0];
-                        this.save_changes();
-                        this.gui.back();
-                    }
-                    this.render_list(customers);
+            if(query && patt.test(query)){
+                customers = this.pos.db.search_partner(query);
+                this.display_client_details('hide');
+                if ( associate_result && customers.length === 1){
+                    this.new_client = customers[0];
+                    this.save_changes();
+                    this.gui.back();
                 }
+                this.render_list(customers);
             }
             else{
                 this.render_list([]);
