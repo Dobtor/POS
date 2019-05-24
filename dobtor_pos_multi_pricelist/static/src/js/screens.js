@@ -59,8 +59,14 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
     })
     // screens.set_pricelist_button.include({
     //     init: function (parent, options) {
-    //         // this.css("display", "none");
-    //     },
-    //     button_click:function(){}
+    //         this._super();
+    //         this.css('display', 'none');
+    //     }
     // })
+    // screens.define_action_button({
+    //     'name': 'set_pricelist',
+    //     'widget': screens.set_pricelist_button,
+        
+    // })
+   
 })
