@@ -239,8 +239,9 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     return {
                         type: 'bogo',
                         price: price,
-                        discount: 0,
+                        discount: 100,
                         quantity: add_newproduct_qty,
+                        gift: self.product,
                     };
                 }
                 if (rule.bogo_base === 'bxa_gyb_free') {
@@ -264,8 +265,10 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         return {
                             type: 'bogo',
                             price: productB.lst_price,
-                            discount: 0,
+                            discount: 100,
                             quantity: result_quantity,
+                            // product: self.product,
+                            gift: self.pos.db.get_product_by_id(rule.bxa_gyb_free_products[0]),
                         };
                     }
                 }
@@ -288,16 +291,20 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                             resultC_quantity = add_newproductC_qty;
                         }
                         var new_pirceC = productC.lst_price;
+                        var discount = 0;
                         if (rule.bxa_gyb_discount_base_on === 'percentage') {
                             new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
+                            discount = rule.bxa_gyb_discount_percentage_price;
                         } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
                             new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
+                            discount = round_pr((((productC.lst_price - new_pirceC) / productC.lst_price) *100), 1);
                         }
                         return {
                             type: 'bogo',
                             price: new_pirceC,
-                            discount: 0,
+                            discount: discount,
                             quantity: resultC_quantity,
+                            gift: self.pos.db.get_product_by_id(rule.bxa_gyb_discount_product[0]),
                         };
                     }
                 }
