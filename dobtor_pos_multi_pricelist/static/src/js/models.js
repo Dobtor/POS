@@ -26,7 +26,23 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     });
     exports.load_fields('product.pricelist', ['discount_item', 'discount_product']);
     exports.load_fields('product.product', ['discount_type'])
-    exports.load_fields('res.partner', ['birthday', 'member_id']);
+    exports.load_fields('res.partner', ['birthday', 'member_id', 'used_birthday_times','can_discount_times','related_discount_product','birthday_discount','related_discount']);
+    // var _super_posmodel = exports.PosModel;
+    // exports.PosModel = exports.PosModel.extend({
+    //         initialize: function (session, attributes) {
+    //             _super_posmodel.prototype.initialize.apply(this, arguments);
+    //             this.member_by_id = {};
+    //         }
+    //     }),
+    //     exports.load_models([{
+    //         model: 'sales.member',
+    //         loaded: function (self, members) {
+    //             self.members = members
+    //             // _.each(members, function (member) {
+    //             //     self.member_by_id[member.id] = member;
+    //             // });
+    //         },
+    //     }])
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
         // 為了讓add_prdouct有return 複寫了一次
@@ -234,11 +250,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             'price': discount_price,
                                             'quantity': result_m.quantity
                                         })
-                                        console.log(discount_rate, 'rate')
                                         sub_rate = sub_rate * (1 - discount_rate)
                                         discount_line.compute_name = self.add_line_description(item, line, result_m.discount)
                                         discount_line.product.display_name = discount_line.compute_name
-                                        // 名稱先這樣給，測試目前沒問題，但重整問題還在
                                         temp_price = temp_price + discount_price
                                     }
                                     if (result_m.type == 'range') {
@@ -251,19 +265,28 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 }
                             });
                             if (sub_rate >= 0.6) {
-                                // if(customer.member_id){
-                                //     var member = this.pos.get_member_by_id(customer.member_id)
-                                //     var Today=new Date(); 
-                                //     if(customer.birthday ==Today&& customer.birthday_discount_times>0){
-                                //         self.add_product(discount_product, {
-                                //             'price': discount_price,
-                                //             'quantity': result_m.quantity
-                                //         })
+                                if (customer.member_id[0] ) {
+                                    var today_date = new Date().toISOString().split('T')[0];
 
-                                //     }
-                                //     if()
-                                // }
-                                console.log('此product總折扣大於6折，如果有會員要折扣')
+                                    if(customer.birthday ===today_date && customer.used_birthday_times <=customer.can_discount_times){
+                                        var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
+                                        var discount_line = self.add_product(member_product,{
+                                            'price': -line.price * sub_rate * customer.birthday_discount,
+                                            'quantity': line.quantity
+                                        })
+                                        discount_line.compute_name = customer.member_id[1] + '[' +line.product.display_name +'] ( -' + (customer.birthday_discount)*100 + ' %)'
+                                        discount_line.product.display_name = discount_line.compute_name
+                                    }
+                                    else if(customer.related_discount){
+                                        var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
+                                        var discount_line =self.add_product(member_product,{
+                                            'price': -line.price * sub_rate * customer.related_discount,
+                                            'quantity': line.quantity
+                                        })
+                                        discount_line.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.related_discount)*100 + ' %)'
+                                        discount_line.product.display_name = discount_line.compute_name
+                                    }
+                                }
                             }
 
                         }
