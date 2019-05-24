@@ -41,30 +41,57 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
 
     var _super_product = exports.Product;
     exports.Product = exports.Product.extend({
-        get_pricelist: function (pricelist) {
+        inner_join_variant: function (rule) {
+            var self = this;
+            var find_variant = false;
+            if ((rule.variant_ids instanceof Array) && rule.variant_ids.length > 0) {
+                $.each(self.attribute_value_ids, function (index, attr) {
+                    if (rule.variant_ids.includes(attr)) {
+                        find_variant = true;
+                    }
+                });
+            }
+            return find_variant;
+        },
+        inner_join_combo_product: function (rule, pos) {
+            var combo_promotion = [];
+            var get_combo_promotion;
+            if (pos) {
+                get_combo_promotion = _.filter(pos.combo_promotion, function (combo) {
+                    if (combo.promotion_id[0] == rule.id) {
+                        return true;
+                    }
+                    return false;
+                });
+                if (get_combo_promotion) {
+                    combo_promotion = _.pluck(_.pluck(get_combo_promotion, 'product_id'), 0);
+                }
+            }
+            return combo_promotion;
+        },
+        get_pricelist: function (pricelist, pos=undefined) {
             // console.log(this.pos.currency.rounding);
             var self = this;
             var date = moment().startOf('day');
             var sortpicelist = pricelist.items;
             // var sortpicelist = _.sortBy(pricelist.items, 'sequence');
             var pricelist_items = _.filter(sortpicelist, function (item) {
-                var merge_variant = false;
-                if ((item.variant_ids instanceof Array) && item.variant_ids.length > 0) {
-                    $.each(self.attribute_value_ids, function (index, attr) {
-                        if (item.variant_ids.includes(attr)) {
-                            merge_variant = true;
-                        }
-                    });
-                }
 
+                // handle variant.
+                var find_variant = self.inner_join_variant(item);
+                // handle combo promotion.
+                var combo_promotion = self.inner_join_combo_product(item, pos);
+                
+                // Relationship items
                 return (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id) &&
                     (!item.product_id || item.product_id[0] === self.id) &&
                     (!item.categ_id || _.contains(category_ids, item.categ_id[0])) &&
                     (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
                     (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
-                    (!((item.variant_ids instanceof Array) && item.variant_ids.length) || merge_variant);
+                    (!((item.variant_ids instanceof Array) && item.variant_ids.length) || find_variant) &&
+                    (!combo_promotion.length || combo_promotion.includes(self.id));
             });
-            return pricelist_items
+            return pricelist_items;
         },
         get_rule_price: function (pricelist_items, quantity, price) {
             _.find(pricelist_items, function (rule) {

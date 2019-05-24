@@ -146,7 +146,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 var product = line.product;
                 var items = [];
                 $.each(pricelists, function (i, pl) {
-                    var pricelist_items = product.get_pricelist(pl);
+                    var pricelist_items = product.get_pricelist(pl, self.pos);
                     $.each(pricelist_items, function (i, item) {
                         items.push(item)
                     })
@@ -233,7 +233,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 }
             });
             // Per Order
-            console.log(rule_sum);
             var group_rule = _.groupBy(rule_sum, 'rule_id');
             $.each(Object.keys(group_rule), function (i, t) {
                 var pluck_val = _.pluck(group_rule[t], 'round_value');
@@ -241,14 +240,14 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 var rule_total = _.reduce(pluck_val, function (memo, num) {
                     return memo + num;
                 }, 0);
-                console.log(rule_total);
+
                 var get_range_promotion = _.find(self.pos.range_promotion, function (range) {
                     if (range.promotion_id[0] == group_rule[t][0].rule_id) {
                         return rule_total >= range.start;
                     }
                     return false;
                 });
-                console.log(get_range_promotion);
+
                 if (get_range_promotion) {
                     if (get_range_promotion.based_on === 'rebate') {
                         self.add_product(self.pos.db.get_product_by_id(this_rule.related_product[0]), {
