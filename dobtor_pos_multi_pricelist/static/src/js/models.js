@@ -127,20 +127,38 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 }
             }
         },
-        add_line_description: function (item, line, discount=0) {
+        add_line_description: function (item, line, discount = 0) {
             if (discount) {
                 return item.related_discount_name + ' ' + line.product.display_name + ' ( -' + discount + ' %)'
             } else {
                 return item.related_discount_name + ' ' + line.product.display_name
             }
         },
+        inner_join_combo_product: function (rule, pos) {
+            var combo_promotion = [];
+            var get_combo_promotion;
+            if (pos) {
+                get_combo_promotion = _.filter(pos.combo_promotion, function (combo) {
+                    if (combo.promotion_id[0] == rule.id) {
+                        return true;
+                    }
+                    return false;
+                });
+                if (get_combo_promotion) {
+                    combo_promotion = _.pluck(_.pluck(get_combo_promotion, 'product_id'), 0);
+                }
+            }
+            return combo_promotion;
+        },
         check_order_discount: function () {
+            // Common Declare Variables
             var self = this;
             var pricelists = self.pos.pricelists;
             var customer = this.get_client();
             self.remove_discount();
             var rule_sum = [];
-            // var item_list = [];
+            var combo_list = [];
+
             // Per Line
             $.each(self.orderlines.models, function (i, line) {
                 var product = line.product;
@@ -157,12 +175,21 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     if (items.length == 1) {
                         console.log('only one')
                         self.add_discount_product(self, line, items[0]);
-                        var result_only_range = line.get_price_byitem(items[0]);
-                        if (result_only_range.type == 'range') {
+                        var result_only = line.get_price_byitem(items[0]);
+                        // handle Range
+                        if (result_only.type == 'range') {
                             rule_sum.push({
                                 rule_id: items[0].id,
                                 rule: items[0],
-                                round_value: round_pr(result_only_range.price * result_only_range.quantity, 0)
+                                round_value: round_pr(result_only.price * result_only.quantity, 0)
+                            });
+                        }
+                        // handle Combo
+                        if (result_only.type == 'combo') {
+                            combo_list.push({
+                                rule_id: items[0].id,
+                                rule: items[0],
+                                combo_product: result_only,
                             });
                         }
                     } else {
@@ -170,18 +197,29 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             return item.is_primary_key;
                         });
                         if (pk) {
+                            // Special case (BOGO offer, Combo Promotion or do not want multi discount etc ...)
                             console.log('pk')
                             self.add_discount_product(self, line, pk);
-                            var result_pk_range = line.get_price_byitem(pk);
-                            if (result_pk_range.type == 'range') {
+                            var result_pk = line.get_price_byitem(pk);
+                            // handle Range
+                            if (result_pk.type == 'range') {
                                 rule_sum.push({
                                     rule_id: pk.id,
                                     rule: pk,
-                                    round_value: round_pr(result_pk_range.price * result_pk_range.quantity, 0)
+                                    round_value: round_pr(result_pk.price * result_pk.quantity, 0)
                                 });
                             }
+                            // handle Combo
+                            if (result_pk.type == 'combo') {
+                                combo_list.push({
+                                    rule_id: pk.id,
+                                    rule: pk,
+                                    combo_product: result_pk,
+                                });
+                            }
+
                         } else {
-                            // multi 
+                            // multi (Do not process Combo)
                             console.log('multi')
                             var temp_price = line.price
                             var sub_rate = 1;
@@ -232,7 +270,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     }
                 }
             });
-            // Per Order
+            // End Per Line
+
+            // Per Order (Range)
             var group_rule = _.groupBy(rule_sum, 'rule_id');
             $.each(Object.keys(group_rule), function (i, t) {
                 var pluck_val = _.pluck(group_rule[t], 'round_value');
@@ -260,7 +300,48 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     }
                 }
             });
+            // End Range
 
+            // Per Order (Combo)
+            var group_combo = _.groupBy(combo_list, 'rule_id');
+            console.log('group_combo : ', group_combo);
+            $.each(Object.keys(group_combo), function (i, t) {
+                var pluck_product = _.pluck(group_combo[t], 'combo_product');
+                var this_rule = group_combo[t][0].rule;
+                console.log('pluck_product : ', pluck_product);
+                console.log('this_rule : ', this_rule);
+                console.log('pluck_product.length : ', pluck_product.length);
+                console.log('this_rule.combo_sale_ids.length : ', self.inner_join_combo_product(this_rule, self.pos).length);
+                if (pluck_product.length && pluck_product.length == self.inner_join_combo_product(this_rule, self.pos).length) {
+                    var sort_min_qty_product = _.sortBy(pluck_product, 'quantity');
+                    var min_combo_qty = sort_min_qty_product[0].quantity;
+                    console.log('sort_min_qty_product : ', sort_min_qty_product);
+                    if (min_combo_qty > 0) {
+                        
+                        $.each(sort_min_qty_product, function (i, item) {
+                            console.log('product info : ',item)
+                            var get_combo_promotion = _.find(self.pos.combo_promotion, function (combo) {
+                                if (combo.promotion_id[0] == group_combo[t][0].rule_id) {
+                                    return combo.product_id[0] == item.product.id;
+                                }
+                                return false;
+                            });
+                            if (get_combo_promotion.based_on === 'price') {
+                                self.add_product(self.pos.db.get_product_by_id(this_rule.related_product[0]), {
+                                    'price': get_combo_promotion.based_on_price - item.product.lst_price,
+                                    'quantity': min_combo_qty,
+                                });
+                            } else if (get_combo_promotion.based_on === 'percentage') {
+                                self.add_product(self.pos.db.get_product_by_id(this_rule.related_product[0]), {
+                                    'price': -round_pr(item.product.lst_price * (1 - (get_combo_promotion.based_on_percentage / 100)), 0),
+                                    'quantity': min_combo_qty,
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+            // End Combo
         }
     });
 

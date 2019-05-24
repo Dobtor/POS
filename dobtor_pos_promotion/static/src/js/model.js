@@ -191,6 +191,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             // price : discount price  
             // bogo : buy something, get product pirce
             // range : range
+            // combo : combo
 
             var self = this;
             var price = self.product.lst_price;
@@ -215,6 +216,14 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         price: price,
                         discount: 0,
                         quantity: quantity,
+                    };
+                } else if (rule.base_on === 'combo_sale') {
+                    return {
+                        type: 'combo',
+                        price: price,
+                        discount: 0,
+                        quantity: quantity,
+                        product: self.product
                     };
                 }
                 return {
