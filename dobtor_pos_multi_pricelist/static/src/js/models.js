@@ -247,7 +247,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         });
                     } else if (get_range_promotion.based_on === 'percentage') {
                         self.add_product(self.pos.db.get_product_by_id(this_rule.related_product[0]), {
-                            'price': -round_pr(rule_total * (1 - (get_range_promotion.based_on_percentage / 100)), 0),
+                            'price': -round_pr(rule_total * (get_range_promotion.based_on_percentage / 100), 0),
                         });
                     }
                 }
@@ -278,7 +278,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 });
                             } else if (get_combo_promotion.based_on === 'percentage') {
                                 self.add_product(self.pos.db.get_product_by_id(this_rule.related_product[0]), {
-                                    'price': -round_pr(item.product.lst_price * (1 - (get_combo_promotion.based_on_percentage / 100)), 0),
+                                    'price': -round_pr(item.product.lst_price * (get_combo_promotion.based_on_percentage / 100), 0),
                                     'quantity': min_combo_qty,
                                 });
                             }
