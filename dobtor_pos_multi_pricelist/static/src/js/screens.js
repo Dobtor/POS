@@ -33,7 +33,7 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             this.$('.pay').on('click', function () {
                 var order = self.pos.get_order();
                 order.check_order_discount();
-                var r = confirm("Confirm to go to the payment page?.");
+                var r = confirm(_t("Confirm to go to the payment page?."));
                 if (r == true) {
                     var has_valid_product_lot = _.every(order.orderlines.models, function (line) {
                         return line.has_valid_product_lot();
@@ -57,16 +57,5 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             });
         }
     })
-    // screens.set_pricelist_button.include({
-    //     init: function (parent, options) {
-    //         this._super();
-    //         this.css('display', 'none');
-    //     }
-    // })
-    // screens.define_action_button({
-    //     'name': 'set_pricelist',
-    //     'widget': screens.set_pricelist_button,
-        
-    // })
-   
+
 })
