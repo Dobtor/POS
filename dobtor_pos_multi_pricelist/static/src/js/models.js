@@ -26,81 +26,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     });
     exports.load_fields('product.pricelist', ['discount_item', 'discount_product']);
     exports.load_fields('product.product', ['discount_type'])
-    exports.load_fields('res.partner', ['birthday', 'member_id', 'used_birthday_times','can_discount_times','related_discount_product','birthday_discount','related_discount']);
-    // var _super_posmodel = exports.PosModel;
-    // exports.PosModel = exports.PosModel.extend({
-    //         initialize: function (session, attributes) {
-    //             _super_posmodel.prototype.initialize.apply(this, arguments);
-    //             this.member_by_id = {};
-    //         }
-    //     }),
-    //     exports.load_models([{
-    //         model: 'sales.member',
-    //         loaded: function (self, members) {
-    //             self.members = members
-    //             // _.each(members, function (member) {
-    //             //     self.member_by_id[member.id] = member;
-    //             // });
-    //         },
-    //     }])
+    exports.load_fields('res.partner', ['birthday', 'member_id', 'used_birthday_times', 'can_discount_times', 'related_discount_product', 'birthday_discount', 'related_discount']);
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
-        // 為了讓add_prdouct有return 複寫了一次
-        add_product: function (product, options) {
-            if (this._printed) {
-                this.destroy();
-                return this.pos.get_order().add_product(product, options);
-            }
-            this.assert_editable();
-            options = options || {};
-            var attr = JSON.parse(JSON.stringify(product));
-            attr.pos = this.pos;
-            attr.order = this;
-            var line = new exports.Orderline({}, {
-                pos: this.pos,
-                order: this,
-                product: product
-            });
-
-            if (options.quantity !== undefined) {
-                line.set_quantity(options.quantity);
-            }
-
-            if (options.price !== undefined) {
-                line.set_unit_price(options.price);
-            }
-
-            //To substract from the unit price the included taxes mapped by the fiscal position
-            this.fix_tax_included_price(line);
-
-            if (options.discount !== undefined) {
-                line.set_discount(options.discount);
-            }
-
-            if (options.extras !== undefined) {
-                for (var prop in options.extras) {
-                    line[prop] = options.extras[prop];
-                }
-            }
-
-            var to_merge_orderline;
-            for (var i = 0; i < this.orderlines.length; i++) {
-                if (this.orderlines.at(i).can_be_merged_with(line) && options.merge !== false) {
-                    to_merge_orderline = this.orderlines.at(i);
-                }
-            }
-            if (to_merge_orderline) {
-                to_merge_orderline.merge(line);
-            } else {
-                this.orderlines.add(line);
-            }
-            this.select_orderline(this.get_last_orderline());
-
-            if (line.has_product_lot) {
-                this.display_lot_popup();
-            }
-            return line
-        },
         export_as_JSON: function () {
             var res = _super_order.prototype.export_as_JSON.apply(this, arguments);
             return res
@@ -124,30 +52,29 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             var product = line.product;
             if (result.quantity > 0) {
                 if (result.type == 'bogo') {
-                    var discount_line = self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
+                    self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
                         'price': -result.price,
                         'quantity': result.quantity,
                     });
-                    discount_line.compute_name = self.add_line_description(rule, line)
+                    self.selected_orderline.compute_name = self.add_line_description(rule, line)
 
                 } else if (result.type == 'price') {
                     if (round_pr((result.price - product.lst_price), 1)) {
-                        var discount_line = self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
+                        self.add_product(self.pos.db.get_product_by_id(rule.related_product[0]), {
                             'price': round_pr((result.price - product.lst_price), 1),
                             'quantity': result.quantity,
                         });
-                        discount_line.compute_name = self.add_line_description(rule, line)
-                        discount_line.product.display_name = discount_line.compute_name
-                        // 名稱先這樣給，測試目前沒問題，但重整問題還在
+                        self.selected_orderline.compute_name = self.add_line_description(rule, line)
+                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name
                     }
                 }
             }
         },
         add_line_description: function (item, line, discount = 0) {
             if (discount) {
-                return item.related_discount_name + ' ' + line.product.display_name + ' ( -' + discount + ' %)'
+                return item.related_discount_name + ' [' + line.product.display_name + '] ( -' + discount + ' %)'
             } else {
-                return item.related_discount_name + ' ' + line.product.display_name
+                return item.related_discount_name + ' [' + line.product.display_name + ']'
             }
         },
         check_order_discount: function () {
@@ -206,15 +133,16 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                     var result_m = line.get_price_byitem(item)
                                     var discount_rate = result_m.discount / 100
                                     var discount_product = self.pos.db.get_product_by_id(item.related_product[0])
+                                    var temp_product = $.extend(true, {}, discount_product);
                                     var discount_price = round_pr(-discount_rate * temp_price, 1)
-                                    if (result_m.type == 'price' && result_m.discount > 0 && discount_product && discount_price) {
-                                        var discount_line = self.add_product(discount_product, {
+                                    if (result_m.type == 'price' && result_m.discount > 0 && temp_product && discount_price) {
+                                        self.add_product(temp_product, {
                                             'price': discount_price,
                                             'quantity': result_m.quantity
                                         })
                                         sub_rate = sub_rate * (1 - discount_rate)
-                                        discount_line.compute_name = self.add_line_description(item, line, result_m.discount)
-                                        discount_line.product.display_name = discount_line.compute_name
+                                        self.selected_orderline.compute_name = self.add_line_description(item, line, result_m.discount)
+                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name
                                         temp_price = temp_price + discount_price
                                     }
                                     if (result_m.type == 'range') {
@@ -226,27 +154,28 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                     }
                                 }
                             });
-                            if (sub_rate >= 0.6) {
-                                if (customer.member_id[0] ) {
-                                    var today_date = new Date().toISOString().split('T')[0];
-
-                                    if(customer.birthday ===today_date && customer.used_birthday_times <=customer.can_discount_times){
+                            if (sub_rate >= 0.6 && customer) {
+                                if (customer.member_id[0]) {
+                                    var today_date = new moment().format('YYYY-MM-DD');
+                                    if (customer.birthday == today_date && customer.used_birthday_times <= customer.can_discount_times) {
                                         var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
-                                        var discount_line = self.add_product(member_product,{
+                                        var temp_product = $.extend(true, {}, member_product);
+                                        self.add_product(temp_product, {
                                             'price': -line.price * sub_rate * customer.birthday_discount,
                                             'quantity': line.quantity
                                         })
-                                        discount_line.compute_name = customer.member_id[1] + '[' +line.product.display_name +'] ( -' + (customer.birthday_discount)*100 + ' %)'
-                                        discount_line.product.display_name = discount_line.compute_name
-                                    }
-                                    else if(customer.related_discount){
+                                        self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.birthday_discount) * 100 + ' %)'
+                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name
+                                    } else if (customer.related_discount) {
                                         var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
-                                        var discount_line =self.add_product(member_product,{
+                                        var temp_product = $.extend(true, {}, member_product);
+
+                                        self.add_product(temp_product, {
                                             'price': -line.price * sub_rate * customer.related_discount,
                                             'quantity': line.quantity
                                         })
-                                        discount_line.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.related_discount)*100 + ' %)'
-                                        discount_line.product.display_name = discount_line.compute_name
+                                        self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.related_discount) * 100 + ' %)'
+                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name
                                     }
                                 }
                             }
@@ -295,15 +224,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             _super_orderline.prototype.initialize.apply(self, arguments);
             self.compute_name = '';
         },
-        // can_be_merged_with: function (orderline) {
-        //     var self = this;
-        //     if (self.get_product().id == self.pos.db.get_discount_product().id) { //only orderline of the same product can be merged
-        //         return false;
-        //     }
-        //     if (_super_orderline.prototype.can_be_merged_with.apply(this, arguments))
-        //         return true;
-        // },
-
         export_as_JSON: function () {
             var self = this;
             var res = _super_orderline.prototype.export_as_JSON.apply(self, arguments)
