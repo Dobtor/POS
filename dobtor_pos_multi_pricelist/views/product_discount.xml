@@ -22,7 +22,7 @@
             </h1>
           </div>
           <group>
-            <field name="product_id" domain="[('discount_type','=',True)]"/>
+            <field name="product_id" domain="[('discount_type','=',True)]" context="{'default_available_in_pos': True}"/>
             <field name="paid_type"/>
           </group>
         </sheet>
