@@ -8,7 +8,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var round_pr = utils.round_precision;
     var exports = models;
     
-
     exports.load_domain = function (model_name, domain) {
         var models = exports.PosModel.prototype.models;
         for (var i = 0; i < models.length; i++) {
@@ -27,6 +26,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             ['id', 'in', multi_pricelist_ids]
         ];
     });
+    // export.load_fields()
     exports.load_fields('product.pricelist', ['discount_item', 'discount_product']);
     exports.load_fields('product.product', ['discount_type'])
     exports.load_fields('res.partner', ['birthday', 'member_id', 'used_birthday_times', 'can_discount_times', 'related_discount_product', 'birthday_discount', 'related_discount']);

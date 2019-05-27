@@ -3,34 +3,95 @@
 <templates id="template" xml:space="preserve">
 
     <t t-extend="ClientDetailsEdit">
+        <t t-jquery='div[t-attf-class*="client-detail"]' t-operation="replace"/>
+        <t t-jquery='div.client-detail:last' t-operation="replace"/>
         <t t-jquery="div.client-details-left" t-operation="append">
             <div class='client-detail'>
-                <span class="label"/>
+                <span class='label'>Birthday</span>
+                <input class='detail client-birthday' name='birthday' type="date" t-att-value='partner.birthday || ""'></input>
             </div>
             <div class='client-detail'>
+                <span class='label'>ExpiryDate</span>
+                <input class='detail client-expired_date' name='Term' readonly="1" t-att-value='partner.expired_date || ""'></input>
+            </div>
+        </t>
+        <t t-jquery="div.client-details-right" t-operation="append">
+
+            <div class='client-detail'>
                 <span class='label' style="width:95px">Membership</span>
-                <input class='detail client-point' style="width:320px" name='member_type_name' readonly="1" t-att-value='partner.member_type_name || ""'></input>
+                <input class='detail client-member_type_name' style="width: 320px;" name='member_type_name' readonly="1" t-att-value='partner.member_type_name || 0'></input>
             </div>
             <div class='client-detail'>
                 <span class='label'>Point</span>
-                <input class='detail client-point' name='point' readonly="1"  t-att-value='partner.sfic_point || 0'></input>
-                <!-- <span class='label' name='point' ><t t-esc="partner.sfic_point || 0"/>&#160;&#160;Point</span> -->
+                <input class='detail client-sfic_point' name='Point' readonly="1" t-att-value='partner.sfic_point || 0'></input>
+            </div>
+            <div class='client-detail'>
+                <span class='label' style="width:95px">TotoalAmount</span>
+                <input class='detail client-total_amount' style="width: 320px;" name='Total amount' readonly="1" t-att-value='partner.total_amount || 0'></input>
+            </div>
+        </t>
+
+    </t>
+    <t t-extend="ClientDetails">
+        <t t-jquery='div[t-attf-class*="client-detail"]' t-operation="replace"/>
+        <t t-jquery="div.client-details-left" t-operation="append">
+            <div class='client-detail'>
+                <span class='label'>Birthday</span>
+                <t t-if='partner.birthday'>
+                    <span class='detail client-birthday'>
+                        <t t-esc='partner.birthday' />
+                    </span>
+                </t>
+                <t t-if='!partner.birthday'>
+                    <span class='detail client-birthday empty'>N/A</span>
+                </t>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>ExpiryDate</span>
+                <t t-if='partner.expired_date'>
+                    <span class='detail client-expired_date'>
+                        <t t-esc='partner.expired_date' />
+                    </span>
+                </t>
+                <t t-if='!partner.expired_date'>
+                    <span class='detail client-expired_date empty'>N/A</span>
+                </t>
             </div>
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
             <div class='client-detail'>
-                <span class='label'>Birthday</span>
-                <input class='detail client-point' name='birthday' type="date" t-att-value='partner.birthday || ""'></input>
+                <span class='label' style="width:95px">Membership</span>
+                <t t-if='partner.member_type_name'>
+                    <span class='detail client-member_type_name'>
+                        <t t-esc='partner.member_type_name' />
+                    </span>
+                </t>
+                <t t-if='!partner.member_type_name'>
+                    <span class='detail client-member_type_name empty'>N/A</span>
+                </t>
             </div>
             <div class='client-detail'>
-                <span class='label'>ExpiryDate</span>
-                <input class='detail client-point' name='Term' readonly="1" t-att-value='partner.expired_date || ""'></input>
+                <span class='label'>Point</span>
+                <t t-if='partner.sfic_point'>
+                    <span class='detail client-sfic_point'>
+                        <t t-esc='partner.sfic_point' />
+                    </span>
+                </t>
+                <t t-if='!partner.sfic_point'>
+                    <span class='detail client-sfic_point empty'>0</span>
+                </t>
             </div>
             <div class='client-detail'>
-                <span class='label'  style="width:95px">TotoalAmount</span>
-                <input class='detail client-point' style="width:320px" name='total_amount' readonly="1" t-att-value='partner.total_amount'></input>
+                <span class='label' style="width:95px">TotoalAmount</span>
+                <t t-if='partner.total_amount'>
+                    <span class='detail client-total_amount'>
+                        <t t-esc='partner.total_amount' />
+                    </span>
+                </t>
+                <t t-if='!partner.total_amount'>
+                    <span class='detail client-total_amount empty'>0</span>
+                </t>
             </div>
         </t>
     </t>
-
 </templates>
