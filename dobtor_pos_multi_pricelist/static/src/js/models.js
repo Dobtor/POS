@@ -7,7 +7,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var _t = core._t;
     var round_pr = utils.round_precision;
     var exports = models;
-    
+
+
     exports.load_domain = function (model_name, domain) {
         var models = exports.PosModel.prototype.models;
         for (var i = 0; i < models.length; i++) {
@@ -66,7 +67,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
                     } else if (result.type == 'price') {
                         if (round_pr((result.price - product.lst_price), 1)) {
-                            
+
                             self.add_product(temp_product, {
                                 'price': round_pr((result.price - product.lst_price), 1),
                                 'quantity': result.quantity,
@@ -135,113 +136,91 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 // check has pricelist item 
                 if (items.length > 0) {
                     // if only one pricelist item
-                    if (items.length == 1) {
-                        console.log('only one')
-                        self.add_discount_product(self, line, items[0]);
-                        var result_only = line.get_price_byitem(items[0]);
+                    var pk = _.find(items, function (item) {
+                        return item.is_primary_key;
+                    });
+                    var rule = pk || items[0];
+                    if (pk || items.length == 1) {
+                        // Special case (BOGO offer, Combo Promotion or do not want multi discount etc ...)
+                        console.log('pk or only one')
+                        self.add_discount_product(self, line, rule);
+                        var result = line.get_price_byitem(rule);
                         // handle Range
-                        if (result_only.type == 'range') {
+                        if (result.type == 'range') {
                             rule_sum.push({
-                                rule_id: items[0].id,
-                                rule: items[0],
-                                round_value: round_pr(result_only.price * result_only.quantity, 1)
+                                rule_id: rule.id,
+                                rule: rule,
+                                round_value: round_pr(result.price * result.quantity, 1)
                             });
                         }
                         // handle Combo
-                        if (result_only.type == 'combo') {
+                        if (result.type == 'combo') {
                             combo_list.push({
-                                rule_id: items[0].id,
-                                rule: items[0],
-                                combo_product: result_only,
+                                rule_id: rule.id,
+                                rule: rule,
+                                combo_product: result,
                             });
                         }
+
                     } else {
-                        var pk = _.find(items, function (item) {
-                            return item.is_primary_key;
+                        // multi (Do not process Combo)
+                        console.log('multi')
+                        var temp_price = line.price
+                        var sub_rate = 1;
+                        $.each(items, function (i, item) {
+                            if (line.quantity > 0) {
+                                var result_m = line.get_price_byitem(item)
+                                var discount_rate = result_m.discount / 100
+                                var discount_product = self.pos.db.get_product_by_id(item.related_product[0]);
+                                if (discount_product) {
+                                    var temp_product = $.extend(true, {}, discount_product);
+                                    var discount_price = round_pr(-discount_rate * temp_price, 1)
+                                    if (result_m.type == 'price' && result_m.discount > 0 && temp_product && discount_price) {
+                                        self.add_product(temp_product, {
+                                            'price': discount_price,
+                                            'quantity': result_m.quantity
+                                        })
+                                        sub_rate = sub_rate * (1 - discount_rate)
+                                        self.selected_orderline.compute_name = self.add_line_description(item, line, result_m.discount)
+                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name
+                                        temp_price = temp_price + discount_price
+                                    }
+                                    if (result_m.type == 'range') {
+                                        rule_sum.push({
+                                            rule_id: item.id,
+                                            rule: item,
+                                            round_value: round_pr(result_m.quantity * result_m.price, 1)
+                                        });
+                                    }
+                                } else {
+                                    alert(_t("You should be setting pricelist of discount product !!!"));
+                                }
+                            }
                         });
-                        if (pk) {
-                            // Special case (BOGO offer, Combo Promotion or do not want multi discount etc ...)
-                            console.log('pk')
-                            self.add_discount_product(self, line, pk);
-                            var result_pk = line.get_price_byitem(pk);
-                            // handle Range
-                            if (result_pk.type == 'range') {
-                                rule_sum.push({
-                                    rule_id: pk.id,
-                                    rule: pk,
-                                    round_value: round_pr(result_pk.price * result_pk.quantity, 1)
-                                });
-                            }
-                            // handle Combo
-                            if (result_pk.type == 'combo') {
-                                combo_list.push({
-                                    rule_id: pk.id,
-                                    rule: pk,
-                                    combo_product: result_pk,
-                                });
-                            }
+                        if (sub_rate >= 0.6 && customer) {
+                            if (customer.member_id[0]) {
+                                var today_date = new moment().format('YYYY-MM-DD');
+                                if (customer.birthday == today_date && customer.used_birthday_times <= customer.can_discount_times) {
+                                    var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
+                                    var temp_product = $.extend(true, {}, member_product);
+                                    self.add_product(temp_product, {
+                                        'price': -line.price * sub_rate * customer.birthday_discount,
+                                        'quantity': line.quantity
+                                    })
+                                    self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.birthday_discount) * 100 + ' %)'
+                                    self.selected_orderline.product.display_name = self.selected_orderline.compute_name
+                                } else if (customer.related_discount) {
+                                    var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
+                                    var temp_product = $.extend(true, {}, member_product);
 
-                        } else {
-                            // multi (Do not process Combo)
-                            console.log('multi')
-                            var temp_price = line.price
-                            var sub_rate = 1;
-                            $.each(items, function (i, item) {
-                                if (line.quantity > 0) {
-                                    var result_m = line.get_price_byitem(item)
-                                    var discount_rate = result_m.discount / 100
-                                    var discount_product = self.pos.db.get_product_by_id(item.related_product[0]);
-                                    if (discount_product) {
-                                        var temp_product = $.extend(true, {}, discount_product);
-                                        var discount_price = round_pr(-discount_rate * temp_price, 1)
-                                        if (result_m.type == 'price' && result_m.discount > 0 && temp_product && discount_price) {
-                                            self.add_product(temp_product, {
-                                                'price': discount_price,
-                                                'quantity': result_m.quantity
-                                            })
-                                            sub_rate = sub_rate * (1 - discount_rate)
-                                            self.selected_orderline.compute_name = self.add_line_description(item, line, result_m.discount)
-                                            self.selected_orderline.product.display_name = self.selected_orderline.compute_name
-                                            temp_price = temp_price + discount_price
-                                        }
-                                        if (result_m.type == 'range') {
-                                            rule_sum.push({
-                                                rule_id: item.id,
-                                                rule: item,
-                                                round_value: round_pr(result_m.quantity * result_m.price, 1)
-                                            });
-                                        }
-                                    } else {
-                                        alert(_t("You should be setting pricelist of discount product !!!"));
-                                    }
-                                }
-                            });
-                            if (sub_rate >= 0.6 && customer) {
-                                if (customer.member_id[0]) {
-                                    var today_date = new moment().format('YYYY-MM-DD');
-                                    if (customer.birthday == today_date && customer.used_birthday_times <= customer.can_discount_times) {
-                                        var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
-                                        var temp_product = $.extend(true, {}, member_product);
-                                        self.add_product(temp_product, {
-                                            'price': -line.price * sub_rate * customer.birthday_discount,
-                                            'quantity': line.quantity
-                                        })
-                                        self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.birthday_discount) * 100 + ' %)'
-                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name
-                                    } else if (customer.related_discount) {
-                                        var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
-                                        var temp_product = $.extend(true, {}, member_product);
-
-                                        self.add_product(temp_product, {
-                                            'price': -line.price * sub_rate * customer.related_discount,
-                                            'quantity': line.quantity
-                                        })
-                                        self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.related_discount) * 100 + ' %)'
-                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name
-                                    }
+                                    self.add_product(temp_product, {
+                                        'price': -line.price * sub_rate * customer.related_discount,
+                                        'quantity': line.quantity
+                                    })
+                                    self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.related_discount) * 100 + ' %)'
+                                    self.selected_orderline.product.display_name = self.selected_orderline.compute_name
                                 }
                             }
-
                         }
                     }
                 }
@@ -335,7 +314,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             if (self.orderlines.models.length) {
                 this.select_orderline(self.orderlines.models[0]);
             }
-            
+
         }
     });
 
