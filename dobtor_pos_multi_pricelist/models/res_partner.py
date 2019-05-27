@@ -6,7 +6,7 @@ from odoo.tools.translate import _
 from odoo.exceptions import UserError
 from datetime import datetime,timedelta
 import logging
-import time
+from time import time
 
 class ResPartner(models.Model):
     _inherit = "res.partner"
@@ -16,3 +16,11 @@ class ResPartner(models.Model):
     related_discount_product = fields.Many2one(string="related_discount_product",related="member_id.related_item")
     birthday_discount = fields.Float(string="Birthday Discount",related="member_id.birthday_discount")
     related_discount = fields.Float(string="related_discount",related="member_id.discount_rate")
+
+    @api.model
+    def _clear_used_birthday_times(self):
+        records = self.search([('member_id', '!=', False),('used_birthday_times', '>', 0)])
+        for partner in records:
+            today = datetime.today().date()
+            if today > partner.birthday:
+                partner.used_birthday_times = 0

@@ -200,14 +200,14 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         if (self.pos.config.available_member_discount) {
                             if (sub_rate >= 0.6 && customer && customer.member_id[0]) {
                                 var today_date = new moment().format('YYYY-MM-DD');
-                                if (customer.birthday == today_date && customer.used_birthday_times <= customer.can_discount_times) {
+                                if (customer.birthday == today_date && customer.used_birthday_times < customer.can_discount_times) {
                                     var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
                                     var temp_product = $.extend(true, {}, member_product);
                                     self.add_product(temp_product, {
                                         'price': -line.price * sub_rate * customer.birthday_discount,
                                         'quantity': line.quantity
                                     })
-                                    self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.birthday_discount) * 100 + ' %)'
+                                    self.selected_orderline.compute_name = _t(`Birthday [${line.product.display_name}] (- ${(customer.birthday_discount) * 100} %)`)
                                     self.selected_orderline.product.display_name = self.selected_orderline.compute_name
                                 } else if (customer.related_discount) {
                                     var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
