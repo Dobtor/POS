@@ -22,6 +22,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="o_setting_left_pane">
+                        <field name="available_member_discount"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="available_member_discount" string="Use Member Discount"/>
+                        <div class="text-muted">
+                                    Available Using Member Discount in POS.
+                        </div>
+                    </div>
                 </div>
             </xpath>
         </field>

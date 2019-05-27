@@ -122,7 +122,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             self.remove_discount();
             var rule_sum = [];
             var combo_list = [];
-
             // Per Line
             $.each(self.orderlines.models, function (i, line) {
                 var product = line.product;
@@ -197,8 +196,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 }
                             }
                         });
-                        if (sub_rate >= 0.6 && customer) {
-                            if (customer.member_id[0]) {
+                        console.log(self.pos.config.available_member_discount);
+                        if (self.pos.config.available_member_discount) {
+                            if (sub_rate >= 0.6 && customer && customer.member_id[0]) {
                                 var today_date = new moment().format('YYYY-MM-DD');
                                 if (customer.birthday == today_date && customer.used_birthday_times <= customer.can_discount_times) {
                                     var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
