@@ -102,7 +102,21 @@ class PricelistItem(models.Model):
         string=_("Discounted Product Qty"),
         default=1
     )
-
+    bxa_gyb_free_gift_base_on = fields.Selection(
+        selection=[
+            ('product', _('Product')),
+            ('variant', _('Variant Value')),
+        ],
+        index=True,
+        default='product'
+    )
+    bxa_gyb_free_variant_ids = fields.Many2many(
+        string=_('Discounted Variant Value'),
+        comodel_name='product.attribute.value',
+        relation='pricelist_bogo_free_variant_rel',
+        column1='pricelist_id',
+        column2='variant_id',
+    )
     bxa_gyb_free_products = fields.Many2one(
         string=_("Discounted Products"),
         comodel_name='product.product',
@@ -133,6 +147,21 @@ class PricelistItem(models.Model):
     ],
         string="Based On",
         index=True
+    )
+    bxa_gyb_discount_gift_base_on = fields.Selection(
+        selection=[
+            ('product', _('Product')),
+            ('variant', _('Variant Value')),
+        ],
+        index=True,
+        default='product'
+    )
+    bxa_gyb_discount_variant_ids = fields.Many2many(
+        string=_('Discounted Variant Value'),
+        comodel_name='product.attribute.value',
+        relation='pricelist_bogo_discount_variant_rel',
+        column1='pricelist_id',
+        column2='variant_id',
     )
     bxa_gyb_discount_product = fields.Many2one(
         comodel_name='product.product',
@@ -178,8 +207,6 @@ class PricelistItem(models.Model):
             self.range_based_ids = [(6, 0, [])]
         if self.base_on == 'combo_sale':
             self.is_primary_key = True
-        if self.base_on == 'range':
-            self.sequence = 99
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
@@ -190,14 +217,18 @@ class PricelistItem(models.Model):
     def _get_default_bxa_gyb_free_value(self):
         self.bxa_gyb_free_Aproduct_unit = 1
         self.bxa_gyb_free_Bproduct_unit = 1
+        self.bxa_gyb_free_gift_base_on = 'product'
         self.bxa_gyb_free_products = False
-        # self.bxa_gyb_free_products = [(6, 0, [])]
+        self.bxa_gyb_free_variant_ids = [(6, 0, [])]
 
     @api.multi
     def _get_default_bxa_gyb_discount_value(self):
         self.bxa_gyb_discount_Aproduct_unit = 1
         self.bxa_gyb_discount_Bproduct_unit = 1
+        self.bxa_gyb_discount_gift_base_on = 'product'
         self.bxa_gyb_discount_product = False
+        self.bxa_gyb_discount_variant_ids = [(6, 0, [])]
+        self.bxa_gyb_discount_base_on = 'percentage'
         self.bxa_gyb_discount_fixed_price = 0.0
         self.bxa_gyb_discount_percentage_price = 0.0
 
@@ -212,7 +243,6 @@ class PricelistItem(models.Model):
             self.is_primary_key = False
         if self.compute_price == 'bogo_sale':
             self.is_primary_key = True
-            self.sequence = 1
 
     @api.onchange('bogo_base')
     def _onchange_bogo_base(self):
@@ -223,12 +253,26 @@ class PricelistItem(models.Model):
         if self.bogo_base != 'bxa_gyb_discount':
             self._get_default_bxa_gyb_discount_value()
 
+    @api.onchange('bxa_gyb_free_gift_base_on')
+    def _onchange_bxa_gyb_free_gift_base_on(self):
+        if self.bxa_gyb_free_gift_base_on != 'product':
+            self.bxa_gyb_free_products = False
+        if self.bxa_gyb_free_gift_base_on != 'variant':
+            self.bxa_gyb_free_variant_ids = [(6, 0, [])]
+    
+    @api.onchange('bxa_gyb_discount_gift_base_on')
+    def _onchange_bxa_gyb_discount_gift_base_on(self):
+        if self.bxa_gyb_discount_gift_base_on != 'product':
+            self.bxa_gyb_discount_product = False
+        if self.bxa_gyb_discount_gift_base_on != 'variant':
+            self.bxa_gyb_discount_variant_ids = [(6, 0, [])]
+
     @api.onchange('bxa_gyb_discount_base_on')
     def _onchange_bxa_gyb_discount_base_on(self):
         if self.bxa_gyb_discount_base_on != 'fixed':
             self.bxa_gyb_discount_fixed_price = 0.0
         if self.bxa_gyb_discount_base_on != 'percentage':
-            self.bxa_gyb_discount_percentage_price = 0.0
+            self.bxa_gyb_discount_variant_ids = 0.0
 
     @api.constrains('bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
                     'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit', 

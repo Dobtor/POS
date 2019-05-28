@@ -75,7 +75,6 @@
                     </group>
                 </xpath>
                 <xpath expr="//form" position="inside">
-                    
                     <group col="2" attrs="{'invisible':['|','|',('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bogo_base" colspan="2" string="bogo base on" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
                     </group>
@@ -85,12 +84,16 @@
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gyb_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gyb_free_Aproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_free_products" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_free')]}"/>
+                        <field name="bxa_gyb_free_gift_base_on" widget="radio" />
+                        <field name="bxa_gyb_free_products" class="oe_inline" attrs="{'invisible':[('bxa_gyb_free_gift_base_on', '!=', 'product')],'required':[('bogo_base', '=', 'bxa_gyb_free'), ('bxa_gyb_free_gift_base_on', '=', 'product')]}"/>
+                        <field name="bxa_gyb_free_variant_ids" widget="many2many_tags" class="oe_inline" attrs="{'invisible':[('bxa_gyb_free_gift_base_on', '!=', 'variant')],'required':[('bogo_base', '=', 'bxa_gyb_free'), ('bxa_gyb_free_gift_base_on', '=', 'variant')]}"/>
                         <field name="bxa_gyb_free_Bproduct_unit" class="oe_inline"/>
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gyb_discount'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gyb_discount_Aproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_discount_product" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_discount')]}"/>
+                        <field name="bxa_gyb_discount_gift_base_on" widget="radio" />
+                        <field name="bxa_gyb_discount_product" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_gift_base_on', '!=', 'product')],'required':[('bogo_base', '=', 'bxa_gyb_discount'), ('bxa_gyb_discount_gift_base_on', '=', 'product')]}"/>
+                        <field name="bxa_gyb_discount_variant_ids" class="oe_inline" widget="many2many_tags" attrs="{'invisible':[('bxa_gyb_discount_gift_base_on', '!=', 'variant')],'required':[('bogo_base', '=', 'bxa_gyb_discount'), ('bxa_gyb_discount_gift_base_on', '=', 'variant')]}"/>
                         <field name="bxa_gyb_discount_Bproduct_unit" class="oe_inline" />
                         <field name="bxa_gyb_discount_base_on" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_discount')]}"/>
                         <field name="bxa_gyb_discount_fixed_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'fixed')]}"/>
