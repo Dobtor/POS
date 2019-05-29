@@ -33,6 +33,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     exports.load_fields('res.partner', ['birthday', 'member_id', 'used_birthday_times', 'can_discount_times', 'related_discount_product', 'birthday_discount', 'related_discount']);
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
+        // initialize:function(){
+        //     _super_order.prototype.initialize.apply(this);
+        // },
+
         export_as_JSON: function () {
             var res = _super_order.prototype.export_as_JSON.apply(this, arguments);
             return res
@@ -196,9 +200,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 }
                             }
                         });
-                        console.log(self.pos.config.available_member_discount);
+                        console.log('member discount');
                         if (self.pos.config.available_member_discount) {
-                            if (sub_rate >= 0.6 && customer && customer.member_id[0]) {
+                            if (sub_rate >= self.pos.config.member_discount_limit && customer && customer.member_id[0]) {
                                 var today_date = new moment().format('YYYY-MM-DD');
                                 if (customer.birthday == today_date && customer.used_birthday_times < customer.can_discount_times) {
                                     var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
@@ -217,7 +221,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                         'price': -line.price * sub_rate * customer.related_discount,
                                         'quantity': line.quantity
                                     })
-                                    self.selected_orderline.compute_name = customer.member_id[1] + '[' + line.product.display_name + '] ( -' + (customer.related_discount) * 100 + ' %)'
+                                    self.selected_orderline.compute_name = _t(`${customer.member_id[1]} [${line.product.display_name}] ( - ${customer.related_discount * 100} %)`)
                                     self.selected_orderline.product.display_name = self.selected_orderline.compute_name
                                 }
                             }
