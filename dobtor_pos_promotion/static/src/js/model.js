@@ -75,7 +75,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
             return combo_promotion;
         },
-        get_pricelist: function (pricelist, pos=undefined) {
+        get_pricelist: function (pricelist, pos = undefined) {
             var self = this;
             var date = moment().startOf('day');
             var sortpicelist = pricelist.items;
@@ -87,19 +87,16 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 var find_gift_variant = self.inner_join_gift_variant(item);
                 // handle combo promotion.
                 var combo_promotion = self.inner_join_combo_product(item, pos);
-                
-                console.log('variant_ids ', (!item.variant_ids.length || find_variant))
-                console.log('bxa_gyb_free_variant_ids ', (!item.variant_ids.length || find_variant))
-                console.log('bxa_gyb_discount_base_on ', (!item.variant_ids.length || find_variant))
                 // Relationship items
                 return (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id) &&
                     (!item.product_id || item.product_id[0] === self.id) &&
                     (!item.categ_id || _.contains(category_ids, item.categ_id[0])) &&
                     (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
                     (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
-                    (!item.variant_ids.length || find_variant) &&
-                    (!item.bxa_gyb_free_variant_ids.length || find_gift_variant) &&
-                    (!item.bxa_gyb_discount_base_on.length || find_gift_variant) &&
+                    // variant_ids & bxa_gyb_free_variant_ids & bxa_gyb_discount_variant_ids just can one
+                    (!item.variant_ids.length || find_variant || find_gift_variant) &&
+                    ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant) ||
+                        (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant)) &&
                     (!combo_promotion.length || combo_promotion.includes(self.id));
             });
             return pricelist_items;
@@ -309,7 +306,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                             discount = rule.bxa_gyb_discount_percentage_price;
                         } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
                             new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
-                            discount = round_pr((((productC.lst_price - new_pirceC) / productC.lst_price) *100), 1);
+                            discount = round_pr((((productC.lst_price - new_pirceC) / productC.lst_price) * 100), 1);
                         }
                         return {
                             type: 'bogo',
