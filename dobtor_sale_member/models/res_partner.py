@@ -26,11 +26,14 @@ class ResPartner(models.Model):
                 partner.expired_date = datetime.today() + timedelta(days=partner.member_id.expired_date)
                 partner._add_history_tag()
             else:
-                member_type= self.env['sales.member'].sudo().search([('annual_threshold', '>=', partner.total_amount)],order='annual_threshold desc',limit=1)
+                member_type= self.env['sales.member'].sudo().search([('annual_threshold', '<=', partner.total_amount)],order='annual_threshold desc',limit=1)
                 if member_type:
                     partner.member_id = member_type.id
                     partner.expired_date = datetime.today() + timedelta(days=member_type.expired_date)
                     partner._add_history_tag()
+                else:
+                    partner.member_id = False
+                    partner.expired_date = False
             partner.total_amount =0
 
     @api.model
