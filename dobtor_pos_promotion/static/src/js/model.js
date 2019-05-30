@@ -59,6 +59,16 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
             return false;
         },
+        inner_join_gift_product: function (rule) {
+            // get A ∩ B 
+            var self = this;
+            if (rule.bxa_gyb_free_variant_ids && rule.bxa_gyb_free_products[0] === self.id) {
+                return true;
+            } else if (rule.bxa_gyb_free_variant_ids && rule.bxa_gyb_discount_product[0] === self.id) {
+                return true;
+            }
+            return false;
+        },
         inner_join_combo_product: function (rule, pos) {
             var combo_promotion = [];
             var get_combo_promotion;
@@ -81,22 +91,45 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             var sortpicelist = pricelist.items;
             // var sortpicelist = _.sortBy(pricelist.items, 'sequence');
             var pricelist_items = _.filter(sortpicelist, function (item) {
-
-                // handle variant.
+                // handle variant or product.
                 var find_variant = self.inner_join_variant(item);
                 var find_gift_variant = self.inner_join_gift_variant(item);
+                var find_gift_product = self.inner_join_gift_product(item);
+                // console.log('name :', item.related_discount_name);
+                // console.log('c0 : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id));
+                // console.log('c1 : ', (!item.product_id || item.product_id[0] === self.id || find_gift_product));
+                // console.log('c2 : ', ((!item.bxa_gyb_free_products || find_gift_product) ||
+                //     (!item.bxa_gyb_discount_product || find_gift_product)));
+                // console.log('c3 : ', (!item.variant_ids.length || find_variant || find_gift_variant));
+                // console.log('c4 : ', ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant) ||
+                //     (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant)));
                 // handle combo promotion.
                 var combo_promotion = self.inner_join_combo_product(item, pos);
+                // console.log('total : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product) &&
+                //     (!item.product_id || item.product_id[0] === self.id || find_gift_product) &&
+                //     ((!item.bxa_gyb_free_products || find_gift_product) ||
+                //         (!item.bxa_gyb_discount_product || find_gift_product)) &&
+                //     (!item.categ_id || _.contains(category_ids, item.categ_id[0])) &&
+                //     (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
+                //     (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
+                //     // variant_ids & bxa_gyb_free_variant_ids & bxa_gyb_discount_variant_ids just can one
+                //     (!item.variant_ids.length || find_variant || find_gift_variant) &&
+                //     ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant) ||
+                //         (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant)) &&
+                //     (!combo_promotion.length || combo_promotion.includes(self.id)));
+                // console.log('c5 : ', (!combo_promotion.length || combo_promotion.includes(self.id)));
                 // Relationship items
-                return (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id) &&
-                    (!item.product_id || item.product_id[0] === self.id) &&
+                return (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
+                    (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
+                    ((!item.bxa_gyb_free_products || find_gift_product || find_gift_variant) ||
+                        (!item.bxa_gyb_discount_product || find_gift_product || find_gift_variant)) &&
                     (!item.categ_id || _.contains(category_ids, item.categ_id[0])) &&
                     (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
                     (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
                     // variant_ids & bxa_gyb_free_variant_ids & bxa_gyb_discount_variant_ids just can one
-                    (!item.variant_ids.length || find_variant || find_gift_variant) &&
-                    ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant) ||
-                        (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant)) &&
+                    (!item.variant_ids.length || find_variant || find_gift_variant || find_gift_product) &&
+                    ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
+                        (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)) &&
                     (!combo_promotion.length || combo_promotion.includes(self.id));
             });
             return pricelist_items;
@@ -243,86 +276,96 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
             var quant = parseFloat(quantity) || 0;
             if (rule.compute_price === 'bogo_sale') {
-                if (rule.bogo_base === 'bxa_gya_free') {
-                    var add_newproduct_qty = parseInt(quant / (rule.bxa_gya_free_Aproduct_unit + rule.bxa_gya_free_Bproduct_unit));
-                    return {
-                        type: 'bogo',
-                        price: price,
-                        discount: 100,
-                        quantity: add_newproduct_qty,
-                        gift: self.product,
-                    };
-                }
-                if (rule.bogo_base === 'bxa_gyb_free') {
-                    var can_productB_free_qty = parseInt(quant / rule.bxa_gyb_free_Aproduct_unit) * rule.bxa_gyb_free_Bproduct_unit;
-                    var add_newproductB_qty = 0
-                    var productB;
-                    var result_quantity = 0;
-                    $.each(order.orderlines.models, function (i, line) {
-                        var product_id = line.product.id;
-                        if (product_id == rule.bxa_gyb_free_products[0]) {
-                            add_newproductB_qty = line.quantity;
-                            productB = line.product;
-                        }
-                    });
-                    if (productB && add_newproductB_qty) {
-                        if (add_newproductB_qty >= can_productB_free_qty) {
-                            result_quantity = can_productB_free_qty;
-                        } else {
-                            result_quantity = add_newproductB_qty;
-                        }
-                        return {
-                            type: 'bogo',
-                            price: productB.lst_price,
-                            discount: 100,
-                            quantity: result_quantity,
-                            // product: self.product,
-                            gift: self.pos.db.get_product_by_id(rule.bxa_gyb_free_products[0]),
-                        };
-                    }
-                }
-                if (rule.bogo_base === 'bxa_gyb_discount') {
-                    var can_productC_free_qty = parseInt(quant / rule.bxa_gyb_discount_Aproduct_unit) * rule.bxa_gyb_discount_Bproduct_unit;
-                    var add_newproductC_qty = 0
-                    var productC;
-                    var resultC_quantity = 0;
-                    $.each(order.orderlines.models, function (i, line) {
-                        var product_id = line.product.id;
-                        if (product_id == rule.bxa_gyb_discount_product[0]) {
-                            add_newproductC_qty = line.quantity;
-                            productC = line.product;
-                        }
-                    });
-                    if (productC && add_newproductC_qty) {
-                        if (add_newproductC_qty >= can_productC_free_qty) {
-                            resultC_quantity = can_productC_free_qty;
-                        } else {
-                            resultC_quantity = add_newproductC_qty;
-                        }
-                        var new_pirceC = productC.lst_price;
-                        var discount = 0;
-                        if (rule.bxa_gyb_discount_base_on === 'percentage') {
-                            new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
-                            discount = rule.bxa_gyb_discount_percentage_price;
-                        } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
-                            new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
-                            discount = round_pr((((productC.lst_price - new_pirceC) / productC.lst_price) * 100), 1);
-                        }
-                        return {
-                            type: 'bogo',
-                            price: new_pirceC,
-                            discount: discount,
-                            quantity: resultC_quantity,
-                            gift: self.pos.db.get_product_by_id(rule.bxa_gyb_discount_product[0]),
-                        };
-                    }
-                }
                 return {
+                    rule_id: rule.id,
+                    rule: rule,
                     type: 'bogo',
-                    price: 0,
+                    price: price,
                     discount: 0,
-                    quantity: 0,
+                    quantity: quantity,
+                    product_type: self.product.inner_join_gift_variant(rule) || self.product.inner_join_gift_product(rule) ? 'gift' : 'product',
+                    product: self.product
                 };
+                // if (rule.bogo_base === 'bxa_gya_free') {
+                //     var add_newproduct_qty = parseInt(quant / (rule.bxa_gya_free_Aproduct_unit + rule.bxa_gya_free_Bproduct_unit));
+                //     return {
+                //         type: 'bogo',
+                //         price: price,
+                //         discount: 100,
+                //         quantity: add_newproduct_qty,
+                //         gift: self.product,
+                //     };
+                // }
+                // if (rule.bogo_base === 'bxa_gyb_free') {
+                //     var can_productB_free_qty = parseInt(quant / rule.bxa_gyb_free_Aproduct_unit) * rule.bxa_gyb_free_Bproduct_unit;
+                //     var add_newproductB_qty = 0
+                //     var productB;
+                //     var result_quantity = 0;
+                //     $.each(order.orderlines.models, function (i, line) {
+                //         var product_id = line.product.id;
+                //         if (product_id == rule.bxa_gyb_free_products[0]) {
+                //             add_newproductB_qty = line.quantity;
+                //             productB = line.product;
+                //         }
+                //     });
+                //     if (productB && add_newproductB_qty) {
+                //         if (add_newproductB_qty >= can_productB_free_qty) {
+                //             result_quantity = can_productB_free_qty;
+                //         } else {
+                //             result_quantity = add_newproductB_qty;
+                //         }
+                //         return {
+                //             type: 'bogo',
+                //             price: productB.lst_price,
+                //             discount: 100,
+                //             quantity: result_quantity,
+                //             // product: self.product,
+                //             gift: self.pos.db.get_product_by_id(rule.bxa_gyb_free_products[0]),
+                //         };
+                //     }
+                // }
+                // if (rule.bogo_base === 'bxa_gyb_discount') {
+                //     var can_productC_free_qty = parseInt(quant / rule.bxa_gyb_discount_Aproduct_unit) * rule.bxa_gyb_discount_Bproduct_unit;
+                //     var add_newproductC_qty = 0
+                //     var productC;
+                //     var resultC_quantity = 0;
+                //     $.each(order.orderlines.models, function (i, line) {
+                //         var product_id = line.product.id;
+                //         if (product_id == rule.bxa_gyb_discount_product[0]) {
+                //             add_newproductC_qty = line.quantity;
+                //             productC = line.product;
+                //         }
+                //     });
+                //     if (productC && add_newproductC_qty) {
+                //         if (add_newproductC_qty >= can_productC_free_qty) {
+                //             resultC_quantity = can_productC_free_qty;
+                //         } else {
+                //             resultC_quantity = add_newproductC_qty;
+                //         }
+                //         var new_pirceC = productC.lst_price;
+                //         var discount = 0;
+                //         if (rule.bxa_gyb_discount_base_on === 'percentage') {
+                //             new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
+                //             discount = rule.bxa_gyb_discount_percentage_price;
+                //         } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
+                //             new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
+                //             discount = round_pr((((productC.lst_price - new_pirceC) / productC.lst_price) * 100), 1);
+                //         }
+                //         return {
+                //             type: 'bogo',
+                //             price: new_pirceC,
+                //             discount: discount,
+                //             quantity: resultC_quantity,
+                //             gift: self.pos.db.get_product_by_id(rule.bxa_gyb_discount_product[0]),
+                //         };
+                //     }
+                // }
+                // return {
+                //     type: 'bogo',
+                //     price: price,
+                //     discount: 0,
+                //     quantity: 0,
+                // };
             }
             if (rule.base === 'pricelist') {
                 new_price = self.get_price(rule.base_pricelist, quantity);
