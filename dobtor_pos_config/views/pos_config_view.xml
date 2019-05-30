@@ -26,9 +26,15 @@
                         <field name="available_member_discount"/>
                     </div>
                     <div class="o_setting_right_pane">
-                        <label for="available_member_discount" string="Use Member Discount"/>
+                    <label for="available_member_discount" string="Use Member Discount"/>
                         <div class="text-muted">
                                     Available Using Member Discount in POS.
+                        </div>
+                        <div class="content-group mt16" attrs="{'invisible': [('available_member_discount','=',False)], 'required' : [('available_member_discount', '=', True)]}">
+                            <div class="row mt16">
+                                <label string="Member Discount Limit." for="member_discount_limit" class="col-lg-3 o_light_label"/>
+                                <field name="member_discount_limit"/>
+                            </div>
                         </div>
                     </div>
                 </div>
