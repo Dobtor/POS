@@ -197,10 +197,10 @@ class PricelistItem(models.Model):
     def _onchange_applied_on(self):
         super()._onchange_applied_on()
         if self.applied_on != '02_variant_value':
-            self.variant_id = False
+            self.variant_id = [(6, 0, [])]
 
     @api.onchange('base_on')
-    def _onchange_applied_on(self):
+    def _onchange_base_on(self):
         if self.base_on != 'combo_sale':
             self.combo_sale_ids = [(6, 0, [])]
             self.is_primary_key = False
