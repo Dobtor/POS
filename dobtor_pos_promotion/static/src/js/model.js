@@ -138,7 +138,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
                     ((!item.bxa_gyb_free_products || find_gift_product || find_gift_variant) ||
                         (!item.bxa_gyb_discount_product || find_gift_product || find_gift_variant)) &&
-                    (!item.categ_id || _.contains(category_ids, item.categ_id[0])) &&
+                    (!item.categ_id || _.contains(category_ids, item.categ_id[0]) || find_gift_product || find_gift_variant) &&
                     (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
                     (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
                     // variant_ids & bxa_gyb_free_variant_ids & bxa_gyb_discount_variant_ids just can one
@@ -149,71 +149,71 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             });
             return pricelist_items;
         },
-        get_rule_price: function (pricelist_items, quantity, price) {
-            _.find(pricelist_items, function (rule) {
-                if (rule.min_quantity && quantity < rule.min_quantity) {
-                    return false;
-                }
+        // get_rule_price: function (pricelist_items, quantity, price) {
+        //     _.find(pricelist_items, function (rule) {
+        //         if (rule.min_quantity && quantity < rule.min_quantity) {
+        //             return false;
+        //         }
 
-                if (rule.level_on === 'order') {
-                    return false;
-                }
+        //         if (rule.level_on === 'order') {
+        //             return false;
+        //         }
 
-                if (rule.base === 'pricelist') {
-                    price = self.get_price(rule.base_pricelist, quantity);
-                } else if (rule.base === 'standard_price') {
-                    price = self.standard_price;
-                }
+        //         if (rule.base === 'pricelist') {
+        //             price = self.get_price(rule.base_pricelist, quantity);
+        //         } else if (rule.base === 'standard_price') {
+        //             price = self.standard_price;
+        //         }
 
-                if (rule.compute_price === 'fixed') {
-                    price = rule.fixed_price;
-                    return true;
-                } else if (rule.compute_price === 'percentage') {
-                    price = price - (price * (rule.percent_price / 100));
-                    price = round_pr(price, 1);
-                    return true;
-                } else if (rule.compute_price === 'formula') {
-                    var price_limit = price;
-                    price = price - (price * (rule.price_discount / 100));
-                    if (rule.price_round) {
-                        price = round_pr(price, rule.price_round);
-                    }
-                    if (rule.price_surcharge) {
-                        price += rule.price_surcharge;
-                    }
-                    if (rule.price_min_margin) {
-                        price = Math.max(price, price_limit + rule.price_min_margin);
-                    }
-                    if (rule.price_max_margin) {
-                        price = Math.min(price, price_limit + rule.price_max_margin);
-                    }
-                    return true;
-                }
-                return false;
-            });
-            return price;
-        },
-        get_price: function (pricelist, quantity) {
-            var self = this;
-            if (pricelist === undefined) {
-                alert(_t(
-                    'An error occurred when loading product prices. ' +
-                    'Make sure all pricelists are available in the POS.'
-                ));
-            }
+        //         if (rule.compute_price === 'fixed') {
+        //             price = rule.fixed_price;
+        //             return true;
+        //         } else if (rule.compute_price === 'percentage') {
+        //             price = price - (price * (rule.percent_price / 100));
+        //             price = round_pr(price, 1);
+        //             return true;
+        //         } else if (rule.compute_price === 'formula') {
+        //             var price_limit = price;
+        //             price = price - (price * (rule.price_discount / 100));
+        //             if (rule.price_round) {
+        //                 price = round_pr(price, rule.price_round);
+        //             }
+        //             if (rule.price_surcharge) {
+        //                 price += rule.price_surcharge;
+        //             }
+        //             if (rule.price_min_margin) {
+        //                 price = Math.max(price, price_limit + rule.price_min_margin);
+        //             }
+        //             if (rule.price_max_margin) {
+        //                 price = Math.min(price, price_limit + rule.price_max_margin);
+        //             }
+        //             return true;
+        //         }
+        //         return false;
+        //     });
+        //     return price;
+        // },
+        // get_price: function (pricelist, quantity) {
+        //     var self = this;
+        //     if (pricelist === undefined) {
+        //         alert(_t(
+        //             'An error occurred when loading product prices. ' +
+        //             'Make sure all pricelists are available in the POS.'
+        //         ));
+        //     }
 
-            var category_ids = [];
-            var category = this.categ;
-            while (category) {
-                category_ids.push(category.id);
-                category = category.parent;
-            }
-            var pricelist_items = this.get_pricelist(pricelist);
+        //     var category_ids = [];
+        //     var category = this.categ;
+        //     while (category) {
+        //         category_ids.push(category.id);
+        //         category = category.parent;
+        //     }
+        //     var pricelist_items = this.get_pricelist(pricelist);
 
-            var price = self.lst_price;
-            price = this.get_rule_price(pricelist_items, quantity, price);
-            return price;
-        },
+        //     var price = self.lst_price;
+        //     price = this.get_rule_price(pricelist_items, quantity, price);
+        //     return price;
+        // },
     });
 
     var OrderlineCollection = Backbone.Collection.extend({
@@ -301,86 +301,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     product_type: self.product.inner_join_gift_variant(rule) || self.product.inner_join_gift_product(rule) ? 'gift' : 'product',
                     product: self.product
                 };
-                // if (rule.bogo_base === 'bxa_gya_free') {
-                //     var add_newproduct_qty = parseInt(quant / (rule.bxa_gya_free_Aproduct_unit + rule.bxa_gya_free_Bproduct_unit));
-                //     return {
-                //         type: 'bogo',
-                //         price: price,
-                //         discount: 100,
-                //         quantity: add_newproduct_qty,
-                //         gift: self.product,
-                //     };
-                // }
-                // if (rule.bogo_base === 'bxa_gyb_free') {
-                //     var can_productB_free_qty = parseInt(quant / rule.bxa_gyb_free_Aproduct_unit) * rule.bxa_gyb_free_Bproduct_unit;
-                //     var add_newproductB_qty = 0
-                //     var productB;
-                //     var result_quantity = 0;
-                //     $.each(order.orderlines.models, function (i, line) {
-                //         var product_id = line.product.id;
-                //         if (product_id == rule.bxa_gyb_free_products[0]) {
-                //             add_newproductB_qty = line.quantity;
-                //             productB = line.product;
-                //         }
-                //     });
-                //     if (productB && add_newproductB_qty) {
-                //         if (add_newproductB_qty >= can_productB_free_qty) {
-                //             result_quantity = can_productB_free_qty;
-                //         } else {
-                //             result_quantity = add_newproductB_qty;
-                //         }
-                //         return {
-                //             type: 'bogo',
-                //             price: productB.lst_price,
-                //             discount: 100,
-                //             quantity: result_quantity,
-                //             // product: self.product,
-                //             gift: self.pos.db.get_product_by_id(rule.bxa_gyb_free_products[0]),
-                //         };
-                //     }
-                // }
-                // if (rule.bogo_base === 'bxa_gyb_discount') {
-                //     var can_productC_free_qty = parseInt(quant / rule.bxa_gyb_discount_Aproduct_unit) * rule.bxa_gyb_discount_Bproduct_unit;
-                //     var add_newproductC_qty = 0
-                //     var productC;
-                //     var resultC_quantity = 0;
-                //     $.each(order.orderlines.models, function (i, line) {
-                //         var product_id = line.product.id;
-                //         if (product_id == rule.bxa_gyb_discount_product[0]) {
-                //             add_newproductC_qty = line.quantity;
-                //             productC = line.product;
-                //         }
-                //     });
-                //     if (productC && add_newproductC_qty) {
-                //         if (add_newproductC_qty >= can_productC_free_qty) {
-                //             resultC_quantity = can_productC_free_qty;
-                //         } else {
-                //             resultC_quantity = add_newproductC_qty;
-                //         }
-                //         var new_pirceC = productC.lst_price;
-                //         var discount = 0;
-                //         if (rule.bxa_gyb_discount_base_on === 'percentage') {
-                //             new_pirceC = new_pirceC - (new_pirceC * (rule.bxa_gyb_discount_percentage_price / 100));
-                //             discount = rule.bxa_gyb_discount_percentage_price;
-                //         } else if (rule.bxa_gyb_discount_base_on === 'fixed') {
-                //             new_pirceC = round_pr(rule.bxa_gyb_discount_fixed_price, 1);
-                //             discount = round_pr((((productC.lst_price - new_pirceC) / productC.lst_price) * 100), 1);
-                //         }
-                //         return {
-                //             type: 'bogo',
-                //             price: new_pirceC,
-                //             discount: discount,
-                //             quantity: resultC_quantity,
-                //             gift: self.pos.db.get_product_by_id(rule.bxa_gyb_discount_product[0]),
-                //         };
-                //     }
-                // }
-                // return {
-                //     type: 'bogo',
-                //     price: price,
-                //     discount: 0,
-                //     quantity: 0,
-                // };
             }
             if (rule.base === 'pricelist') {
                 new_price = self.get_price(rule.base_pricelist, quantity);
