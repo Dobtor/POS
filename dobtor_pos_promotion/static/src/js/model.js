@@ -88,9 +88,24 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         get_pricelist: function (pricelist, pos = undefined) {
             var self = this;
             var date = moment().startOf('day');
+            if (pricelist === undefined) {
+                alert(_t(
+                    'An error occurred when loading product prices. ' +
+                    'Make sure all pricelists are available in the POS.'
+                ));
+            }
+
+            var category_ids = [];
+            var category = this.categ;
+            while (category) {
+                category_ids.push(category.id);
+                category = category.parent;
+            }
+
             var sortpicelist = pricelist.items;
             // var sortpicelist = _.sortBy(pricelist.items, 'sequence');
             var pricelist_items = _.filter(sortpicelist, function (item) {
+
                 // handle variant or product.
                 var find_variant = self.inner_join_variant(item);
                 var find_gift_variant = self.inner_join_gift_variant(item);
