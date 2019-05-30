@@ -8,7 +8,7 @@ class Sale_Member(models.Model):
     
     @api.model
     def get_discount(self):
-        return self.env.ref('dobtor_pos_multi_pricelist.product_discount_member').product_id.id
+        return self.env.ref('dobtor_pos_multi_pricelist.product_discount_members').product_id.id
 
     related_item = fields.Many2one(string='related_product',comodel_name='product.product',default=get_discount,readonly=1)
 

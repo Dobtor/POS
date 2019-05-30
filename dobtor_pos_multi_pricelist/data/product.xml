@@ -39,7 +39,7 @@
             <field name="sequence">40</field>
         </record>
 
-        <record id="product_discount_member" model="product.product.discount">
+        <record id="product_discount_members" model="product.product.discount">
             <field name="name">Discount-Member</field>
             <field name="type">service</field>
             <field name="discount_type" eval="True"/>
