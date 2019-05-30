@@ -195,6 +195,7 @@ class PricelistItem(models.Model):
 
     @api.onchange('applied_on')
     def _onchange_applied_on(self):
+        super()._onchange_applied_on()
         if self.applied_on != '02_variant_value':
             self.variant_id = False
 
