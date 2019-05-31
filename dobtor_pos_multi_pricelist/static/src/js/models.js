@@ -333,10 +333,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     return gwtp.product_type === 'gift';
                 });
                 // sub query rule, gift, product
+                var this_rule = group_bogo[t][0].rule;
                 var product_set = _.chain(group_where_type_product)
                     .sortBy('price')
-                    .pluck('product')
-                    .value();
+                    .pluck('product');
+                product_set = this_rule.order_by_pirce === 'desc' ? product_set.reverse().value() : product_set.value();
                 var product_set_qty = _.chain(group_where_type_product)
                     .pluck('quantity')
                     .reduce(function (memo, num) {
@@ -345,16 +346,14 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     .value();
                 var gift_set = _.chain(group_where_type_gift)
                     .sortBy('price')
-                    .pluck('product')
-                    .value();
+                    .pluck('product');
+                gift_set = this_rule.order_by_pirce === 'desc' ? gift_set.reverse().value() : gift_set.value();
                 var gift_set_qty = _.chain(group_where_type_gift)
                     .pluck('quantity')
                     .reduce(function (memo, num) {
                         return memo + num;
                     }, 0)
                     .value();
-                var this_rule = group_bogo[t][0].rule;
-
                 
                 // handle the same
                 var the_same = false;
@@ -369,7 +368,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 console.log('product_set : ', product_set);
                 console.log('product_set_qty : ', product_set_qty);
                 console.log('the_same : ', the_same);
-                console.log('the_same : ', this_rule);
+                console.log('this_rule : ', this_rule);
 
                 // Compute Promotion
                 if (product_set.length) {
