@@ -74,16 +74,29 @@ class PricelistItem(models.Model):
             # ('other_sale', _('Other Promotion')),
         ]
     )
-    bogo_base = fields.Selection([
-        ('bxa_gya_free', _('Buy (X Unit) of Product , Get (Y Unit) of Product Free')),
-        ('bxa_gya_discount', _(
-            'Buy (X Unit) of Product , Get Product for % Discount')),
-        ('bxa_gyb_free', _('Buy (X Unit) of Product Get (Y Unit) of Another Products Free')),
-        ('bxa_gyb_discount', _(
-            'Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
-    ],
+    bogo_base = fields.Selection(
+        string=_('bogo base on'),
+        selection=[
+            ('bxa_gya_free', _('Buy (X Unit) of Product , Get (Y Unit) of Product Free')),
+            ('bxa_gya_discount', _(
+                'Buy (X Unit) of Product , Get Product for % Discount')),
+            ('bxa_gyb_free', _(
+                'Buy (X Unit) of Product Get (Y Unit) of Another Products Free')),
+            ('bxa_gyb_discount', _(
+                'Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
+        ],
         index=True,
         default='bxa_gya_free'
+    )
+    # order by
+    order_by_pirce = fields.Selection(
+        string=_('Order by Price'),
+        selection=[
+            ('asc', _('ascending')),
+            ('desc', _('descending'))
+        ],
+        index=True,
+        default='asc'
     )
     # bxa_gya_free
     bxa_gya_free_Aproduct_unit = fields.Integer(
@@ -219,11 +232,13 @@ class PricelistItem(models.Model):
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
+        self.order_by_pirce = 'asc'
         self.bxa_gya_free_Aproduct_unit = 1
         self.bxa_gya_free_Bproduct_unit = 1
 
     @api.multi
     def _get_default_bxa_gyb_free_value(self):
+        self.order_by_pirce = 'asc'
         self.bxa_gyb_free_Aproduct_unit = 1
         self.bxa_gyb_free_Bproduct_unit = 1
         self.bxa_gyb_free_gift_base_on = 'product'
@@ -232,6 +247,7 @@ class PricelistItem(models.Model):
 
     @api.multi
     def _get_default_bxa_gyb_discount_value(self):
+        self.order_by_pirce = 'asc'
         self.bxa_gyb_discount_Aproduct_unit = 1
         self.bxa_gyb_discount_Bproduct_unit = 1
         self.bxa_gyb_discount_gift_base_on = 'product'
@@ -257,10 +273,14 @@ class PricelistItem(models.Model):
     def _onchange_bogo_base(self):
         if self.bogo_base != 'bxa_gya_free':
             self._get_default_bxa_gya_free_value()
+        if self.bogo_base != 'bxa_gya_discount':
+            self.order_by_pirce = 'asc'
         if self.bogo_base != 'bxa_gyb_free':
             self._get_default_bxa_gyb_free_value()
         if self.bogo_base != 'bxa_gyb_discount':
             self._get_default_bxa_gyb_discount_value()
+        if self.bogo_base == 'bxa_gya_discount':
+            self.order_by_pirce = 'desc'
 
     @api.onchange('bxa_gyb_free_gift_base_on')
     def _onchange_bxa_gyb_free_gift_base_on(self):

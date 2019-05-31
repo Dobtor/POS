@@ -77,6 +77,7 @@
                 <xpath expr="//form" position="inside">
                     <group col="2" attrs="{'invisible':['|','|',('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bogo_base" colspan="2" string="bogo base on" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
+                        <field name="order_by_pirce" widget="radio" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gya_free_Aproduct_unit" class="oe_inline" />
