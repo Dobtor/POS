@@ -37,6 +37,20 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         'after': 'product.product'
     });
 
+    models.load_models([{
+        model: 'sale.promotion.bogo_offer.item',
+        domain: function (self) {
+            return [
+                ['pricelist_id', 'in', _.pluck(self.pricelists, 'id')]
+            ];
+        },
+        loaded: function (self, promotion_rules) {
+            self.bogo_offer_items = promotion_rules;
+        },
+    }], {
+        'after': 'product.product'
+    });
+
     models.load_fields('product.product', ['attribute_value_ids']);
 
     var _super_product = exports.Product;
