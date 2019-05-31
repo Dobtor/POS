@@ -269,16 +269,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             var quantity = self.quantity;
             var new_price = 0;
 
-
-            if (rule.min_quantity && quantity < rule.min_quantity) {
-                return {
-                    type: 'price',
-                    price: price,
-                    discount: 0,
-                    quantity: 0,
-                };
-            }
-
             if (rule.level_on === 'order') {
                 if (rule.base_on === 'range') {
                     return {
@@ -305,6 +295,11 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
             var quant = parseFloat(quantity) || 0;
             if (rule.compute_price === 'bogo_sale') {
+
+                var is_proudct = (!rule.product_tmpl_id || rule.product_tmpl_id[0] === self.product.product_tmpl_id) &&
+                    (!rule.product_id || rule.product_id[0] === self.product.id) &&
+                    (!rule.variant_ids.length || self.product.inner_join_variant(rule));
+                var is_gift = self.product.inner_join_gift_variant(rule) || self.product.inner_join_gift_product(rule);
                 return {
                     rule_id: rule.id,
                     rule: rule,
@@ -312,7 +307,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     price: price,
                     discount: 0,
                     quantity: quantity,
-                    product_type: self.product.inner_join_gift_variant(rule) || self.product.inner_join_gift_product(rule) ? 'gift' : 'product',
+                    product_type: is_gift ? 'gift' : 'product',
+                    gift_product_the_same: is_proudct == is_gift,
                     product: self.product
                 };
             }
@@ -331,6 +327,15 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     price: new_price,
                     discount: (price - new_price) / price,
                     quantity: quantity,
+                };
+            }
+
+            if (rule.min_quantity && quantity < rule.min_quantity) {
+                return {
+                    type: 'price',
+                    price: price,
+                    discount: 0,
+                    quantity: 0,
                 };
             }
 
