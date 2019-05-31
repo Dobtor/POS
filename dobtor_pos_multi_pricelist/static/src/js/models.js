@@ -130,7 +130,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         items.push(item);
                     })
                 });
-                
+
                 // check has pricelist item 
                 if (items.length > 0) {
                     // if only one pricelist item
@@ -389,6 +389,43 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 });
                             }
                             while (i <= quant);
+                        } else if (this_rule.bogo_base === 'bxa_gya_discount' && quant) {
+                            var get_bogo_offer_itme = undefined;
+                            var filter_this_rule_bogo_items = _.filter(self.pos.bogo_offer_items, function (bogo_item) {
+                                return bogo_item.promotion_id[0] == group_bogo[t][0].rule_id
+                            });
+                            var max_bogo_count = filter_this_rule_bogo_items.length;
+                            if (max_bogo_count) {
+                                do {
+                                    i += 1;
+                                    if (i <= max_bogo_count) {
+                                        get_bogo_offer_itme = _.find(filter_this_rule_bogo_items, function (bogo_item) {
+                                            return bogo_item.buy_x == i;
+                                        });
+                                    } else if (i > max_bogo_count && (!this_rule.min_quantity || (i - max_bogo_count) < this_rule.min_quantity)) {
+                                        get_bogo_offer_itme = _.last(filter_this_rule_bogo_items);
+                                    }
+                                    if (i <= quant) {
+                                        if (get_bogo_offer_itme) {
+                                            var bogo_promotion_pirce = product_set[gift_index].lst_price;
+                                            bogo_promotion_pirce = bogo_promotion_pirce - (bogo_promotion_pirce * (get_bogo_offer_itme.based_on_percentage / 100));
+                                            discount = get_bogo_offer_itme.based_on_percentage;
+                                            if (discount > 0) {
+                                                temp_product = $.extend(true, {}, discount_product);
+                                                self.add_product(temp_product, {
+                                                    'price': -bogo_promotion_pirce,
+                                                    'quantity': 1,
+                                                });
+                                                self.selected_orderline.compute_name = self.add_line_description(this_rule, undefined, discount, product_set[gift_index]);
+                                                self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
+                                            }
+                                        }
+                                        gift_index++;
+                                        get_bogo_offer_itme = undefined;
+                                    }
+                                }
+                                while (i <= quant);
+                            }
                         } else if (this_rule.bogo_base === 'bxa_gyb_free' && quant && (parseFloat(gift_set_qty) || 0)) {
                             do {
                                 i += parseInt(this_rule.bxa_gyb_free_Aproduct_unit);
