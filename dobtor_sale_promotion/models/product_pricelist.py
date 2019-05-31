@@ -76,10 +76,11 @@ class PricelistItem(models.Model):
     )
     bogo_base = fields.Selection([
         ('bxa_gya_free', _('Buy (X Unit) of Product , Get (Y Unit) of Product Free')),
+        ('bxa_gya_discount', _(
+            'Buy (X Unit) of Product , Get Product for % Discount')),
         ('bxa_gyb_free', _('Buy (X Unit) of Product Get (Y Unit) of Another Products Free')),
         ('bxa_gyb_discount', _(
             'Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
-        # ('bxa_gyc_free', _('Buy (X Unit) of Product A, Get (Y Unit) of Another Products (Categrory) Free'))
     ],
         index=True,
         default='bxa_gya_free'
@@ -93,6 +94,13 @@ class PricelistItem(models.Model):
         string=_("Discounted Product Qty"),
         default=1
     )
+    # bxa_gya_discount
+    bxa_gya_discount_ids = fields.One2many(
+        string=_('BOGO Rule Lines'),
+        comodel_name='sale.promotion.bogo_offer.item',
+        inverse_name='promotion_id',
+    )
+
     # bxa_gyb_free
     bxa_gyb_free_Aproduct_unit = fields.Integer(
         string=_("Product Qty"),
@@ -260,7 +268,7 @@ class PricelistItem(models.Model):
             self.bxa_gyb_free_products = False
         if self.bxa_gyb_free_gift_base_on != 'variant':
             self.bxa_gyb_free_variant_ids = [(6, 0, [])]
-    
+
     @api.onchange('bxa_gyb_discount_gift_base_on')
     def _onchange_bxa_gyb_discount_gift_base_on(self):
         if self.bxa_gyb_discount_gift_base_on != 'product':
@@ -276,7 +284,7 @@ class PricelistItem(models.Model):
             self.bxa_gyb_discount_variant_ids = 0.0
 
     @api.constrains('bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
-                    'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit', 
+                    'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit',
                     'bxa_gyb_discount_Aproduct_unit', 'bxa_gyb_discount_Bproduct_unit',  'bxa_gyb_discount_percentage_price')
     def _check_rule_validation(self):
         """  validation at promotion create time. """
@@ -300,4 +308,5 @@ class PricelistItem(models.Model):
                 raise ValidationError(_("It has to be less than 100"))
             if record.bxa_gyb_discount_base_on == 'percentage':
                 if record.bxa_gyb_discount_percentage_price < 0.0:
-                    raise ValidationError(_("Please enter Some Value for Calculation"))
+                    raise ValidationError(
+                        _("Please enter Some Value for Calculation"))

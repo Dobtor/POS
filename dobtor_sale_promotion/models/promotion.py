@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from odoo.tools import float_compare, pycompat
 
 
 class BogoItem(models.Model):
@@ -10,6 +11,66 @@ class BogoItem(models.Model):
     """
     _name = 'sale.promotion.bogo_offer.item'
     _description = 'BOGO Offer Item'
+    _order = 'promotion_id, buy_x'
+    
+    promotion_id = fields.Many2one(
+        string=_('Promotion Reference'),
+        comodel_name='product.pricelist.item',
+        ondelete='cascade',
+        index=True,
+    )
+    pricelist_id = fields.Many2one(
+        string=_('Referce pricelist'),
+        related='promotion_id.pricelist_id',
+        readonly=True,
+        store=True
+    )
+    buy_x = fields.Integer(
+        string=_('Buy (X Unit)'),
+        readonly=True,
+        store=True
+    )
+    based_on_percentage = fields.Float(
+        string=_('Percentage'),
+        default=0.0
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        conut = 0
+        for res in vals_list:
+            if res.get('promotion_id', False):
+                pircelist_item = self.env['product.pricelist.item'].search(
+                        [('id', '=', res.get('promotion_id'))])
+                conut += 1
+                res['buy_x'] = len(pircelist_item.bxa_gya_discount_ids) + conut
+        promotion = super().create(vals_list)
+        self.clear_caches()
+        return promotion
+
+    @api.multi
+    def unlink(self):
+        for record in self:
+            if not isinstance(record.id, models.NewId):
+                pircelist_item = self.env['product.pricelist.item'].search([('id', '=', record.promotion_id.id)])
+                conut = 0
+                for item in pircelist_item.bxa_gya_discount_ids:
+                    if record.id != item.id:
+                        conut += 1
+                        item.write({'buy_x': conut})
+        res = super().unlink()
+        self.clear_caches()
+        return res
+
+    @api.constrains('based_on_percentage')
+    def _check_rule_validation(self):
+        """  validation at promotion create time. """
+        for record in self:
+            if record.based_on_percentage > 99:
+                raise ValidationError(_("It has to be less then 100"))
+            if record.based_on_percentage < 0.0:
+                raise ValidationError(_("Please enter Some Value for Calculation"))
+
 
 class SalePromotionRuleRangeBased(models.Model):
     _name = 'sale.promotion.rule.range.based'

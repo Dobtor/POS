@@ -82,6 +82,14 @@
                         <field name="bxa_gya_free_Aproduct_unit" class="oe_inline" />
                         <field name="bxa_gya_free_Bproduct_unit" class="oe_inline" />
                     </group>
+                    <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_discount'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
+                        <field name="bxa_gya_discount_ids">
+                            <tree string="Rule Lines" editable="bottom">
+                                <field name="buy_x"/>
+                                <field name="based_on_percentage" />
+                            </tree>
+                        </field>
+                    </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gyb_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gyb_free_Aproduct_unit" class="oe_inline" />
                         <field name="bxa_gyb_free_gift_base_on" widget="radio" />
