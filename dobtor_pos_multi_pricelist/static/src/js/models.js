@@ -280,17 +280,31 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // Per Order (Combo)
             var group_combo = _.groupBy(combo_list, 'rule_id');
             $.each(Object.keys(group_combo), function (i, t) {
-                var pluck_product = _.pluck(group_combo[t], 'combo_product');
+                var pluck_product = _.chain(group_combo[t])
+                    .sortBy('price')
+                    .pluck('combo_product')
+                    .value();
                 var this_rule = group_combo[t][0].rule;
+                var combo_promotion_where_this_rule = _.filter(self.pos.combo_promotion, function (combo) {
+                    return combo.promotion_id[0] == group_combo[t][0].rule_id
+                });
+
+                // console.log('group_combo', group_combo);
+                // console.log('product_set : ', pluck_product);
+                // console.log('this_rule : ', this_rule);
+
                 if (pluck_product.length && pluck_product.length == self.inner_join_combo_product(this_rule, self.pos).length) {
                     var sort_min_qty_product = _.sortBy(pluck_product, 'quantity');
                     var min_combo_qty = sort_min_qty_product[0].quantity;
                     if (min_combo_qty > 0) {
 
                         $.each(sort_min_qty_product, function (i, item) {
-                            var get_combo_promotion = _.find(self.pos.combo_promotion, function (combo) {
-                                if (combo.promotion_id[0] == group_combo[t][0].rule_id) {
+                            var get_combo_promotion = _.find(combo_promotion_where_this_rule, function (combo) {
+                                if (combo.applied_on === 'product') {
                                     return combo.product_id[0] == item.product.id;
+                                } else if (combo.applied_on === 'variant') {
+                                    var variant_ids = combo.variant_ids;
+                                    return _.size(_.intersection(item.product.attribute_value_ids, variant_ids, variant_ids)) == _.size(variant_ids);
                                 }
                                 return false;
                             });
@@ -354,7 +368,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         return memo + num;
                     }, 0)
                     .value();
-                
+
                 // handle the same
                 var the_same = false;
                 if (the_same && (parseFloat(gift_set_qty) || 0)) {
@@ -363,12 +377,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     product_set_qty = gift_set_qty;
                 }
 
-                console.log('gift_set : ', gift_set);
-                console.log('gift_set_qty : ', gift_set_qty);
-                console.log('product_set : ', product_set);
-                console.log('product_set_qty : ', product_set_qty);
-                console.log('the_same : ', the_same);
-                console.log('this_rule : ', this_rule);
+                // console.log('gift_set : ', gift_set);
+                // console.log('gift_set_qty : ', gift_set_qty);
+                // console.log('product_set : ', product_set);
+                // console.log('product_set_qty : ', product_set_qty);
+                // console.log('the_same : ', the_same);
+                // console.log('this_rule : ', this_rule);
 
                 // Compute Promotion
                 if (product_set.length) {
@@ -389,7 +403,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                         i++;
                                         if (i <= quant) {
                                             var promotion_pirce = product_set[gift_index].lst_price;
-                                            if (the_same && this_rule.bogo_base === 'bxa_gyb_discount') {                                                
+                                            if (the_same && this_rule.bogo_base === 'bxa_gyb_discount') {
                                                 if (this_rule.bxa_gyb_discount_base_on === 'percentage') {
                                                     promotion_pirce = promotion_pirce - (promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100));
                                                     discount = this_rule.bxa_gyb_discount_percentage_price;
@@ -405,7 +419,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                                 'price': -promotion_pirce,
                                                 'quantity': 1,
                                             });
-                                            
+
                                             self.selected_orderline.compute_name = self.add_line_description(this_rule, undefined, discount, product_set[gift_index]);
                                             self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
                                             gift_index++;
