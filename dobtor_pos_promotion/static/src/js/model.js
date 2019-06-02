@@ -83,18 +83,34 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
             return false;
         },
-        inner_join_combo_product: function (rule, pos) {
+        inner_join_combo_variant: function (rule, pos) {
             var combo_promotion = [];
-            var get_combo_promotion;
+            var get_combo_promotion_variant;
             if (pos) {
-                get_combo_promotion = _.filter(pos.combo_promotion, function (combo) {
+                get_combo_promotion_variant = _.filter(pos.combo_promotion, function (combo) {
                     if (combo.promotion_id[0] == rule.id) {
-                        return true;
+                        return combo.applied_on === 'variant';
                     }
                     return false;
                 });
-                if (get_combo_promotion) {
-                    combo_promotion = _.pluck(_.pluck(get_combo_promotion, 'product_id'), 0);
+                if (get_combo_promotion_variant.length) {
+                    combo_promotion = _.pluck(get_combo_promotion_variant, 'variant_ids');
+                }
+            }
+            return combo_promotion;
+        },
+        inner_join_combo_product: function (rule, pos) {
+            var combo_promotion = [];
+            var get_combo_promotion_product;
+            if (pos) {
+                get_combo_promotion_product = _.filter(pos.combo_promotion, function (combo) {
+                    if (combo.promotion_id[0] == rule.id) {
+                        return combo.applied_on === 'product';
+                    }
+                    return false;
+                });
+                if (get_combo_promotion_product.length) {
+                    combo_promotion = _.pluck(_.pluck(get_combo_promotion_product, 'product_id'), 0);
                 }
             }
             return combo_promotion;
@@ -134,6 +150,19 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 //     (!item.bxa_gyb_discount_variant_ids.length || find_gift_product || find_gift_variant)));
                 // handle combo promotion.
                 var combo_promotion = self.inner_join_combo_product(item, pos);
+                var combo_variant_promotion = self.inner_join_combo_variant(item, pos);
+                var find_combo_variant = false;
+                if (combo_variant_promotion.length) {
+                    _.find(combo_variant_promotion, function(cvp) {
+                        // console.log('cvp :', cvp);
+                        // console.log('self.attribute_value_ids : ', self.attribute_value_ids);
+                        // console.log('merge : ', _.size(_.intersection(self.attribute_value_ids, cvp, cvp)) == _.size(cvp));
+                        if (_.size(_.intersection(self.attribute_value_ids, cvp, cvp)) == _.size(cvp)) {
+                            find_combo_variant = true;
+                            return true;
+                        }   
+                    });
+                }
                 // console.log('total : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
                 //     (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
                 //     ((!item.bxa_gyb_free_products || find_gift_product || find_gift_variant) ||
@@ -145,8 +174,16 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 //     (!item.variant_ids.length || find_variant || find_gift_variant || find_gift_product) &&
                 //     ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
                 //         (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)) &&
-                //     (!combo_promotion.length || combo_promotion.includes(self.id)));
-                // console.log('c5 : ', (!combo_promotion.length || combo_promotion.includes(self.id)));
+                //     (!combo_promotion.length || combo_promotion.includes(self.id)) &&
+                //     (!combo_variant_promotion.length || (_.size(_.intersection(self.attribute_value_ids, combo_variant_promotion, combo_variant_promotion)) == _.size(combo_variant_promotion))));
+                // if (item.level_on === 'order' && item.base_on === 'combo_sale') {
+                //     console.log('name :', item.related_discount_name);
+                //     console.log('combo_promotion :', combo_promotion);
+                //     console.log('combo_variant_promotion :', combo_variant_promotion);
+                //     console.log('c5 : ', (!combo_promotion.length || combo_promotion.includes(self.id)) &&
+                //         (!combo_variant_promotion.length || find_combo_variant));
+                // }
+                
                 // Relationship items
                 return (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
                     (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
@@ -159,7 +196,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     (!item.variant_ids.length || find_variant || find_gift_variant || find_gift_product) &&
                     ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
                         (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)) &&
-                    (!combo_promotion.length || combo_promotion.includes(self.id));
+                    (!combo_promotion.length || combo_promotion.includes(self.id) || find_combo_variant) &&
+                    (!combo_variant_promotion.length || combo_promotion.includes(self.id) || find_combo_variant);
             });
             return pricelist_items;
         },
