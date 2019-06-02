@@ -144,15 +144,6 @@ class PricelistItem(models.Model):
         ondelete='cascade',
         domain="[('type','!=','service')]",
     )
-    # bxa_gyb_free_products = fields.Many2many(
-    #     comodel_name='product.product',
-    #     relation='bxa_gyb_free_products_rel',
-    #     column1='product_id',
-    #     column2='pricelist_id',
-    #     string=_("Discounted Products"),
-    #     ondelete='cascade',
-    #     domain="[('type','!=','service')]"
-    # )
     # bxa_gyb_discount
     bxa_gyb_discount_Aproduct_unit = fields.Integer(
         string=_("Product Qty"),

@@ -136,7 +136,6 @@ class SalePromotionRuleRangeBased(models.Model):
 class SalePromotionRuleCombo(models.Model):
     _name = 'sale.promotion.rule.combo.sale'
     _description = 'Promotion rule combo sale'
-    # _order = "start"
 
     promotion_id = fields.Many2one(
         string=_('Promotion Reference'),
@@ -149,6 +148,22 @@ class SalePromotionRuleCombo(models.Model):
         related='promotion_id.pricelist_id',
         readonly=True,
         store=True
+    )
+    applied_on = fields.Selection(
+        string=_('Applied on'),
+        selection=[
+            ('product', _('Product')),
+            ('variant', _('Variant Value')),
+        ],
+        index=True,
+        default='product'
+    )
+    variant_ids = fields.Many2many(
+        string=_('Variant Value'),
+        comodel_name='product.attribute.value',
+        relation='promotion_combo_sale_variant_rel',
+        column1='promotion_id',
+        column2='variant_id',
     )
     product_id = fields.Many2one(
         string=_('Product'),

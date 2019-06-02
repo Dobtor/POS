@@ -47,7 +47,9 @@
                     <group attrs="{'invisible':['|',('base_on', '!=', 'combo_sale'),('level_on', '!=', 'order')]}">
                         <field name="combo_sale_ids">
                             <tree string="Rule Lines" editable="bottom">
-                                <field name="product_id" />
+                                <field name="applied_on"/>
+                                <field name="product_id" attrs="{'invisible':[('applied_on', '!=', 'product')]}" />
+                                <field name="variant_ids" widget="many2many_tags" attrs="{'invisible':[('applied_on', '!=', 'variant')]}" />
                                 <field name="based_on"/>
                                 <field name="based_on_price" attrs="{'invisible':[('based_on', '!=', 'price')]}" />
                                 <field name="based_on_percentage" attrs="{'invisible':[('based_on', '!=', 'percentage')]}" />
@@ -76,7 +78,7 @@
                 </xpath>
                 <xpath expr="//form" position="inside">
                     <group col="2" attrs="{'invisible':['|','|',('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
-                        <field name="bogo_base" colspan="2" string="bogo base on" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
+                        <field name="bogo_base" colspan="2" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
                         <field name="order_by_pirce" widget="radio" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
