@@ -13,7 +13,8 @@ class PosOrder(models.Model):
         if session.config_id.available_member_discount and res['partner_id']:   
             partner = self.env['res.partner'].browse(res['partner_id'])
             order_date = res['date_order'].split('T')[0]
-            birthday = datetime.strftime(partner.birthday, '%Y-%m-%d')
-            if order_date == birthday: 
+            order_date = order_date.split('-')[-2:]
+            birthday = datetime.strftime(partner.birthday, '%m-%d')
+            if '-'.join(order_date) == birthday:
                 partner.used_birthday_times = partner.used_birthday_times + 1
         return res 
