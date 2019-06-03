@@ -115,11 +115,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             return combo_promotion;
         },
         compute_member_promotion: function (self, customer, member_list, get_range_promotion = undefined, rule_total = 0, discount_rate = 0) {
-            var sort = 'desc';
+            // var sort = self.pos.config.member_discount_rule;
             window.member_list = member_list
             var group_member = _.chain(member_list)
                 .sortBy('price');
-            group_member = sort == 'desc' ? group_member.reverse().value() : group_member.value();
+            group_member = self.pos.config.member_discount_rule == 'desc' ? group_member.reverse().value() : group_member.value();
             var today_date = new moment().format('MM-DD');
             var leave_qty = 0
             if (customer && customer.birthday) {

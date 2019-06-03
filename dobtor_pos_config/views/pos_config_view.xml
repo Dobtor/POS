@@ -36,6 +36,12 @@
                                 <field name="member_discount_limit"/>
                             </div>
                         </div>
+                        <div class="content-group mt16" attrs="{'invisible': [('available_member_discount','=',False)], 'required' : [('available_member_discount', '=', True)]}">
+                            <div class="row mt16">
+                                <label string="Member Discount Rule." for="member_discount_rule" class="col-lg-3 o_light_label"/>
+                                <field name="member_discount_rule" widget="radio" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </xpath>
