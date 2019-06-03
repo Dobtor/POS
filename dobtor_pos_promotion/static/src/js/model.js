@@ -153,14 +153,14 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 var combo_variant_promotion = self.inner_join_combo_variant(item, pos);
                 var find_combo_variant = false;
                 if (combo_variant_promotion.length) {
-                    _.find(combo_variant_promotion, function(cvp) {
+                    _.find(combo_variant_promotion, function (cvp) {
                         // console.log('cvp :', cvp);
                         // console.log('self.attribute_value_ids : ', self.attribute_value_ids);
                         // console.log('merge : ', _.size(_.intersection(self.attribute_value_ids, cvp, cvp)) == _.size(cvp));
                         if (_.size(_.intersection(self.attribute_value_ids, cvp, cvp)) == _.size(cvp)) {
                             find_combo_variant = true;
                             return true;
-                        }   
+                        }
                     });
                 }
                 // console.log('total : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
@@ -183,7 +183,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 //     console.log('c5 : ', (!combo_promotion.length || combo_promotion.includes(self.id)) &&
                 //         (!combo_variant_promotion.length || find_combo_variant));
                 // }
-                
+
                 // Relationship items
                 return (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
                     (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
@@ -355,7 +355,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     type: 'price',
                     price: new_price,
-                    discount: (price - new_price) / price,
+                    discount: ((price - new_price) / price) * 100.00,
                     quantity: quantity,
                 };
             } else if (rule.base === 'standard_price') {
@@ -363,7 +363,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     type: 'price',
                     price: new_price,
-                    discount: (price - new_price) / price,
+                    discount: ((price - new_price) / price) * 100.00,
                     quantity: quantity,
                 };
             }
@@ -382,7 +382,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     type: 'price',
                     price: new_price,
-                    discount: (price - new_price) / price,
+                    discount: ((price - new_price) / price) * 100.00,
                     quantity: quantity,
                 };
             } else if (rule.compute_price === 'percentage') {
