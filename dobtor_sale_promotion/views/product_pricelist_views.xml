@@ -37,7 +37,7 @@
                         <field name="range_based_ids">
                             <tree string="Rule Lines" editable="bottom">
                                 <field name="start"/>
-                                <field name="end"/>
+                                <!-- <field name="end"/> -->
                                 <field name="based_on"/>
                                 <field name="based_on_rebate" attrs="{'invisible':[('based_on', '!=', 'rebate')]}" />
                                 <field name="based_on_percentage" attrs="{'invisible':[('based_on', '!=', 'percentage')]}" />

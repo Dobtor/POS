@@ -117,14 +117,14 @@ class SalePromotionRuleRangeBased(models.Model):
         default=0.0
     )
 
-    @api.constrains('end', 'start', 'based_on', 'based_on_rebate', 'based_on_percentage')
+    @api.constrains('start', 'based_on', 'based_on_rebate', 'based_on_percentage')
     def _check_rule_validation(self):
         """  validation at promotion create time. """
         for record in self:
             if record.based_on_percentage > 99:
                 raise ValidationError(_("It has to be less than 100"))
-            if record.end < -1 or record.start < -1 or record.end == 0 or record.start == 0:
-                raise ValidationError(_("Please enter valid Start or End number"))
+            # if record.end < -1 or record.start < -1 or record.end == 0 or record.start == 0:
+            #     raise ValidationError(_("Please enter valid Start or End number"))
             if record.based_on in ['rebate']:
                 if record.based_on_rebate < 0.0:
                     raise ValidationError(_("Please enter Some Value for Calculation"))
