@@ -121,7 +121,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 .sortBy('price');
             group_member = sort == 'desc' ? group_member.reverse().value() : group_member.value();
             var today_date = new moment().format('MM-DD');
-            var leave_qty = 0
+            var leave_qty = 0;
             if (customer && customer.birthday) {
                 leave_qty = customer ? customer.birthday.split('-').slice(1).join('-') == today_date ? customer.can_discount_times : 0 : 0;
             }
@@ -154,7 +154,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             temp_qty = _.min([line.quantity, leave_qty]);
                             current_qty -= (temp_qty < 0 ? 0 : temp_qty);
 
-                            if (customer.birthday.split('-').slice(1).join('-') == today_date && leave_qty) {
+                            if ((customer.birthday && customer.birthday.split('-').slice(1).join('-')) == today_date && leave_qty) {
                                 var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
                                 var temp_product = $.extend(true, {}, member_product);
                                 self.add_product(temp_product, {
@@ -167,7 +167,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             } 
                             
 
-                            if (customer.related_discount && (!(customer.birthday.split('-').slice(1).join('-') == today_date) || current_qty)) {
+                            if (customer.related_discount && (!((customer.birthday && customer.birthday.split('-').slice(1).join('-')) == today_date) || current_qty)) {
                                 var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0]);
                                 var temp_product = $.extend(true, {}, member_product);
 
