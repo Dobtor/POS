@@ -8,7 +8,8 @@ class PricelistItem(models.Model):
 
     is_primary_key = fields.Boolean(
         string=_('Primary key'),
-        default=False)
+        default=False
+    )
 
     sequence = fields.Integer(
         string=_('sequence'),
