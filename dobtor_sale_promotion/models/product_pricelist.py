@@ -59,6 +59,10 @@ class PricelistItem(models.Model):
             ('02_variant_value', _('Variant Value')),
         ]
     )
+    attribute_id = fields.Many2many(
+        string=_('Attribute'),
+        comodel_name='product.attribute',
+        compute='_compute_attribute')
     variant_ids = fields.Many2many(
         string=_('Variant Value'),
         comodel_name='product.attribute.value',
@@ -131,6 +135,10 @@ class PricelistItem(models.Model):
         index=True,
         default='product'
     )
+    bxa_gyb_free_attribute_id = fields.Many2many(
+        string=_('BOGO Free Attribute'),
+        comodel_name='product.attribute',
+        compute='_compute_bxa_gyb_free_attribute')
     bxa_gyb_free_variant_ids = fields.Many2many(
         string=_('Discounted Variant Value'),
         comodel_name='product.attribute.value',
@@ -168,6 +176,10 @@ class PricelistItem(models.Model):
         index=True,
         default='product'
     )
+    bxa_gyb_discount_attribute_id = fields.Many2many(
+        string=_('BOGO Discount Attribute'),
+        comodel_name='product.attribute',
+        compute='_compute_bxa_gyb_discount_attribute')
     bxa_gyb_discount_variant_ids = fields.Many2many(
         string=_('Discounted Variant Value'),
         comodel_name='product.attribute.value',
@@ -187,6 +199,25 @@ class PricelistItem(models.Model):
     bxa_gyb_discount_percentage_price = fields.Float(
         string=_("Percentage Discount")
     )
+
+    @api.multi
+    @api.depends('variant_ids', 'variant_ids.attribute_id')
+    def _compute_attribute(self):
+        for item in self:
+            item.attribute_id = item.variant_ids.mapped('attribute_id')
+
+    @api.multi
+    @api.depends('bxa_gyb_free_variant_ids', 'bxa_gyb_free_variant_ids.attribute_id')
+    def _compute_bxa_gyb_free_attribute(self):
+        for item in self:
+            item.bxa_gyb_free_attribute_id = item.bxa_gyb_free_variant_ids.mapped('attribute_id')
+
+    @api.multi
+    @api.depends('bxa_gyb_discount_variant_ids', 'bxa_gyb_discount_variant_ids.attribute_id')
+    def _compute_bxa_gyb_free_attribute(self):
+        for item in self:
+            item.bxa_gyb_discount_attribute_id = item.bxa_gyb_discount_variant_ids.mapped('attribute_id')
+
 
     @api.one
     @api.depends('categ_id', 'product_tmpl_id', 'product_id', 'compute_price', 'fixed_price',
