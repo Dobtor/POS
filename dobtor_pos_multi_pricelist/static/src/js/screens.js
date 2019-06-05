@@ -31,13 +31,13 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             this._super();
             this.$('.pay').off('click');
             this.$('.pay').on('click', function () {
-                self.click_payment_btn();
+                self.click_payment_btn(self);
             });
             this.$('.set-customer').click(function () {
                 self.gui.show_screen('clientlist');
             });
         },
-        click_payment_btn: function() {
+        click_payment_btn: function (self) {
             var order = self.pos.get_order();
             order.check_order_discount();
             var has_valid_product_lot = _.every(order.orderlines.models, function (line) {
