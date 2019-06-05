@@ -22,7 +22,7 @@ odoo.define('dobtor_pos_promotion_return.screens', function (require) {
                 return o.mode == "return" && o.uid === uid && Number(o.sequence_number) === Number(sequence_number);
             });
 
-            if (!exist_order.orderlines.length && exist_order.return_lines.length) {
+            if (exist_order && exist_order.return_lines.length && !exist_order.orderlines.length) {
                 exist_order.return_all();
             }
             
