@@ -158,6 +158,10 @@ class SalePromotionRuleCombo(models.Model):
         index=True,
         default='product'
     )
+    attribute_id = fields.Many2many(
+        string=_('Attribute'),
+        comodel_name='product.attribute',
+        compute='_compute_attribute')
     variant_ids = fields.Many2many(
         string=_('Variant Value'),
         comodel_name='product.attribute.value',
@@ -185,6 +189,12 @@ class SalePromotionRuleCombo(models.Model):
         string=_('Percentage'),
         default=0.0
     )
+
+    @api.multi
+    @api.depends('variant_ids', 'variant_ids.attribute_id')
+    def _compute_attribute(self):
+        for item in self:
+            item.attribute_id = item.variant_ids.mapped('attribute_id')
     
     @api.constrains('based_on', 'based_on_price', 'based_on_percentage')
     def _check_rule_validation(self):

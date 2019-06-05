@@ -9,9 +9,9 @@
                 <field name="discount_type"/>
                 <field name="discount_item"/>
             </xpath>
-            <xpath expr="//tree/field[@name='name']" position="before">
+            <!-- <xpath expr="//tree/field[@name='name']" position="before">
                 <field name="sequence" widget="handle"/>
-            </xpath>
+            </xpath> -->
         </field>
     </record>
 </odoo>

@@ -123,7 +123,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             group_member = self.pos.config.member_discount_rule == 'desc' ? group_member.reverse().value() : group_member.value();
             console.log('group_member',group_member)
             var today_date = new moment().format('MM-DD');
-            var leave_qty = 0
+            var leave_qty = 0;
             if (customer && customer.birthday) {
                 leave_qty = customer ? customer.birthday.split('-').slice(1).join('-') == today_date ? customer.can_discount_times : 0 : 0;
             }
@@ -150,7 +150,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
                             temp_qty = _.min([line.quantity, leave_qty]);
                             current_qty -= (temp_qty < 0 ? 0 : temp_qty);
-                            if (customer.birthday.split('-').slice(1).join('-') == today_date && leave_qty) {
+
+                            if ((customer.birthday && customer.birthday.split('-').slice(1).join('-')) == today_date && leave_qty) {
                                 var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
                                 var temp_product = $.extend(true, {}, member_product);
                                 self.add_product(temp_product, {
@@ -163,7 +164,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             } 
                             
 
-                            if (customer.related_discount && (!(customer.birthday.split('-').slice(1).join('-') == today_date) || current_qty)) {
+                            if (customer.related_discount && (!((customer.birthday && customer.birthday.split('-').slice(1).join('-')) == today_date) || current_qty)) {
                                 var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0]);
                                 var temp_product = $.extend(true, {}, member_product);
 
@@ -295,6 +296,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             // total_discount_price: total_promotion_value,
                             sub_rate: sub_rate,
                         });
+                        
                         var group_pruduct = _.groupBy(rule_sum, 'prodcut_id');
                         window.group_pruduct = group_pruduct;
                         $.each(Object.keys(group_pruduct), function (i, t) {
@@ -304,35 +306,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 });
                             })
                         });
-
-
-
-                        // console.log('member discount');
-                        // if (self.pos.config.available_member_discount) {
-                        //     if (sub_rate >= self.pos.config.member_discount_limit && customer && customer.member_id[0]) {
-                        //         var today_date = new moment().format('YYYY-MM-DD');
-                        //         if (customer.birthday == today_date && customer.used_birthday_times < customer.can_discount_times) {
-                        //             var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
-                        //             var temp_product = $.extend(true, {}, member_product);
-                        //             self.add_product(temp_product, {
-                        //                 'price': -line.price * sub_rate * customer.birthday_discount,
-                        //                 'quantity': line.quantity
-                        //             })
-                        //             self.selected_orderline.compute_name = _t(`Birthday [${line.product.display_name}] (- ${(customer.birthday_discount) * 100} %)`)
-                        //             self.selected_orderline.product.display_name = self.selected_orderline.compute_name
-                        //         } else if (customer.related_discount) {
-                        //             var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
-                        //             var temp_product = $.extend(true, {}, member_product);
-
-                        //             self.add_product(temp_product, {
-                        //                 'price': -line.price * sub_rate * customer.related_discount,
-                        //                 'quantity': line.quantity
-                        //             })
-                        //             self.selected_orderline.compute_name = _t(`${customer.member_id[1]} [${line.product.display_name}] ( - ${customer.related_discount * 100} %)`)
-                        //             self.selected_orderline.product.display_name = self.selected_orderline.compute_name
-                        //         }
-                        //     }
-                        // }
                     }
                 }
             });

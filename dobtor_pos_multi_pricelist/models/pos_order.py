@@ -3,6 +3,8 @@
 from odoo import models, fields, api
 import datetime
 from datetime import datetime, timedelta
+
+
 class PosOrder(models.Model):
     _inherit = "pos.order"
 
@@ -12,9 +14,12 @@ class PosOrder(models.Model):
         session = self.env['pos.session'].browse(ui_order['pos_session_id'])
         if session.config_id.available_member_discount and res['partner_id']:   
             partner = self.env['res.partner'].browse(res['partner_id'])
-            order_date = res['date_order'].split('T')[0]
-            order_date = order_date.split('-')[-2:]
+            order_date = False
+            if res['date_order'] :
+                order_date = res['date_order'].split('T')[0]
+                order_date = order_date.split('-')[-2:]
+            
             birthday = datetime.strftime(partner.birthday, '%m-%d')
-            if '-'.join(order_date) == birthday:
+            if (order_date and '-'.join(order_date)) == birthday:
                 partner.used_birthday_times = partner.used_birthday_times + 1
         return res 
