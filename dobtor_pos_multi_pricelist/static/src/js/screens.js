@@ -59,5 +59,12 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             });
         }
     })
+    screens.PaymentScreenWidget.include({
+        renderElement: function() {
+            var res = this._super();
+            this.$('.js_set_customer').off('click');
+            return res
+        }
+    })
 
 })
