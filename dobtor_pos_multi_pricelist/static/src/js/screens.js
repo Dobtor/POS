@@ -33,6 +33,9 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             this.$('.pay').on('click', function () {
                 self.click_payment_btn(self);
             });
+            this.click_customer_btn(self);
+        },
+        click_customer_btn: function (self) {
             this.$('.set-customer').click(function () {
                 self.gui.show_screen('clientlist');
             });
