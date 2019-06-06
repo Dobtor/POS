@@ -31,6 +31,10 @@ odoo.define('dobtor_sfic_wallet.pos', function (require) {
                 return point_paid - order.point_paid;
             }
             return 0;
+        },
+
+        get_point_paid_string: function() {
+            return _t(' [Paid: ') + this.get_point_paid() + "]";
         }
     });
 

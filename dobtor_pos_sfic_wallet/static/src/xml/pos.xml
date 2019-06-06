@@ -7,7 +7,7 @@
             <t t-if="cashregister.journal.is_points">
                 <t t-if="widget.pos.get_client()">
                     <span>
-                        <t t-esc="_t(' [Paid: ') + widget.pos.get_point_paid() + ']'"/>
+                        <t t-esc="widget.pos.get_point_paid_string()"/>
                     </span>
                 </t>
             </t>
