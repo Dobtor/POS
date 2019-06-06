@@ -40,7 +40,7 @@ var _t = core._t;
 
         customer_changed: function() {
             var client = this.pos.get_client();
-            this.$('.js_customer_name').text( client ? client.name + "[Points: " + client.sfic_point + "]" : _t('Customer') ); 
+            this.$('.js_customer_name').text( client ? client.name + _t("[Points: ") + client.sfic_point + "]" : _t('Customer') ); 
 
             this.reset_paymentmethods();
         },

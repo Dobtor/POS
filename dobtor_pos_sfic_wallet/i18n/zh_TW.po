@@ -1,0 +1,181 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* dobtor_pos_sfic_wallet
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20190128\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-06-06 09:02+0000\n"
+"PO-Revision-Date: 2019-06-06 09:02+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: dobtor_pos_sfic_wallet
+#. openerp-web
+#: code:addons/dobtor_pos_sfic_wallet/static/src/js/pos.js:37
+#, python-format
+msgid " [Paid: "
+msgstr " [可折抵: "
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__amount
+msgid "Amount"
+msgstr "金額"
+
+#. module: dobtor_pos_sfic_wallet
+#: selection:pos.point.transaction,state:0
+msgid "Canceled"
+msgstr "已取消"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model,name:dobtor_pos_sfic_wallet.model_res_partner
+msgid "Contact"
+msgstr "聯絡人"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__create_uid
+msgid "Created by"
+msgstr "創建者"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__create_date
+msgid "Created on"
+msgstr "創建時間"
+
+#. module: dobtor_pos_sfic_wallet
+#: selection:pos.point.transaction,point_type:0
+msgid "Credit"
+msgstr ""
+
+#. module: dobtor_pos_sfic_wallet
+#. openerp-web
+#: code:addons/dobtor_pos_sfic_wallet/static/src/js/screens.js:43
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__partner_id
+#, python-format
+msgid "Customer"
+msgstr "客戶"
+
+#. module: dobtor_pos_sfic_wallet
+#: selection:pos.point.transaction,point_type:0
+msgid "Debit"
+msgstr ""
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__display_name
+msgid "Display Name"
+msgstr "顯示名稱"
+
+#. module: dobtor_pos_sfic_wallet
+#: selection:pos.point.transaction,state:0
+msgid "Done"
+msgstr "已完成"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__id
+msgid "ID"
+msgstr ""
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model,name:dobtor_pos_sfic_wallet.model_account_journal
+msgid "Journal"
+msgstr "日記帳"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction____last_update
+msgid "Last Modified on"
+msgstr "最後修改時間"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__write_uid
+msgid "Last Updated by"
+msgstr "最後更新人"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__write_date
+msgid "Last Updated on"
+msgstr "最後更新時間"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__pos_type
+msgid "POS Type"
+msgstr "POS 類型"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_res_partner__sfic_point
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_res_users__sfic_point
+msgid "Point"
+msgstr "點數"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_order__point_credit_id
+msgid "Point Credit Transaction"
+msgstr ""
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_order__point_debit_id
+msgid "Point Debit Transaction"
+msgstr ""
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__point_type
+msgid "Point Process"
+msgstr ""
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model,name:dobtor_pos_sfic_wallet.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "POS訂單"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model,name:dobtor_pos_sfic_wallet.model_pos_session
+msgid "Point of Sale Session"
+msgstr "POS會話"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__pos_order_id
+msgid "Pos Order"
+msgstr "Pos 訂單"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__reference
+msgid "Reference"
+msgstr "參照"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__state
+msgid "Status"
+msgstr "狀態"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_res_partner__sfic_transaction
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_res_users__sfic_transaction
+msgid "Transaction"
+msgstr "交易"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_account_journal__is_points
+msgid "Use Points for POS"
+msgstr "於 POS 使用點數"
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__date
+msgid "Validation Date"
+msgstr "審核日期"
+
+#. module: dobtor_pos_sfic_wallet
+#. openerp-web
+#: code:addons/dobtor_pos_sfic_wallet/static/src/js/screens.js:43
+#, python-format
+msgid "[Points: "
+msgstr "[點數: "
+
+#. module: dobtor_pos_sfic_wallet
+#: model:ir.model,name:dobtor_pos_sfic_wallet.model_pos_point_transaction
+msgid "pos.point.transaction"
+msgstr ""
+
