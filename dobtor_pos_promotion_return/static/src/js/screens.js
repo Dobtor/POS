@@ -25,11 +25,20 @@ odoo.define('dobtor_pos_promotion_return.screens', function (require) {
             if (exist_order && exist_order.return_lines.length && !exist_order.orderlines.length) {
                 exist_order.return_all();
             }
-            
+
         }
     });
 
     screens.ActionpadWidget.include({
+        click_customer_btn: function(self) {
+            this.$('.set-customer').off('click');
+            this.$('.set-customer').on('click',function () {
+                var order = self.pos.get_order();
+                if (!(order.mode && order.mode == 'return')) {
+                    self.gui.show_screen('clientlist');
+                }
+            });
+        },
         click_payment_btn: function (self) {
             var self = this;
             var order = self.pos.get_order();
@@ -52,5 +61,25 @@ odoo.define('dobtor_pos_promotion_return.screens', function (require) {
                 self._super(self);
             }
         }
+    });
+
+    screens.OrderWidget.include({
+        set_value: function (val) {
+            var order = this.pos.get_order();
+            if (!(order.mode && order.mode == 'return')) {
+                if (order.get_selected_orderline()) {
+                    var mode = this.numpad_state.get('mode');
+                    if (mode === 'quantity') {
+                        order.get_selected_orderline().set_quantity(val);
+                    } else if (mode === 'discount') {
+                        order.get_selected_orderline().set_discount(val);
+                    } else if (mode === 'price') {
+                        var selected_orderline = order.get_selected_orderline();
+                        selected_orderline.price_manually_set = true;
+                        selected_orderline.set_unit_price(val);
+                    }
+                }
+            }
+        },
     });
 });
