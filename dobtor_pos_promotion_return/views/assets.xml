@@ -2,6 +2,7 @@
 <odoo>
     <template id="assets_promotion_return" name="assets" inherit_id="point_of_sale.assets">
         <xpath expr="." position="inside">
+            <script type="text/javascript" src="/dobtor_pos_promotion_return/static/src/js/db.js"></script>
             <script type="text/javascript" src="/dobtor_pos_promotion_return/static/src/js/models.js"></script>
             <script type="text/javascript" src="/dobtor_pos_promotion_return/static/src/js/screens.js"></script>
         </xpath>

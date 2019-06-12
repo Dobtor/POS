@@ -13,6 +13,7 @@
     'version': '0.1',
     'depends': [
         'dobtor_pos_multi_pricelist',
+        'dobtor_pos_sfic_wallet',
         'pos_orders_history_return'
     ],
     'data': [
