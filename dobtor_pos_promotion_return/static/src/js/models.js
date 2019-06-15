@@ -39,6 +39,7 @@ odoo.define('dobtor_pos_promotion_return.models', function (require) {
                 self.db.paymentline_by_id[line.id] = line;
             });
         },
+        
     });
 
     var _super_order = exports.Order.prototype;
