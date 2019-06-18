@@ -316,11 +316,44 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         quantity: quantity,
                     };
                 } else if (rule.base_on === 'combo_sale') {
+                    var combo_variant_promotion = self.product.inner_join_combo_variant(rule, self.pos);
+                    var marge_tag = _.find(combo_variant_promotion, function (cvp) {
+                        if (_.size(_.intersection(self.product.extra_attribute_value_ids, cvp, cvp)) == _.size(cvp)) {
+                            return true;
+                        }
+                    });
+                    var combo_product_promotion = self.product.inner_join_combo_product(rule, self.pos);
+                    var marge_product = _.find(combo_product_promotion, function (cpp) {
+                        return self.product.id == cpp;
+                    });
+                    
+                    var combo_promotion_where_this_rule = _.filter(self.pos.combo_promotion, function (combo) {
+                        return combo.promotion_id[0] == rule.id
+                    });
+                    var get_combo_promotion = _.find(combo_promotion_where_this_rule, function (combo) {
+                        if (combo.applied_on === 'product') {
+                            return combo.product_id[0] == self.product.id;
+                        } else if (combo.applied_on === 'variant') {
+                            var variant_ids = combo.variant_ids;
+                            // console.log('variant_ids : ', variant_ids);
+                            // console.log('self.product.extra_attribute_value_ids : ', self.product.extra_attribute_value_ids);
+                            // console.log('merge : ', _.size(_.intersection(self.product.extra_attribute_value_ids, variant_ids, variant_ids)) == _.size(variant_ids));
+                            return _.size(_.intersection(self.product.extra_attribute_value_ids, variant_ids, variant_ids)) == _.size(variant_ids);
+                        }
+                        return false;
+                    });
                     return {
+                        rule_id: rule.id,
+                        rule: rule,
                         type: 'combo',
                         price: price,
                         discount: 0,
                         quantity: quantity,
+                        product_tag: self.product.extra_attribute_value_ids,
+                        marge_tag: !!marge_tag ? marge_tag: [],
+                        marge_product: !!marge_product ? marge_product : [],
+                        combo_promotion: get_combo_promotion,
+                        product_id: self.product.id,
                         product: self.product
                     };
                 }
