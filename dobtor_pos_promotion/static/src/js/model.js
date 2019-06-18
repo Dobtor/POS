@@ -51,7 +51,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         'after': 'product.product'
     });
 
-    models.load_fields('product.product', ['attribute_value_ids']);
+    models.load_fields('product.product', ['attribute_value_ids', 'extra_attribute_value_ids']);
 
     var _super_product = exports.Product;
     exports.Product = exports.Product.extend({
@@ -59,7 +59,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             // get A ∩ B 
             var self = this;
             if ((rule.variant_ids instanceof Array) && rule.variant_ids.length > 0) {
-                return _.size(_.intersection(self.attribute_value_ids, rule.variant_ids, rule.variant_ids)) == _.size(rule.variant_ids);
+                return _.size(_.intersection(self.extra_attribute_value_ids, rule.variant_ids, rule.variant_ids)) == _.size(rule.variant_ids);
             }
             return false;
         },
@@ -67,9 +67,9 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             // get A ∩ B 
             var self = this;
             if ((rule.bxa_gyb_free_variant_ids instanceof Array) && rule.bxa_gyb_free_variant_ids.length > 0) {
-                return _.size(_.intersection(self.attribute_value_ids, rule.bxa_gyb_free_variant_ids, rule.bxa_gyb_free_variant_ids)) == _.size(rule.bxa_gyb_free_variant_ids);
+                return _.size(_.intersection(self.extra_attribute_value_ids, rule.bxa_gyb_free_variant_ids, rule.bxa_gyb_free_variant_ids)) == _.size(rule.bxa_gyb_free_variant_ids);
             } else if ((rule.bxa_gyb_discount_variant_ids instanceof Array) && rule.bxa_gyb_discount_variant_ids.length > 0) {
-                return _.size(_.intersection(self.attribute_value_ids, rule.bxa_gyb_discount_variant_ids, rule.bxa_gyb_discount_variant_ids)) == _.size(rule.bxa_gyb_discount_variant_ids);
+                return _.size(_.intersection(self.extra_attribute_value_ids, rule.bxa_gyb_discount_variant_ids, rule.bxa_gyb_discount_variant_ids)) == _.size(rule.bxa_gyb_discount_variant_ids);
             }
             return false;
         },
@@ -155,9 +155,9 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 if (combo_variant_promotion.length) {
                     _.find(combo_variant_promotion, function (cvp) {
                         // console.log('cvp :', cvp);
-                        // console.log('self.attribute_value_ids : ', self.attribute_value_ids);
-                        // console.log('merge : ', _.size(_.intersection(self.attribute_value_ids, cvp, cvp)) == _.size(cvp));
-                        if (_.size(_.intersection(self.attribute_value_ids, cvp, cvp)) == _.size(cvp)) {
+                        // console.log('self.extra_attribute_value_ids : ', self.extra_attribute_value_ids);
+                        // console.log('merge : ', _.size(_.intersection(self.extra_attribute_value_ids, cvp, cvp)) == _.size(cvp));
+                        if (_.size(_.intersection(self.extra_attribute_value_ids, cvp, cvp)) == _.size(cvp)) {
                             find_combo_variant = true;
                             return true;
                         }
@@ -175,7 +175,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 //     ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
                 //         (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)) &&
                 //     (!combo_promotion.length || combo_promotion.includes(self.id)) &&
-                //     (!combo_variant_promotion.length || (_.size(_.intersection(self.attribute_value_ids, combo_variant_promotion, combo_variant_promotion)) == _.size(combo_variant_promotion))));
+                //     (!combo_variant_promotion.length || (_.size(_.intersection(self.extra_attribute_value_ids, combo_variant_promotion, combo_variant_promotion)) == _.size(combo_variant_promotion))));
                 // if (item.level_on === 'order' && item.base_on === 'combo_sale') {
                 //     console.log('name :', item.related_discount_name);
                 //     console.log('combo_promotion :', combo_promotion);

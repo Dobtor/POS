@@ -19,7 +19,8 @@
         'product',
         'sale', 
         'point_of_sale',
-        'dobtor_sale_promotion'
+        'dobtor_sale_promotion',
+        'dobtor_pos_sfic_base'
     ],
 
     'data': [
