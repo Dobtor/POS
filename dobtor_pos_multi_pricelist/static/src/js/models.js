@@ -224,11 +224,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         }
                         // handle Combo
                         if (result.type == 'combo') {
-                            if (result.quantity > 0) {
-                                combo_list.push({
-                                    rule_id: rule.id,
-                                    rule: rule,
-                                    combo_product: result,
+                            var comboqty = result.quantity;
+                            if (comboqty > 0) {
+                                _.each(_.range(comboqty), function (i) {
+                                    _.extend(result, {
+                                        quantity: 1,
+                                    })
+                                    combo_list.push(result);
                                 });
                             }
                         }
@@ -360,56 +362,60 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // Per Order (Combo)
             var group_combo = _.groupBy(combo_list, 'rule_id');
             $.each(Object.keys(group_combo), function (i, t) {
-                var pluck_product = _.chain(group_combo[t])
-                    .sortBy('price')
-                    .pluck('combo_product')
-                    .value();
+                
                 var this_rule = group_combo[t][0].rule;
-                var combo_promotion_where_this_rule = _.filter(self.pos.combo_promotion, function (combo) {
-                    return combo.promotion_id[0] == group_combo[t][0].rule_id
-                });
+                var group_variant = _.groupBy(_.filter(group_combo[t], (item) => {
+                    return !!item.marge_tag.length;
+                }), 'marge_tag');
+                var group_product = _.groupBy(_.filter(group_combo[t], (item) => {
+                    return !!item.marge_product.length;
+                }), 'marge_product');
+                var group_all = _.extend(group_variant, group_product);
 
-                // console.log('group_combo', group_combo);
-                // console.log('product_set : ', pluck_product);
+                // check system log
+                // console.log('group_variant: ', group_variant);
+                // console.log('group_product : ', group_product);
+                // console.log('group_combo: ', group_combo);
+                // console.log('group_all : ', group_all);
                 // console.log('this_rule : ', this_rule);
 
-                if (pluck_product.length && pluck_product.length == self.inner_join_combo_product(this_rule, self.pos).length) {
-                    var sort_min_qty_product = _.sortBy(pluck_product, 'quantity');
-                    var min_combo_qty = sort_min_qty_product[0].quantity;
-                    if (min_combo_qty > 0) {
+                if (Object.keys(group_all).length && Object.keys(group_all).length == self.inner_join_combo_product(this_rule, self.pos).length) {
 
-                        $.each(sort_min_qty_product, function (i, item) {
-                            var get_combo_promotion = _.find(combo_promotion_where_this_rule, function (combo) {
-                                if (combo.applied_on === 'product') {
-                                    return combo.product_id[0] == item.product.id;
-                                } else if (combo.applied_on === 'variant') {
-                                    var variant_ids = combo.variant_ids;
-                                    return _.size(_.intersection(item.product.extra_attribute_value_ids, variant_ids, variant_ids)) == _.size(variant_ids);
+                    var group_min_qty = _.min(_.map(group_all, (value) => {
+                        return _.size(value);
+                    }));
+
+                    if (group_min_qty > 0) {
+                        $.each(Object.keys(group_all), function (j, product_group_name) {
+                            var product_group_order_by_price = _.chain(group_all[product_group_name])
+                                .sortBy('price');
+                            product_group_order_by_price = this_rule.combo_order_by_pirce === 'desc' ? product_group_order_by_price.reverse().value() : product_group_order_by_price.value();
+                            $.each(product_group_order_by_price, function (k, items) {
+                                if (k < group_min_qty) {
+                                    var discount_product = self.pos.db.get_product_by_id(this_rule.related_product[0]);
+                                    if (discount_product) {
+                                        var temp_product = $.extend(true, {}, discount_product);
+                                        var discount = 0;
+                                        if (items.combo_promotion.based_on === 'price') {
+                                            self.add_product(temp_product, {
+                                                'price': items.combo_promotion.based_on_price - items.product.lst_price,
+                                                'quantity': 1,
+                                            });
+                                            discount = round_pr((((items.product.lst_price - items.combo_promotion.based_on_price) / items.product.lst_price) * 100.00), 0.01);
+                                        } else if (items.combo_promotion.based_on === 'percentage') {
+                                            self.add_product(temp_product, {
+                                                'price': -round_pr(items.product.lst_price * (items.combo_promotion.based_on_percentage / 100), 1),
+                                                'quantity': 1,
+                                            });
+                                            discount = get_combo_promotion.based_on_percentage;
+                                        }
+                                        self.selected_orderline.compute_name = self.add_line_description(this_rule, undefined, discount, items.product);
+                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
+                                    } else {
+                                        alert(_t("You should be setting pricelist of discount product !!!"));
+                                    }
                                 }
-                                return false;
                             });
-                            var discount_product = self.pos.db.get_product_by_id(this_rule.related_product[0]);
-                            if (discount_product) {
-                                var temp_product = $.extend(true, {}, discount_product);
-                                var discount = 0;
-                                if (get_combo_promotion.based_on === 'price') {
-                                    self.add_product(temp_product, {
-                                        'price': get_combo_promotion.based_on_price - item.product.lst_price,
-                                        'quantity': min_combo_qty,
-                                    });
-                                    discount = round_pr((((item.product.lst_price - get_combo_promotion.based_on_price) / item.product.lst_price) * 100.00), 0.01);
-                                } else if (get_combo_promotion.based_on === 'percentage') {
-                                    self.add_product(temp_product, {
-                                        'price': -round_pr(item.product.lst_price * (get_combo_promotion.based_on_percentage / 100), 1),
-                                        'quantity': min_combo_qty,
-                                    });
-                                    discount = get_combo_promotion.based_on_percentage;
-                                }
-                                self.selected_orderline.compute_name = self.add_line_description(this_rule, undefined, discount, item.product);
-                                self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
-                            } else {
-                                alert(_t("You should be setting pricelist of discount product !!!"));
-                            }
                         });
                     }
                 }
