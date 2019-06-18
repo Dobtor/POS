@@ -4,7 +4,6 @@ odoo.define('dobtor_pos_promotion_return.screens', function (require) {
     var core = require('web.core');
     var screens = require('point_of_sale.screens');
     var models = require('pos_orders_history.models');
-    var gui = require('point_of_sale.gui');
     var _t = core._t;
 
     screens.OrdersHistoryScreenWidget.include({
