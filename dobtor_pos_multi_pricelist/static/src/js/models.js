@@ -384,7 +384,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                     return combo.product_id[0] == item.product.id;
                                 } else if (combo.applied_on === 'variant') {
                                     var variant_ids = combo.variant_ids;
-                                    return _.size(_.intersection(item.product.attribute_value_ids, variant_ids, variant_ids)) == _.size(variant_ids);
+                                    return _.size(_.intersection(item.product.extra_attribute_value_ids, variant_ids, variant_ids)) == _.size(variant_ids);
                                 }
                                 return false;
                             });
