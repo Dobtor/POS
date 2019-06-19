@@ -463,12 +463,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     product_set_qty = gift_set_qty;
                 }
 
-                // console.log('gift_set : ', gift_set);
-                // console.log('gift_set_qty : ', gift_set_qty);
-                // console.log('product_set : ', product_set);
-                // console.log('product_set_qty : ', product_set_qty);
-                // console.log('the_same : ', the_same);
-                // console.log('this_rule : ', this_rule);
+                console.log('gift_set : ', gift_set);
+                console.log('gift_set_qty : ', gift_set_qty);
+                console.log('product_set : ', product_set);
+                console.log('product_set_qty : ', product_set_qty);
+                console.log('the_same : ', the_same);
+                console.log('this_rule : ', this_rule);
 
                 // Compute Promotion
                 if (product_set.length) {
@@ -479,7 +479,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     var i = 0;
                     var gift_index = 0;
                     var round = 0;
-
+                    console.log('discount_product : ', discount_product);
                     if (discount_product) {
                         if ((this_rule.bogo_base === 'bxa_gya_free' && quant) || the_same) {
                             do {
