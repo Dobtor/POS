@@ -163,19 +163,21 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         }
                     });
                 }
-                // console.log('total : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
-                //     (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
-                //     ((!item.bxa_gyb_free_products || find_gift_product || find_gift_variant) ||
-                //         (!item.bxa_gyb_discount_product || find_gift_product || find_gift_variant)) &&
-                //     (!item.categ_id || _.contains(category_ids, item.categ_id[0]) || find_gift_product || find_gift_variant) &&
-                //     (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
-                //     (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
-                //     // variant_ids & bxa_gyb_free_variant_ids & bxa_gyb_discount_variant_ids just can one
-                //     (!item.variant_ids.length || find_variant || find_gift_variant || find_gift_product) &&
-                //     ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
-                //         (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)) &&
-                //     (!combo_promotion.length || combo_promotion.includes(self.id)) &&
-                //     (!combo_variant_promotion.length || (_.size(_.intersection(self.extra_attribute_value_ids, combo_variant_promotion, combo_variant_promotion)) == _.size(combo_variant_promotion))));
+                // if (item.compute_price === 'bogo_sale') {
+                //     console.log('total : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
+                //         (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
+                //         ((!item.bxa_gyb_free_products || find_gift_product || find_gift_variant) ||
+                //             (!item.bxa_gyb_discount_product || find_gift_product || find_gift_variant)) &&
+                //         (!item.categ_id || _.contains(category_ids, item.categ_id[0]) || find_gift_product || find_gift_variant) &&
+                //         (!item.date_start || moment(item.date_start).isSameOrBefore(date)) &&
+                //         (!item.date_end || moment(item.date_end).isSameOrAfter(date)) &&
+                //         // variant_ids & bxa_gyb_free_variant_ids & bxa_gyb_discount_variant_ids just can one
+                //         (!item.variant_ids.length || find_variant || find_gift_variant || find_gift_product) &&
+                //         ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
+                //             (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)) &&
+                //         (!combo_promotion.length || combo_promotion.includes(self.id) || find_combo_variant) &&
+                //         (!combo_variant_promotion.length || combo_promotion.includes(self.id) || find_combo_variant));
+                // }
                 // if (item.level_on === 'order' && item.base_on === 'combo_sale') {
                 //     console.log('name :', item.related_discount_name);
                 //     console.log('combo_promotion :', combo_promotion);

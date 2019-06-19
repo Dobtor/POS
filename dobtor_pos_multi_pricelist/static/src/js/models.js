@@ -360,6 +360,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // End Range
 
             // Per Order (Combo)
+            window.history_combo_list = combo_list;
             var group_combo = _.groupBy(combo_list, 'rule_id');
             $.each(Object.keys(group_combo), function (i, t) {
                 
@@ -373,11 +374,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 var group_all = _.extend(group_variant, group_product);
 
                 // check system log
-                console.log('group_variant: ', group_variant);
-                console.log('group_product : ', group_product);
-                console.log('group_combo: ', group_combo);
-                console.log('group_all : ', group_all);
-                console.log('this_rule : ', this_rule);
+                // console.log('group_variant: ', group_variant);
+                // console.log('group_product : ', group_product);
+                // console.log('group_combo: ', group_combo);
+                // console.log('group_all : ', group_all);
+                // console.log('this_rule : ', this_rule);
 
                 if (Object.keys(group_all).length && Object.keys(group_all).length == self.inner_join_combo_product(this_rule, self.pos).length) {
 
@@ -423,7 +424,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // End Combo
 
             // Per Line (BOGO)
-            console.log('boso_list :', boso_list);
+            window.history_boso_list = boso_list;
             var group_bogo = _.groupBy(boso_list, 'rule_id');
             $.each(Object.keys(group_bogo), function (i, t) {
                 // sub query (like sql with)
@@ -464,12 +465,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     product_set_qty = gift_set_qty;
                 }
 
-                console.log('gift_set : ', gift_set);
-                console.log('gift_set_qty : ', gift_set_qty);
-                console.log('product_set : ', product_set);
-                console.log('product_set_qty : ', product_set_qty);
-                console.log('the_same : ', the_same);
-                console.log('this_rule : ', this_rule);
+                // check system log
+                // console.log('gift_set : ', gift_set);
+                // console.log('gift_set_qty : ', gift_set_qty);
+                // console.log('product_set : ', product_set);
+                // console.log('product_set_qty : ', product_set_qty);
+                // console.log('the_same : ', the_same);
+                // console.log('this_rule : ', this_rule);
 
                 // Compute Promotion
                 if (product_set.length) {
