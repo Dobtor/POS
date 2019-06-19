@@ -373,11 +373,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 var group_all = _.extend(group_variant, group_product);
 
                 // check system log
-                // console.log('group_variant: ', group_variant);
-                // console.log('group_product : ', group_product);
-                // console.log('group_combo: ', group_combo);
-                // console.log('group_all : ', group_all);
-                // console.log('this_rule : ', this_rule);
+                console.log('group_variant: ', group_variant);
+                console.log('group_product : ', group_product);
+                console.log('group_combo: ', group_combo);
+                console.log('group_all : ', group_all);
+                console.log('this_rule : ', this_rule);
 
                 if (Object.keys(group_all).length && Object.keys(group_all).length == self.inner_join_combo_product(this_rule, self.pos).length) {
 
@@ -423,6 +423,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // End Combo
 
             // Per Line (BOGO)
+            console.log('boso_list :', boso_list);
             var group_bogo = _.groupBy(boso_list, 'rule_id');
             $.each(Object.keys(group_bogo), function (i, t) {
                 // sub query (like sql with)
