@@ -219,6 +219,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             rule_sum.push({
                                 rule_id: rule.id,
                                 rule: rule,
+                                prodcut_id: product.id,
                                 round_value: round_pr(result.price * result.quantity, 1)
                             });
                         }
@@ -279,10 +280,30 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             rule_id: item.id,
                                             rule: item,
                                             prodcut_id: product.id,
-                                            // proudct: product,
-                                            // origin: round_pr(result_m.quantity * result_m.price, 1),
                                             round_value: round_pr(result_m.quantity * result_m.price, 1)
                                         });
+                                    }
+                                    if (result_m.type == 'combo') {
+                                        var comboqty_m = result_m.quantity;
+                                        if (comboqty_m > 0) {
+                                            _.each(_.range(comboqty_m), function (i) {
+                                                _.extend(result_m, {
+                                                    quantity: 1,
+                                                })
+                                                combo_list.push(result_m);
+                                            });
+                                        }
+                                    }
+                                    if (result_m.type == 'bogo') {
+                                        var qty_m = result_m.quantity;
+                                        if (qty_m > 0) {
+                                            _.each(_.range(qty_m), function (i) {
+                                                _.extend(result_m, {
+                                                    quantity: 1,
+                                                })
+                                                boso_list.push(result_m);
+                                            });
+                                        }
                                     }
                                 } else {
                                     alert(_t("You should be setting pricelist of discount product !!!"));
