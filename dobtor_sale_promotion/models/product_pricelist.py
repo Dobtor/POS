@@ -229,7 +229,7 @@ class PricelistItem(models.Model):
 
     @api.multi
     @api.depends('bxa_gyb_discount_variant_ids', 'bxa_gyb_discount_variant_ids.attribute_id')
-    def _compute_bxa_gyb_free_attribute(self):
+    def _compute_bxa_gyb_discount_attribute(self):
         for item in self:
             item.bxa_gyb_discount_attribute_id = item.bxa_gyb_discount_variant_ids.mapped('attribute_id')
 
