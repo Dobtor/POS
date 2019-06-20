@@ -203,71 +203,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             });
             return pricelist_items;
         },
-        // get_rule_price: function (pricelist_items, quantity, price) {
-        //     _.find(pricelist_items, function (rule) {
-        //         if (rule.min_quantity && quantity < rule.min_quantity) {
-        //             return false;
-        //         }
-
-        //         if (rule.level_on === 'order') {
-        //             return false;
-        //         }
-
-        //         if (rule.base === 'pricelist') {
-        //             price = self.get_price(rule.base_pricelist, quantity);
-        //         } else if (rule.base === 'standard_price') {
-        //             price = self.standard_price;
-        //         }
-
-        //         if (rule.compute_price === 'fixed') {
-        //             price = rule.fixed_price;
-        //             return true;
-        //         } else if (rule.compute_price === 'percentage') {
-        //             price = price - (price * (rule.percent_price / 100));
-        //             price = round_pr(price, 1);
-        //             return true;
-        //         } else if (rule.compute_price === 'formula') {
-        //             var price_limit = price;
-        //             price = price - (price * (rule.price_discount / 100));
-        //             if (rule.price_round) {
-        //                 price = round_pr(price, rule.price_round);
-        //             }
-        //             if (rule.price_surcharge) {
-        //                 price += rule.price_surcharge;
-        //             }
-        //             if (rule.price_min_margin) {
-        //                 price = Math.max(price, price_limit + rule.price_min_margin);
-        //             }
-        //             if (rule.price_max_margin) {
-        //                 price = Math.min(price, price_limit + rule.price_max_margin);
-        //             }
-        //             return true;
-        //         }
-        //         return false;
-        //     });
-        //     return price;
-        // },
-        // get_price: function (pricelist, quantity) {
-        //     var self = this;
-        //     if (pricelist === undefined) {
-        //         alert(_t(
-        //             'An error occurred when loading product prices. ' +
-        //             'Make sure all pricelists are available in the POS.'
-        //         ));
-        //     }
-
-        //     var category_ids = [];
-        //     var category = this.categ;
-        //     while (category) {
-        //         category_ids.push(category.id);
-        //         category = category.parent;
-        //     }
-        //     var pricelist_items = this.get_pricelist(pricelist);
-
-        //     var price = self.lst_price;
-        //     price = this.get_rule_price(pricelist_items, quantity, price);
-        //     return price;
-        // },
     });
 
     var OrderlineCollection = Backbone.Collection.extend({
@@ -304,7 +239,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             // combo : combo
 
             var self = this;
-            var price = self.product.lst_price;
+            // var price = self.product.lst_price;
+            var price = self.price;
             var order = self.order;
             var quantity = self.quantity;
             var new_price = 0;
@@ -328,7 +264,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     var marge_product = _.find(combo_product_promotion, function (cpp) {
                         return self.product.id == cpp;
                     });
-                    
+
                     var combo_promotion_where_this_rule = _.filter(self.pos.combo_promotion, function (combo) {
                         return combo.promotion_id[0] == rule.id
                     });
@@ -352,11 +288,13 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         discount: 0,
                         quantity: quantity,
                         product_tag: self.product.extra_attribute_value_ids,
-                        marge_tag: !!marge_tag ? marge_tag: [],
+                        marge_tag: !!marge_tag ? marge_tag : [],
                         marge_product: !!marge_product ? marge_product : [],
                         combo_promotion: get_combo_promotion,
                         product_id: self.product.id,
-                        product: self.product
+                        product: $.extend(self.product, {
+                            line_price: price
+                        }),
                     };
                 }
                 return {
@@ -373,6 +311,16 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     (!rule.product_id || rule.product_id[0] === self.product.id) &&
                     (!rule.variant_ids.length || self.product.inner_join_variant(rule));
                 var is_gift = self.product.inner_join_gift_variant(rule) || self.product.inner_join_gift_product(rule);
+                var marge_variant_ids = [];
+                if (is_gift) {
+
+                    if (rule.bxa_gyb_discount_variant_ids.length > 0) {
+                        marge_variant_ids = rule.bxa_gyb_discount_variant_ids;
+                    } else if (rule.bxa_gyb_free_variant_ids.length > 0) {
+                        marge_variant_ids = rule.bxa_gyb_free_variant_ids;
+                    }
+                }
+
                 return {
                     rule_id: rule.id,
                     rule: rule,
@@ -382,7 +330,11 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     quantity: quantity,
                     product_type: is_gift ? 'gift' : 'product',
                     gift_product_the_same: is_proudct == is_gift,
-                    product: self.product
+                    marge_variant_ids: marge_variant_ids,
+                    product_id: self.product.id,
+                    product: $.extend(self.product, {
+                        line_price: price
+                    }),
                 };
             }
             if (rule.base === 'pricelist') {
