@@ -58,6 +58,15 @@ class PricelistItem(models.Model):
         comodel_name='sale.promotion.rule.combo.sale',
         inverse_name='promotion_id',
     )
+    combo_order_by_pirce = fields.Selection(
+        string=_('Order by Price (Combo)'),
+        selection=[
+            ('asc', _('ascending')),
+            ('desc', _('descending'))
+        ],
+        index=True,
+        default='asc'
+    )
 
     # variant
     applied_on = fields.Selection(
@@ -220,7 +229,7 @@ class PricelistItem(models.Model):
 
     @api.multi
     @api.depends('bxa_gyb_discount_variant_ids', 'bxa_gyb_discount_variant_ids.attribute_id')
-    def _compute_bxa_gyb_free_attribute(self):
+    def _compute_bxa_gyb_discount_attribute(self):
         for item in self:
             item.bxa_gyb_discount_attribute_id = item.bxa_gyb_discount_variant_ids.mapped('attribute_id')
 
@@ -253,10 +262,11 @@ class PricelistItem(models.Model):
         if self.base_on != 'combo_sale':
             self.combo_sale_ids = [(6, 0, [])]
             self.is_primary_key = False
+            self.combo_order_by_pirce = 'asc'
         if self.base_on != 'range':
             self.range_based_ids = [(6, 0, [])]
         if self.base_on == 'combo_sale':
-            self.is_primary_key = True
+            self.is_primary_key = True    
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
