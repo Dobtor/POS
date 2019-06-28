@@ -239,6 +239,9 @@ class PricelistItem(models.Model):
                  'pricelist_id', 'percent_price', 'price_discount', 'price_surcharge')
     def _get_pricelist_item_name_price(self):
         super()._get_pricelist_item_name_price()
+        if self.variant_ids:
+            self.name = _("Variant : {}".format(','.join([variant.name for variant in self.variant_ids])))
+            
         if self.base_on == 'combo_sale':
             self.price = _('Combo Promotion')
         if self.base_on == 'range':
