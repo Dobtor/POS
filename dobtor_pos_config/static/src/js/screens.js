@@ -1,4 +1,4 @@
-odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
+odoo.define('dobtor_pos_config.screens', function (require) {
     "use strict";
 
     var core = require('web.core');
@@ -18,8 +18,6 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             //     product.added_default_code =true;
             // }
             var res = this._super(product);
-            console.log(res)
-            
             return res;
         },
     })
