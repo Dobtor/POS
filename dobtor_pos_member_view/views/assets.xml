@@ -4,6 +4,7 @@
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/dobtor_pos_member_view/static/src/js/models.js"></script>
             <script type="text/javascript" src="/dobtor_pos_member_view/static/src/js/screens.js"></script>
+            <script type="text/javascript" src="/dobtor_pos_member_view/static/src/js/db.js"></script>
         </xpath>
     </template>
 </odoo>
