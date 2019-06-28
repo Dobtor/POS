@@ -16,10 +16,10 @@ class Pricelist(models.Model):
 class PricelistItem(models.Model):
     
     _inherit = 'product.pricelist.item'
-    _order = "sequence"
+    # _order = "sequence"
 
     # is_primary_key = fields.Boolean( string='is_primary_key',default=False)
-    sequence = fields.Integer(string='sequence',default=10)
+    # sequence = fields.Integer(string='sequence',default=10)
     
 
     related_item = fields.Many2one( string='related_product',comodel_name='product.product.discount',related='pricelist_id.discount_item')

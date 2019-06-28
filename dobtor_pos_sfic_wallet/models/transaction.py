@@ -33,3 +33,16 @@ class PosPointTransaction(models.Model):
             code = int(last.reference.split('-')[1]) + 1
         reference = "Point-{}".format(code)
         return reference
+
+    @api.model
+    def create_point_transaction(self, total_amount, order, point_type):
+        return self.create({
+            'amount': total_amount,
+            'partner_id': order.partner_id.id,
+            'point_type': point_type,
+            'pos_order_id': order.id,
+            'state': 'done',
+            'pos_type': order.session_id.config_id.pos_type.id,
+            'reference': self.get_next_sfic_reference(),
+            'date': fields.Datetime.now()
+        })

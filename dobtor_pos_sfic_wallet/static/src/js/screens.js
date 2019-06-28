@@ -40,7 +40,7 @@ var _t = core._t;
 
         customer_changed: function() {
             var client = this.pos.get_client();
-            this.$('.js_customer_name').text( client ? client.name + "[Points: " + client.sfic_point + "]" : _t('Customer') ); 
+            this.$('.js_customer_name').text( client ? client.name + _t("[Points: ") + client.sfic_point + "]" : _t('Customer') ); 
 
             this.reset_paymentmethods();
         },
@@ -54,7 +54,22 @@ var _t = core._t;
 
         show: function() {
             this._super();
+            var client = this.pos.get_client();
+            this.$('.js_customer_name').text( client ? client.name + _t("[Points: ") + client.sfic_point + "]" : _t('Customer') ); 
             this.reset_paymentmethods();
+        },
+
+        click_delete_paymentline: function(cid){
+            var lines = this.pos.get_order().get_paymentlines();
+            for ( var i = 0; i < lines.length; i++ ) {
+                if (lines[i].cid === cid) {
+                    this.pos.get_order().remove_paymentline(lines[i]);
+                    this.reset_input();
+                    this.render_paymentlines();
+                    this.reset_paymentmethods();
+                    return;
+                }
+            }
         },
     })
 });

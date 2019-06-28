@@ -2,6 +2,17 @@
 <odoo>
     <data>
 
+        <record model="ir.ui.view" id="product_pricelist_sequence">
+            <field name="name">product.pricelist.sequence</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='name']" position="before">
+                    <field name="sequence" widget="handle"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="product_pricelist_item_extend_tree_view" model="ir.ui.view">
             <field name="name">product.pricelist.item.tree.extend</field>
             <field name="model">product.pricelist.item</field>
@@ -24,7 +35,8 @@
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='applied_on']/parent::group" position="inside">
-                    <field name="variant_ids" widget="many2many_tags" attrs="{'invisible':[('applied_on', '!=', '02_variant_value')],'required':[('applied_on', '=', '02_variant_value')]}"/>
+                    <field name="attribute_id" widget="many2many_tags" readonly="1" invisible="1" />
+                    <field name="variant_ids" widget="many2many_tags" domain="[('attribute_id', 'not in', attribute_id),('create_variant', '=', 'no_variant')]" attrs="{'invisible':[('applied_on', '!=', '02_variant_value')],'required':[('applied_on', '=', '02_variant_value')]}"/>
                 </xpath>
                 <xpath expr="//div[@class='oe_grey']" position="before">
                     <group attrs="{'invisible':[('level_on', '!=', 'order')]}">
@@ -37,7 +49,7 @@
                         <field name="range_based_ids">
                             <tree string="Rule Lines" editable="bottom">
                                 <field name="start"/>
-                                <field name="end"/>
+                                <!-- <field name="end"/> -->
                                 <field name="based_on"/>
                                 <field name="based_on_rebate" attrs="{'invisible':[('based_on', '!=', 'rebate')]}" />
                                 <field name="based_on_percentage" attrs="{'invisible':[('based_on', '!=', 'percentage')]}" />
@@ -45,9 +57,13 @@
                         </field>
                     </group>
                     <group attrs="{'invisible':['|',('base_on', '!=', 'combo_sale'),('level_on', '!=', 'order')]}">
+                        <field name="combo_order_by_pirce" widget="radio" attrs="{'required':[('base_on', '=', 'bogo_sale')]}"/>
                         <field name="combo_sale_ids">
                             <tree string="Rule Lines" editable="bottom">
-                                <field name="product_id" />
+                                <field name="applied_on"/>
+                                <field name="product_id" attrs="{'invisible':[('applied_on', '!=', 'product')]}" />
+                                <field name="attribute_id" widget="many2many_tags" readonly="1" invisible="1" />
+                                <field name="variant_ids" domain="[('attribute_id', 'not in', attribute_id),('create_variant', '=', 'no_variant')]" widget="many2many_tags" attrs="{'invisible':[('applied_on', '!=', 'variant')]}" />
                                 <field name="based_on"/>
                                 <field name="based_on_price" attrs="{'invisible':[('based_on', '!=', 'price')]}" />
                                 <field name="based_on_percentage" attrs="{'invisible':[('based_on', '!=', 'percentage')]}" />
@@ -75,22 +91,36 @@
                     </group>
                 </xpath>
                 <xpath expr="//form" position="inside">
-                    
                     <group col="2" attrs="{'invisible':['|','|',('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
-                        <field name="bogo_base" colspan="2" string="bogo base on" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
+                        <field name="bogo_base" colspan="2" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
+                        <field name="order_by_pirce" widget="radio" attrs="{'required':[('compute_price', '=', 'bogo_sale')]}"/>
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gya_free_Aproduct_unit" class="oe_inline" />
                         <field name="bxa_gya_free_Bproduct_unit" class="oe_inline" />
                     </group>
+                    <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_discount'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
+                        <field name="bxa_gya_discount_ids">
+                            <tree string="Rule Lines" editable="bottom">
+                                <field name="buy_x"/>
+                                <field name="based_on_percentage" />
+                            </tree>
+                        </field>
+                    </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gyb_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gyb_free_Aproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_free_products" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_free')]}"/>
+                        <field name="bxa_gyb_free_gift_base_on" widget="radio" />
+                        <field name="bxa_gyb_free_products" class="oe_inline" attrs="{'invisible':[('bxa_gyb_free_gift_base_on', '!=', 'product')],'required':[('bogo_base', '=', 'bxa_gyb_free'), ('bxa_gyb_free_gift_base_on', '=', 'product')]}"/>
+                        <field name="bxa_gyb_free_attribute_id" widget="many2many_tags" readonly="1" invisible="1" />
+                        <field name="bxa_gyb_free_variant_ids" domain="[('attribute_id', 'not in', bxa_gyb_free_attribute_id),('create_variant', '=', 'no_variant')]" widget="many2many_tags" class="oe_inline" attrs="{'invisible':[('bxa_gyb_free_gift_base_on', '!=', 'variant')],'required':[('bogo_base', '=', 'bxa_gyb_free'), ('bxa_gyb_free_gift_base_on', '=', 'variant')]}"/>
                         <field name="bxa_gyb_free_Bproduct_unit" class="oe_inline"/>
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gyb_discount'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gyb_discount_Aproduct_unit" class="oe_inline" />
-                        <field name="bxa_gyb_discount_product" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_discount')]}"/>
+                        <field name="bxa_gyb_discount_gift_base_on" widget="radio" />
+                        <field name="bxa_gyb_discount_product" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_gift_base_on', '!=', 'product')],'required':[('bogo_base', '=', 'bxa_gyb_discount'), ('bxa_gyb_discount_gift_base_on', '=', 'product')]}"/>
+                        <field name="bxa_gyb_discount_attribute_id" widget="many2many_tags" readonly="1" invisible="1" />
+                        <field name="bxa_gyb_discount_variant_ids" domain="[('attribute_id', 'not in', bxa_gyb_discount_attribute_id),('create_variant', '=', 'no_variant')]" class="oe_inline" widget="many2many_tags" attrs="{'invisible':[('bxa_gyb_discount_gift_base_on', '!=', 'variant')],'required':[('bogo_base', '=', 'bxa_gyb_discount'), ('bxa_gyb_discount_gift_base_on', '=', 'variant')]}"/>
                         <field name="bxa_gyb_discount_Bproduct_unit" class="oe_inline" />
                         <field name="bxa_gyb_discount_base_on" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bxa_gyb_discount')]}"/>
                         <field name="bxa_gyb_discount_fixed_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'fixed')]}"/>

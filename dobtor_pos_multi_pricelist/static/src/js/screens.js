@@ -31,13 +31,25 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
             this._super();
             this.$('.pay').off('click');
             this.$('.pay').on('click', function () {
-                var order = self.pos.get_order();
-                order.check_order_discount();
-                var r = confirm(_t("Confirm to go to the payment page?."));
-                if (r == true) {
-                    var has_valid_product_lot = _.every(order.orderlines.models, function (line) {
-                        return line.has_valid_product_lot();
-                    });
+                self.click_payment_btn(self);
+            });
+            this.click_customer_btn(self);
+        },
+        click_customer_btn: function (self) {
+            this.$('.set-customer').click(function () {
+                self.gui.show_screen('clientlist');
+            });
+        },
+        click_payment_btn: function (self) {
+            var order = self.pos.get_order();
+            order.check_order_discount();
+            var has_valid_product_lot = _.every(order.orderlines.models, function (line) {
+                return line.has_valid_product_lot();
+            });
+            self.gui.show_popup('confirm', {
+                'title': _t('Go To Payment'),
+                'body': _t('Confirm to go to the payment page?'),
+                confirm: function () {
                     if (!has_valid_product_lot) {
                         self.gui.show_popup('confirm', {
                             'title': _t('Empty Serial/Lot Number'),
@@ -49,13 +61,16 @@ odoo.define('dobtor_pos_multi_pricelist.screens', function (require) {
                     } else {
                         self.gui.show_screen('payment');
                     }
-                }
-
-            });
-            this.$('.set-customer').click(function () {
-                self.gui.show_screen('clientlist');
+                },
             });
         }
     })
 
+    screens.ClientListScreenWidget.include({
+        save_client_details: function(partner){
+        var res = this._super(partner)
+        this.$('.client-list').css('display','none');
+        return res 
+    },
+ })
 })

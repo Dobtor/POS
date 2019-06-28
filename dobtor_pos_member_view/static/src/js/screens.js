@@ -2,15 +2,13 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
     "use strict";
     
     var screens = require('point_of_sale.screens');
-
+    var history_screens = require('pos_orders_history.screens');
     screens.ClientListScreenWidget.include({
 
         show: function(){
             this._super();
             this.render_list([]);
         },
-
-
         perform_search: function(query, associate_result){
             // name Regular Expression : /^[\u4e00-\u9fa5]{2,4}$/
             var customers;
@@ -30,10 +28,18 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
                 this.render_list([]);
             }
         },
-
         clear_search: function(){
             this._super();
             this.render_list([]);
         },
+    })
+    history_screens.OrdersHistoryScreenWidget.include({
+        show:function(){
+            this._super();
+            if(this.pos.config.module_pos_restaurant!=true){
+                this.$('.filters .table-filter').css('display','none');
+
+            }
+        }
     })
 })

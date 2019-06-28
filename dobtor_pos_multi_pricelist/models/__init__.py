@@ -5,3 +5,4 @@ from . import product
 from . import pos_order_line
 from . import res_partner
 from . import sales_member
+from . import pos_order

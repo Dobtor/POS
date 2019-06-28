@@ -20,7 +20,6 @@ class PosOrderLine(models.Model):
     def _order_line_fields(self, line, session_id=None):
         res = super()._order_line_fields(line, session_id)
         product = self.env['product.product'].browse(line[2]['product_id'])
-
         if res and 'compute_name' not in res[2]:
             res[2]['compute_name'] = product.name +' ('+'Demo Text'+')'
         return res

@@ -31,6 +31,10 @@ odoo.define('dobtor_sfic_wallet.pos', function (require) {
                 return point_paid - order.point_paid;
             }
             return 0;
+        },
+
+        get_point_paid_string: function() {
+            return _t(' [Paid: ') + this.get_point_paid() + "]";
         }
     });
 
@@ -49,8 +53,21 @@ odoo.define('dobtor_sfic_wallet.pos', function (require) {
                 this.point_paid = this.pos.get_point_paid();
                 this.paymentlines.add(newPaymentline);
                 this.select_paymentline(newPaymentline);
+                // this.renderElement();
             } else {
                 return _super_order.add_paymentline.apply(this, arguments);
+            }
+        },
+        remove_paymentline: function(line){
+            if (line.cashregister.journal.is_points) {
+                this.assert_editable();
+                this.point_paid = 0;
+                if(this.selected_paymentline === line){
+                    this.select_paymentline(undefined);
+                }
+                this.paymentlines.remove(line);
+            } else {
+                _super_order.remove_paymentline.apply(this, arguments);
             }
         },
     });

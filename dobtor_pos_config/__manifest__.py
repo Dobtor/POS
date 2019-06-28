@@ -29,6 +29,8 @@
         # 'security/ir.model.access.csv',
         'views/pos_config_view.xml',
         'views/product_pricelist.xml',
+        'views/pos_order.xml',
+        'views/assets.xml',
         # 'views/assets.xml'
 
     ],
