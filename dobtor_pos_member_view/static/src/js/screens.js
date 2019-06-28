@@ -15,7 +15,7 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
             // name Regular Expression : /^[\u4e00-\u9fa5]{2,4}$/
             var customers;
             query = query.replace(/[\[\]\(\)\+\*\?\.\-\!\&\^\$\|\~\_\{\}\:\,\\\/]/g,'');
-            var patt = new RegExp(/^09\d{8}$|^(02)?[1-9]{1}\d{7}$/);   
+            var patt = new RegExp(/^09\d{8}$|^(02)?[1-9]{1}\d{7}$|^[\u4e00-\u9fa5a-zA-Z]{2,20}$/);   
             if(query && patt.test(query)){
                 customers = this.pos.db.search_partner(query);
                 this.display_client_details('hide');
