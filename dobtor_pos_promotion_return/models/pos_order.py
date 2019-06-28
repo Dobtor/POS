@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.tools import float_is_zero
+from odoo.exceptions import UserError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -46,10 +47,12 @@ class PosOrder(models.Model):
                     cash_journal = self.env['account.journal'].search([('id', 'in', list(journal_ids))], limit=1)
                     if not cash_journal:
                         journal_list = [statement.journal_id for statement in pos_session.statement_ids]
-                    for journal in journal_list:
-                        if not journal.is_points and journal.type == 'cash':
-                            cash_journals.append(journal)
-                if cash_journals:
+                        for journal in journal_list:
+                            if not journal.is_points and journal.type == 'cash':
+                                cash_journals.append(journal)
+                    else:
+                        cash_journals.append(cash_journal)
+                if len(cash_journals):
                     cash_journal_id = cash_journals[0].id
                 else:
                     raise UserError(
