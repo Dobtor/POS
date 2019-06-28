@@ -220,6 +220,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 rule_id: rule.id,
                                 rule: rule,
                                 prodcut_id: product.id,
+                                quantity: result.quantity,
                                 round_value: round_pr(result.price * result.quantity, 1)
                             });
                         }
@@ -280,6 +281,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             rule_id: item.id,
                                             rule: item,
                                             prodcut_id: product.id,
+                                            quantity: result_m.quantity,
                                             round_value: round_pr(result_m.quantity * result_m.price, 1)
                                         });
                                     }
@@ -336,12 +338,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // Per Order (Range)
             var group_rule = _.groupBy(rule_sum, 'rule_id');
             $.each(Object.keys(group_rule), function (i, t) {
+                var pluck_qty = _.pluck(group_rule[t], 'quantity')
                 var pluck_val = _.pluck(group_rule[t], 'round_value');
                 var this_rule = group_rule[t][0].rule;
-                var rule_total = _.reduce(pluck_val, function (memo, num) {
-                    return memo + num;
-                }, 0);
-
+                var rule_total = _.reduce(pluck_val, (memo, num) => memo + num, 0);
+                var qty_total = _.reduce(pluck_qty, (memo, num) => memo + num, 0);
+                
                 var get_range_promotion = _.find(self.pos.range_promotion, function (range) {
                     if (range.promotion_id[0] == group_rule[t][0].rule_id) {
                         return rule_total >= range.start;
@@ -349,7 +351,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     return false;
                 });
 
-                if (get_range_promotion) {
+                if (get_range_promotion && (!this_rule.min_quantity || qty_total >= this_rule.min_quantity)) {
                     var discount_product = self.pos.db.get_product_by_id(this_rule.related_product[0]);
                     var discount_rate = 0;
                     if (discount_product) {
