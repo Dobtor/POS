@@ -27,40 +27,40 @@ class BogoItem(models.Model):
     )
     buy_x = fields.Integer(
         string=_('Buy (X Unit)'),
-        readonly=True,
-        store=True
+        # readonly=True,
+        # store=True
     )
     based_on_percentage = fields.Float(
         string=_('Percentage'),
         default=0.0
     )
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        conut = 0
-        for res in vals_list:
-            if res.get('promotion_id', False):
-                pircelist_item = self.env['product.pricelist.item'].search(
-                        [('id', '=', res.get('promotion_id'))])
-                conut += 1
-                res['buy_x'] = len(pircelist_item.bxa_gya_discount_ids) + conut
-        promotion = super().create(vals_list)
-        self.clear_caches()
-        return promotion
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     conut = 0
+    #     for res in vals_list:
+    #         if res.get('promotion_id', False):
+    #             pircelist_item = self.env['product.pricelist.item'].search(
+    #                     [('id', '=', res.get('promotion_id'))])
+    #             conut += 1
+    #             res['buy_x'] = len(pircelist_item.bxa_gya_discount_ids) + conut
+    #     promotion = super().create(vals_list)
+    #     self.clear_caches()
+    #     return promotion
 
-    @api.multi
-    def unlink(self):
-        for record in self:
-            if not isinstance(record.id, models.NewId):
-                pircelist_item = self.env['product.pricelist.item'].search([('id', '=', record.promotion_id.id)])
-                conut = 0
-                for item in pircelist_item.bxa_gya_discount_ids:
-                    if record.id != item.id:
-                        conut += 1
-                        item.write({'buy_x': conut})
-        res = super().unlink()
-        self.clear_caches()
-        return res
+    # @api.multi
+    # def unlink(self):
+    #     for record in self:
+    #         if not isinstance(record.id, models.NewId):
+    #             pircelist_item = self.env['product.pricelist.item'].search([('id', '=', record.promotion_id.id)])
+    #             conut = 0
+    #             for item in pircelist_item.bxa_gya_discount_ids:
+    #                 if record.id != item.id:
+    #                     conut += 1
+    #                     item.write({'buy_x': conut})
+    #     res = super().unlink()
+    #     self.clear_caches()
+    #     return res
 
     @api.constrains('based_on_percentage')
     def _check_rule_validation(self):
