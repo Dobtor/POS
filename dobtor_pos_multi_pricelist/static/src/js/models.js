@@ -253,7 +253,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         console.log('multi')
                         var temp_price = line.price
                         var sub_rate = 1;
-                        var total_promotion_value = 0;
+                        var total_promotion_value = [];
 
                         $.each(items, function (i, item) {
                             if (line.quantity > 0) {
@@ -273,8 +273,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                         self.selected_orderline.compute_name = self.add_line_description(item, line, round_pr(result_m.discount, 0.01));
                                         self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
                                         temp_price = temp_price + discount_price;
-
-                                        total_promotion_value += round_pr(result_m.quantity * discount_price, 1);
+                                        
+                                        total_promotion_value.push({
+                                            prodcut_id: product.id,
+                                            promotion_value: round_pr(result_m.quantity * discount_price, 1)
+                                        })
+                                        // total_promotion_value += round_pr(result_m.quantity * discount_price, 1);
                                     }
                                     if (result_m.type == 'range') {
                                         rule_sum.push({
@@ -326,14 +330,18 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         window.group_pruduct = group_pruduct;
                         $.each(Object.keys(group_pruduct), function (i, t) {
                             _.each(group_pruduct[t], function (product_itmes) {
+                                let this_promtion_value = _.filter(total_promotion_value, (item) => product_itmes.prodcut_id == item.prodcut_id);
+                                let get_this_promtion_value = _.pluck(this_promtion_value, 'promotion_value');
+                                let sum_promtion_value = _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
                                 $.extend(product_itmes, {
-                                    round_value: product_itmes.round_value + total_promotion_value
+                                    round_value: product_itmes.round_value + sum_promtion_value
                                 });
                             })
                         });
                     }
                 }
             });
+
             // End Per Line
             // Per Order (Range)
             var group_rule = _.groupBy(rule_sum, 'rule_id');
@@ -388,12 +396,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             $.each(Object.keys(group_combo), function (i, t) {
                 
                 var this_rule = group_combo[t][0].rule;
-                var group_variant = _.groupBy(_.filter(group_combo[t], (item) => {
-                    return !!item.marge_tag.length;
-                }), 'marge_tag');
-                var group_product = _.groupBy(_.filter(group_combo[t], (item) => {
-                    return !!item.marge_product.length;
-                }), 'marge_product');
+                var group_variant = _.groupBy(_.filter(group_combo[t], (item) => !!item.marge_tag.length), 'marge_tag');
+                var group_product = _.groupBy(_.filter(group_combo[t], (item) => !!item.marge_product.length), 'marge_product');
                 var group_all = _.extend(group_variant, group_product);
 
                 // check system log
