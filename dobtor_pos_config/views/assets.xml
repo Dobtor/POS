@@ -3,7 +3,6 @@
     <template id="assets_extend" name="assets" inherit_id="point_of_sale.assets">
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/dobtor_pos_config/static/src/js/screens.js"></script>
-            <!-- <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/screens.js"></script> -->
         </xpath>
     </template>
 </odoo>

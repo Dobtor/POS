@@ -13,6 +13,9 @@ odoo.define('dobtor_pos_member_view.db', function (require) {
             if(partner.mobile){
                 str += '|' + partner.mobile.split(' ').join('');
             }
+            if(partner.barcode){
+                str += '|' + partner.barcode.split(' ').join('');
+            }
             str = '' + partner.id + ':' + str.replace(':','') + '\n';
 
             return str;
