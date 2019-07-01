@@ -2,7 +2,7 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
     "use strict";
     
     var screens = require('point_of_sale.screens');
-    // var history_screens = require('pos_orders_history.screens');
+    var history_screens = require('pos_orders_history.screens');
     screens.ClientListScreenWidget.include({
 
         show: function(){
