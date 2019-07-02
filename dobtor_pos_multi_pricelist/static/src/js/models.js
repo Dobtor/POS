@@ -133,8 +133,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     var sub_rate = _proudct.sub_rate;
                     if (get_range_promotion) {
                         if (get_range_promotion.based_on === 'rebate') {
-                            discount_rate = rule_total == 0 ? 0 : get_range_promotion.based_on_rebate / rule_total;
+                            discount_rate = rule_total == 0 ? 0 : (get_range_promotion.based_on_rebate) / rule_total;
                         }
+                        // console.log('get_range_promotion.based_on_rebate : ', get_range_promotion.based_on_rebate);
+                        // console.log('rule_total :', rule_total);
+                        // console.log('discount_rate : ', discount_rate);
                         $.extend(_proudct, {
                             sub_rate: _proudct.sub_rate * (1 - discount_rate)
                         });
@@ -261,27 +264,31 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
                         $.each(items, function (i, item) {
                             if (line.quantity > 0) {
-                                var result_m = line.get_price_byitem(item);
-                                var discount_rate = round_pr(result_m.discount, 0.01) / 100.00;
+                                var result_m = line.get_price_byitem(item);                                
                                 var discount_product = self.pos.db.get_product_by_id(item.related_product[0]);
 
                                 if (discount_product) {
+                                    
                                     var temp_product = $.extend(true, {}, discount_product);
-                                    var discount_price = round_pr(-discount_rate * temp_price, 1);
-                                    if (result_m.type == 'price' && round_pr(result_m.discount, 0.01) > 0 && temp_product && discount_price) {
-                                        self.add_product(temp_product, {
-                                            'price': discount_price,
-                                            'quantity': result_m.quantity
-                                        });
-                                        sub_rate = sub_rate * (1 - discount_rate);
-                                        self.selected_orderline.compute_name = self.add_line_description(item, line, round_pr(result_m.discount, 0.01));
-                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
-                                        temp_price = temp_price + discount_price;
+                                    
+                                    if (result_m.type == 'price' && temp_product) {
+                                        var discount_rate = round_pr(result_m.discount, 0.01) / 100.00;
+                                        var discount_price = round_pr(-discount_rate * temp_price, 1);
+                                        if (round_pr(result_m.discount, 0.01) > 0 && discount_price) {
+                                            self.add_product(temp_product, {
+                                                'price': discount_price,
+                                                'quantity': result_m.quantity
+                                            });
+                                            sub_rate = sub_rate * (1 - discount_rate);
+                                            self.selected_orderline.compute_name = self.add_line_description(item, line, round_pr(result_m.discount, 0.01));
+                                            self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
+                                            temp_price = temp_price + discount_price;
 
-                                        total_promotion_value.push({
-                                            prodcut_id: product.id,
-                                            promotion_value: round_pr(result_m.quantity * discount_price, 1)
-                                        })
+                                            total_promotion_value.push({
+                                                prodcut_id: product.id,
+                                                promotion_value: round_pr(result_m.quantity * discount_price, 1)
+                                            })
+                                        }
                                         // total_promotion_value += round_pr(result_m.quantity * discount_price, 1);
                                     }
                                     if (result_m.type == 'range') {
@@ -385,9 +392,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     }
 
                     // Compute Sub Rate - member_list
-                    self.compute_member_promotion(self, customer, member_list, get_range_promotion, rule_total, discount_rate);
+                    self.compute_member_promotion(self, customer, member_list, get_range_promotion, rule_total, discount_rate/100);
+                } else {
+                    self.compute_member_promotion(self, customer, member_list);
                 }
-
             });
             if (!rule_sum.length) {
                 self.compute_member_promotion(self, customer, member_list);
@@ -620,12 +628,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                                 });
 
                                                 // relation product
-                                                let relation_product_lists = []
-                                                relation_product_lists.push(product_set[gift_index].id)
+                                                let relation_product_lists = [];
+                                                relation_product_lists.push(product_set[gift_index].id);
 
                                                 self.selected_orderline.compute_name = self.add_line_description(this_rule, undefined, discount, product_set[gift_index]);
                                                 self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
-                                                self.selected_orderline.set_relation_product(relation_product_lists.join())
+                                                self.selected_orderline.set_relation_product(relation_product_lists.join());
                                             }
                                         }
                                         gift_index++;
