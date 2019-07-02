@@ -214,7 +214,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         initialize: function (attr, options) {
             var self = this;
             _super_orderline.prototype.initialize.apply(self, arguments);
-            self.discount_price = 0;
             self.lock = false;
             self.referce_ids = new OrderlineCollection();
             self.res_id = undefined;
@@ -224,13 +223,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         },
         get_res_id: function () {
             return this.res_id;
-        },
-        set_discount_price: function (discount_price) {
-            var disc = Math.max(parseFloat(discount_price) || 0, 0);
-            this.discount_price = disc;
-        },
-        get_discount_price: function () {
-            return this.discount_price;
         },
         get_price_byitem: function (rule) {
             // price : discount price  
@@ -333,7 +325,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     marge_variant_ids: marge_variant_ids,
                     product_id: self.product.id,
                     product: $.extend(self.product, {
-                        line_price: price
+                        line_price: price,
+                        line_cid: self.cid,
                     }),
                 };
             }

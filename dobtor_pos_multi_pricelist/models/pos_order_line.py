@@ -2,11 +2,15 @@
 
 from odoo import models, fields, api
 
+
 class PosOrderLine(models.Model):
     _inherit = "pos.order.line"
 
     description = fields.Char(string='Description',compute='_compute_description')
     compute_name = fields.Char(string="compute_name")
+
+    relation_product = fields.Char(string="Relation Product")
+
     # display_name = fields.Char(string="SXXXX")
     @api.depends('product_id','display_name')
     def _compute_description(self):

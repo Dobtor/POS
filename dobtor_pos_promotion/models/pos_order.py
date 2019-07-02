@@ -13,4 +13,4 @@ class PosOrderLine(models.Model):
         string="Sub Line"
     )
     
-    # discount_price = fields.
+
