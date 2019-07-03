@@ -21,6 +21,6 @@ class ResPartner(models.Model):
     def _clear_used_birthday_times(self):
         records = self.search([('member_id', '!=', False),('used_birthday_times', '>', 0)])
         for partner in records:
-            today = datetime.today().date()
-            if today > partner.birthday:
+            month = datetime.now().month           
+            if str(month) != str(partner.birthday).split('-',1)[1].split('-',1)[0]:
                 partner.used_birthday_times = 0

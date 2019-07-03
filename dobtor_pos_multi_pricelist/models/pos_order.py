@@ -17,9 +17,8 @@ class PosOrder(models.Model):
             order_date = False
             if res['date_order'] :
                 order_date = res['date_order'].split('T')[0]
-                order_date = order_date.split('-')[-2:]
-            
-            birthday = datetime.strftime(partner.birthday, '%m-%d')
-            if (order_date and '-'.join(order_date)) == birthday:
+                order_date = order_date.split('-')[-2:-1]
+            birthday = datetime.strftime(partner.birthday, '%m')
+            if order_date and order_date[0]== birthday:
                 partner.used_birthday_times = partner.used_birthday_times + 1
         return res 

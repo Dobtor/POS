@@ -14,6 +14,23 @@
                 <span class='label'>ExpiryDate</span>
                 <input class='detail client-expired_date' name='Term' readonly="1" t-att-value='partner.expired_date || ""'></input>
             </div>
+            <div class='client-detail'>
+                <span class='label'>Gender</span>
+                <select t-if='!partner.id' class='detail client-gender' name="gender">
+　                  <option value="male">Male</option>
+　                  <option value="female">Female</option>
+                </select>
+                <select t-if='partner.gender=="male"' class='detail client-gender' name="gender">
+　                  <option value="male"  selected="true">Male</option>
+　                  <option value="female">Female</option>
+                </select>
+                 <select t-if='partner.gender=="female"' class='detail client-gender' name="gender">
+　                  <option value="male">Male</option>
+　                  <option value="female" selected="true">Female</option>
+                </select>
+                <!-- <input class='detail client-gender' name='gender' type="radio" value='male' style="width:20px;">Male</input>
+                <input class='detail client-gender' name='gender' type="radio" value='female' style="width:20px;">Female</input> -->
+            </div>
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
 
@@ -55,6 +72,17 @@
                 </t>
                 <t t-if='!partner.expired_date'>
                     <span class='detail client-expired_date empty'>N/A</span>
+                </t>
+            </div>
+             <div class='client-detail'>
+                <span class='label'>Gender</span>
+                <t t-if='partner.gender'>
+                    <span class='detail client-gender'>
+                        <t t-esc='partner.gender'/>
+                    </span>
+                </t>
+                <t t-if='!partner.gender'>
+                    <span class='detail client-gender empty'>N/A</span>
                 </t>
             </div>
         </t>

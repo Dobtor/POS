@@ -23,11 +23,12 @@
         'dobtor_pos_sfic_wallet',
         'point_of_sale',
         'dobtor_sale_member',
-        'pos_orders_history',
+        # 'pos_orders_history',
         ],
         # always loaded
     'data': [
         'views/assets.xml',
+        'views/res_partner.xml',
     ],
     'qweb': ['static/src/xml/pos.xml'],
 }
