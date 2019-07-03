@@ -214,15 +214,6 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
         initialize: function (attr, options) {
             var self = this;
             _super_orderline.prototype.initialize.apply(self, arguments);
-            self.lock = false;
-            self.referce_ids = new OrderlineCollection();
-            self.res_id = undefined;
-        },
-        set_res_id: function (line) {
-            this.res_id = line;
-        },
-        get_res_id: function () {
-            return this.res_id;
         },
         get_price_byitem: function (rule) {
             // price : discount price  
