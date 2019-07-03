@@ -1,6 +1,6 @@
 with lines as (
     select line.id, line.name, line.product_id, line.price_unit, line.qty, line.price_subtotal, line.relation_product from pos_order_line as line 
-    where line.order_id = 166
+    where line.order_id = 167
 )
 
 select lines.*, p.barcode from lines 

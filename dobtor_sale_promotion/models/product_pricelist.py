@@ -242,10 +242,12 @@ class PricelistItem(models.Model):
         if self.variant_ids:
             self.name = _("Variant : {}".format(','.join([variant.name for variant in self.variant_ids])))
             
-        if self.base_on == 'combo_sale':
-            self.price = _('Combo Promotion')
-        if self.base_on == 'range':
-            self.price = _('Range based Discount')
+        if self.level_on == 'order':
+            if self.base_on == 'combo_sale':
+                self.price = _('Combo Promotion')
+            if self.base_on == 'range':
+                self.price = _('Range based Discount')
+
         if self.compute_price == 'bogo_sale':
             self.price = _("bogo offer")
 

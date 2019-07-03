@@ -73,8 +73,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 'price': round_pr((result.price - product.lst_price), 1),
                                 'quantity': result.quantity,
                             });
+
                             self.selected_orderline.compute_name = self.add_line_description(rule, line);
                             self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
+                            // handle relation product 
+                            let relation_product = [];
+                            relation_product.push(product.id);
+                            self.selected_orderline.set_relation_product(relation_product.join());
                         }
                     }
                 } else {
@@ -283,6 +288,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             sub_rate = sub_rate * (1 - discount_rate);
                                             self.selected_orderline.compute_name = self.add_line_description(item, line, round_pr(result_m.discount, 0.01));
                                             self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
+                                            // handle relation product
+                                            let relation_product = [];
+                                            relation_product.push(line.product.id);
+                                            self.selected_orderline.set_relation_product(relation_product.join());
+
                                             temp_price = temp_price + discount_price;
 
                                             total_promotion_value.push({
@@ -612,7 +622,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             let Bproduct_unit = parseInt(this_rule.bxa_gyb_free_Bproduct_unit);
                                             let relation_product_lists = [];
                                             relation_product_lists = self.compute_relation_product(product_set, gift_set, gift_index, i, Aproduct_unit, Bproduct_unit);
-                                            console.log(relation_product_lists);
+                                            // console.log(relation_product_lists);
                                             self.selected_orderline.set_relation_product(relation_product_lists.join());
 
                                             gift_index++;
@@ -656,7 +666,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             let Bproduct_unit = parseInt(this_rule.bxa_gyb_discount_Bproduct_unit);
                                             let relation_product_lists = [];
                                             relation_product_lists = self.compute_relation_product(product_set, gift_set, gift_index, i, Aproduct_unit, Bproduct_unit);
-                                            console.log(relation_product_lists);
+                                            // console.log(relation_product_lists);
                                             self.selected_orderline.set_relation_product(relation_product_lists.join());
 
                                             gift_index++;
@@ -681,18 +691,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 }
             });
             // End BOGO
-
-
-            // handle discount price
-            // window.history_discount_price_list = discount_price_list;
-            // $.each(self.orderlines.models, function (i, line) {
-            //     let filter_discount_price = _.filter(discount_price_list, item => item.line_cid == line.cid);
-            //     let pluck_discount_price = _.pluck(filter_discount_price, 'discount_price')
-            //     let get_total_discount_price = _.reduce(pluck_discount_price, (memo, num) => memo + num, 0);
-
-            //     line.set_discount_price(get_total_discount_price);
-            // })
-            // end discount price
 
             // GO Back first orderline (display correct discount proudct name) 
             if (self.orderlines.models.length) {
@@ -722,6 +720,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             self.selected_orderline.set_relation_product(relation_product_lists.join());
         },
         compute_bogo_promotion: () => {
+            // need to refactoring
             return true;
         },
         compute_range_promotion: () => {
