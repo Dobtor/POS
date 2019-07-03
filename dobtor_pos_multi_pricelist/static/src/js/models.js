@@ -232,7 +232,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             rule_sum.push({
                                 rule_id: rule.id,
                                 rule: rule,
-                                prodcut_id: product.id,
+                                product_id: product.id,
                                 quantity: result.quantity,
                                 round_value: round_pr(result.price * result.quantity, 1)
                             });
@@ -296,7 +296,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             temp_price = temp_price + discount_price;
 
                                             total_promotion_value.push({
-                                                prodcut_id: product.id,
+                                                product_id: product.id,
                                                 promotion_value: round_pr(result_m.quantity * discount_price, 1)
                                             })
                                         }
@@ -306,7 +306,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                         rule_sum.push({
                                             rule_id: item.id,
                                             rule: item,
-                                            prodcut_id: product.id,
+                                            product_id: product.id,
                                             quantity: result_m.quantity,
                                             round_value: round_pr(result_m.quantity * result_m.price, 1)
                                         });
@@ -348,11 +348,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             sub_rate: sub_rate,
                         });
 
-                        var group_pruduct = _.groupBy(rule_sum, 'prodcut_id');
-                        window.group_pruduct = group_pruduct;
-                        $.each(Object.keys(group_pruduct), function (i, t) {
-                            _.each(group_pruduct[t], function (product_itmes) {
-                                let this_promtion_value = _.filter(total_promotion_value, (item) => product_itmes.prodcut_id == item.prodcut_id);
+                        let group_product = _.groupBy(rule_sum, 'product_id');
+                        window.group_product = group_product;
+                        $.each(Object.keys(group_product), function (i, t) {
+                            _.each(group_product[t], function (product_itmes) {
+                                let this_promtion_value = _.filter(total_promotion_value, (item) => product_itmes.product_id == item.product_id);
                                 let get_this_promtion_value = _.pluck(this_promtion_value, 'promotion_value');
                                 let sum_promtion_value = _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
                                 $.extend(product_itmes, {
@@ -368,7 +368,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // Per Order (Range)
             var group_rule = _.groupBy(rule_sum, 'rule_id');
             $.each(Object.keys(group_rule), function (i, t) {
-                var pluck_qty = _.pluck(group_rule[t], 'quantity')
+                var pluck_qty = _.pluck(group_rule[t], 'quantity');
                 var pluck_val = _.pluck(group_rule[t], 'round_value');
                 var this_rule = group_rule[t][0].rule;
                 var rule_total = _.reduce(pluck_val, (memo, num) => memo + num, 0);
@@ -398,6 +398,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         }
                         self.selected_orderline.compute_name = self.add_line_description(this_rule, undefined, 0, undefined, _('Range based Discount'));
                         self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
+                        let relation_product = _.pluck(group_rule[t], 'product_id');
+                        self.selected_orderline.set_relation_product(relation_product.join());
                     } else {
                         alert(_t("You should be setting pricelist of discount product !!!"));
                     }
