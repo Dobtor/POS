@@ -7,7 +7,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var _t = core._t;
     var round_pr = utils.round_precision;
     var exports = models;
-
+    var is_debug = true;
 
     exports.load_domain = function (model_name, domain) {
         var models = exports.PosModel.prototype.models;
@@ -33,10 +33,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     exports.load_fields('res.partner', ['birthday', 'member_id', 'used_birthday_times', 'can_discount_times', 'related_discount_product', 'birthday_discount', 'related_discount']);
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
-        // initialize:function(){
-        //     _super_order.prototype.initialize.apply(this);
-        //     self.leave_qty = undefined;
-        // },
+        initialize:function(){
+            var self = this;
+            _super_order.prototype.initialize.apply(self, arguments);
+            // self.leave_qty = undefined;
+        },
         // set_leave_qty: function (qty) {
         //     this.leave_qty = qty;
         // },
@@ -264,13 +265,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
                         $.each(items, function (i, item) {
                             if (line.quantity > 0) {
-                                var result_m = line.get_price_byitem(item);                                
+                                var result_m = line.get_price_byitem(item);
                                 var discount_product = self.pos.db.get_product_by_id(item.related_product[0]);
 
                                 if (discount_product) {
-                                    
+
                                     var temp_product = $.extend(true, {}, discount_product);
-                                    
+
                                     if (result_m.type == 'price' && temp_product) {
                                         var discount_rate = round_pr(result_m.discount, 0.01) / 100.00;
                                         var discount_price = round_pr(-discount_rate * temp_price, 1);
@@ -392,7 +393,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     }
 
                     // Compute Sub Rate - member_list
-                    self.compute_member_promotion(self, customer, member_list, get_range_promotion, rule_total, discount_rate/100);
+                    self.compute_member_promotion(self, customer, member_list, get_range_promotion, rule_total, discount_rate / 100);
                 } else {
                     self.compute_member_promotion(self, customer, member_list);
                 }
@@ -404,62 +405,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
             // Per Order (Combo)
             window.history_combo_list = combo_list;
-            var group_combo = _.groupBy(combo_list, 'rule_id');
-            $.each(Object.keys(group_combo), function (i, t) {
-
-                var this_rule = group_combo[t][0].rule;
-                var group_variant = _.groupBy(_.filter(group_combo[t], (item) => !!item.marge_tag.length), 'marge_tag');
-                var group_product = _.groupBy(_.filter(group_combo[t], (item) => !!item.marge_product.length), 'marge_product');
-                var group_all = _.extend(group_variant, group_product);
-
-                // check system log
-                // console.log('group_variant: ', group_variant);
-                // console.log('group_product : ', group_product);
-                // console.log('group_combo: ', group_combo);
-                // console.log('group_all : ', group_all);
-                // console.log('this_rule : ', this_rule);
-
-                if (Object.keys(group_all).length && Object.keys(group_all).length == self.inner_join_combo_product(this_rule, self.pos).length) {
-
-                    var group_min_qty = _.min(_.map(group_all, (value) => {
-                        return _.size(value);
-                    }));
-
-                    if (group_min_qty > 0) {
-                        $.each(Object.keys(group_all), function (j, product_group_name) {
-                            var product_group_order_by_price = _.chain(group_all[product_group_name])
-                                .sortBy('price');
-                            product_group_order_by_price = this_rule.combo_order_by_pirce === 'desc' ? product_group_order_by_price.reverse().value() : product_group_order_by_price.value();
-                            $.each(product_group_order_by_price, function (k, items) {
-                                if (k < group_min_qty) {
-                                    var discount_product = self.pos.db.get_product_by_id(this_rule.related_product[0]);
-                                    if (discount_product) {
-                                        var temp_product = $.extend(true, {}, discount_product);
-                                        var discount = 0;
-                                        if (items.combo_promotion.based_on === 'price') {
-                                            self.add_product(temp_product, {
-                                                'price': items.combo_promotion.based_on_price - items.product.line_price,
-                                                'quantity': 1,
-                                            });
-                                            discount = round_pr((((items.product.line_price - items.combo_promotion.based_on_price) / items.product.line_price) * 100.00), 0.01);
-                                        } else if (items.combo_promotion.based_on === 'percentage') {
-                                            self.add_product(temp_product, {
-                                                'price': -round_pr(items.product.line_price * (items.combo_promotion.based_on_percentage / 100), 1),
-                                                'quantity': 1,
-                                            });
-                                            discount = get_combo_promotion.based_on_percentage;
-                                        }
-                                        self.selected_orderline.compute_name = self.add_line_description(this_rule, undefined, discount, items.product);
-                                        self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
-                                    } else {
-                                        alert(_t("You should be setting pricelist of discount product !!!"));
-                                    }
-                                }
-                            });
-                        });
-                    }
-                }
-            });
+            let combo_event = {
+                'compute_combo_relation_product': self.compute_combo_relation_product
+            };
+            self.compute_combo_promotion(self, combo_list, combo_event);
             // End Combo
 
             // Per Line (BOGO)
@@ -766,7 +715,21 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             );
             relation_product_lists.push(gift_set.length ? gift_set[gift_index].id : product_set[gift_index].id);
             return relation_product_lists;
-        }
+        },
+        compute_combo_relation_product: (self, product) => {
+            let relation_product_lists = [];
+            relation_product_lists.push(product.id);
+            self.selected_orderline.set_relation_product(relation_product_lists.join());
+        },
+        compute_bogo_promotion: () => {
+            return true;
+        },
+        compute_range_promotion: () => {
+            return true;
+        },
+        warning_no_config_discount_product: () => {
+            return true;
+        },
     });
 
     var _super_orderline = exports.Orderline;

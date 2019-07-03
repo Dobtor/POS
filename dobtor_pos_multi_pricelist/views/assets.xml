@@ -4,6 +4,7 @@
         <xpath expr="." position="inside">
             <!-- <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/db.js"></script> -->
             <link rel="stylesheet" type="text/css" href="/dobtor_pos_multi_pricelist/static/src/css/style.css"/>
+            <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/combo_promotion.js"></script>
             <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/models.js"></script>
             <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/screens.js"></script>
         </xpath>
