@@ -128,10 +128,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 .sortBy('price');
             group_member = self.pos.config.member_discount_rule == 'desc' ? group_member.reverse().value() : group_member.value();
             console.log('group_member', group_member)
-            var today_date = new moment().format('MM-DD');
+            var today_date = new moment().format('MM');
             var leave_qty = 0;
             if (customer && customer.birthday) {
-                leave_qty = customer ? customer.birthday.split('-').slice(1).join('-') == today_date ? customer.can_discount_times : 0 : 0;
+                leave_qty = customer ? customer.birthday.split('-').slice(1)[0] == today_date ? customer.can_discount_times : 0 : 0;
             }
             var temp_qty = 0;
             $.each(Object.keys(group_member), function (i, t) {
@@ -160,7 +160,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             temp_qty = _.min([line.quantity, leave_qty]);
                             current_qty -= (temp_qty < 0 ? 0 : temp_qty);
 
-                            if ((customer.birthday && customer.birthday.split('-').slice(1).join('-')) == today_date && leave_qty) {
+                            if ((customer.birthday && customer.birthday.split('-').slice(1)[0]) == today_date && leave_qty) {
                                 var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
                                 var temp_product = $.extend(true, {}, member_product);
                                 self.add_product(temp_product, {
@@ -173,7 +173,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             }
 
 
-                            if (customer.related_discount && (!((customer.birthday && customer.birthday.split('-').slice(1).join('-')) == today_date) || current_qty)) {
+                            if (customer.related_discount && (!((customer.birthday && customer.birthday.split('-').slice(1)[0]) == today_date) || current_qty)) {
                                 var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0]);
                                 var temp_product = $.extend(true, {}, member_product);
 
