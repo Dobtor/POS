@@ -33,7 +33,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     exports.load_fields('res.partner', ['birthday', 'member_id', 'used_birthday_times', 'can_discount_times', 'related_discount_product', 'birthday_discount', 'related_discount']);
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
-        initialize:function(){
+        initialize: function () {
             var self = this;
             _super_order.prototype.initialize.apply(self, arguments);
             // self.leave_qty = undefined;
@@ -103,6 +103,43 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 }
                 return `${item.related_discount_name}`;
             }
+        },
+        add_promotion_product: function (product, promotion_product, line, rule, price, quantity, discount, event) {
+            let self = this;
+            self.add_product(promotion_product, {
+                price: price,
+                quantity: quantity,
+            });
+            self.selected_orderline.compute_name = self.add_line_description(rule, line, discount, product);
+            self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
+
+            if (_.size(event)) {
+                _.each(event, function (_fcn) {
+                    _fcn(self, product);
+                });
+            }
+        },
+        add_promotion_products: function (self, promotion_line, event = {}) {
+            let group_rule = _.groupBy(promotion_line, 'rule_id');
+            $.each(Object.keys(group_rule), function (i, key) {
+                $.each(Object.keys(group_rule[key]), function (j, keys) {
+                    let discount_product = self.pos.db.get_product_by_id(group_rule[key][keys].rule.related_product[0]);
+                    if (discount_product) {
+                        let promotion_product = $.extend(true, {}, discount_product);
+                        let {
+                            product,
+                            line,
+                            rule,
+                            price,
+                            quantity,
+                            discount
+                        } = group_rule[key][keys];
+                        self.add_promotion_product.apply(self, [product, promotion_product, line, rule, price, quantity, discount, event]);
+                    } else {
+                        alert(_t("You should be setting pricelist of discount product !!!"));
+                    }
+                });
+            });
         },
         inner_join_combo_product: function (rule, pos) {
             var combo_promotion = [];
@@ -365,6 +402,16 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             });
 
             // End Per Line
+
+            // Per Order (Combo)
+            window.history_combo_list = combo_list;
+            let combo_event = {
+                'compute_combo_relation_product': self.compute_combo_relation_product
+            };
+            let combo_discount_line = self.compute_combo_promotion(self, combo_list);
+            self.add_promotion_products(self, combo_discount_line, combo_event);
+            // End Combo
+
             // Per Order (Range)
             var group_rule = _.groupBy(rule_sum, 'rule_id');
             $.each(Object.keys(group_rule), function (i, t) {
@@ -414,14 +461,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 self.compute_member_promotion(self, customer, member_list);
             }
             // End Range
-
-            // Per Order (Combo)
-            window.history_combo_list = combo_list;
-            let combo_event = {
-                'compute_combo_relation_product': self.compute_combo_relation_product
-            };
-            self.compute_combo_promotion(self, combo_list, combo_event);
-            // End Combo
 
             // Per Line (BOGO)
             var group_bogo = _.groupBy(boso_list, 'rule_id');
