@@ -582,10 +582,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             var promotion_pirce = product_set[gift_index].line_price;
                                             if (the_same && this_rule.bogo_base === 'bxa_gyb_discount') {
                                                 if (this_rule.bxa_gyb_discount_base_on === 'percentage') {
-                                                    promotion_pirce = round_pr(promotion_pirce - (promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
+                                                    promotion_pirce = round_pr((promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
                                                     discount = round_pr(this_rule.bxa_gyb_discount_percentage_price, 0.01);
                                                 } else if (this_rule.bxa_gyb_discount_base_on === 'fixed') {
-                                                    promotion_pirce = round_pr(this_rule.bxa_gyb_discount_fixed_price, 1);
+                                                    promotion_pirce = round_pr(promotion_pirce - this_rule.bxa_gyb_discount_fixed_price, 1);
                                                     discount = round_pr((((product_set[gift_index].line_price - promotion_pirce) / product_set[gift_index].line_price) * 100.00), 0.01);
                                                 }
                                             } else {
@@ -630,8 +630,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                     }
                                     if (i <= quant) {
                                         if (get_bogo_offer_itme) {
-                                            var bogo_promotion_pirce = product_set[gift_index].line_price;
-                                            bogo_promotion_pirce = bogo_promotion_pirce - (bogo_promotion_pirce * (get_bogo_offer_itme.based_on_percentage / 100));
+                                            let bogo_promotion_pirce = product_set[gift_index].line_price;
+                                            bogo_promotion_pirce = bogo_promotion_pirce * (get_bogo_offer_itme.based_on_percentage / 100);
                                             discount = get_bogo_offer_itme.based_on_percentage;
                                             if (discount > 0) {
                                                 temp_product = $.extend(true, {}, discount_product);
@@ -701,10 +701,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                         if ((gift_index + 1) <= gift_set_qty) {
                                             var promotion_pirce = gift_set[gift_index].line_price;
                                             if (this_rule.bxa_gyb_discount_base_on === 'percentage') {
-                                                promotion_pirce = round_pr(promotion_pirce - (promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
+                                                promotion_pirce = round_pr((promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
                                                 discount = round_pr(this_rule.bxa_gyb_discount_percentage_price, 0.01);
                                             } else if (this_rule.bxa_gyb_discount_base_on === 'fixed') {
-                                                promotion_pirce = round_pr(this_rule.bxa_gyb_discount_fixed_price, 1);
+                                                promotion_pirce = round_pr(promotion_pirce - this_rule.bxa_gyb_discount_fixed_price, 1);
                                                 discount = round_pr((((gift_set[gift_index].line_price - promotion_pirce) / gift_set[gift_index].line_price) * 100.00), 0.01);
                                             }
                                             temp_product = $.extend(true, {}, discount_product);
