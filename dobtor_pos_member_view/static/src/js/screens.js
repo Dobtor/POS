@@ -33,13 +33,13 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
             this.render_list([]);
         },
     })
-    // history_screens.OrdersHistoryScreenWidget.include({
-    //     show:function(){
-    //         this._super();
-    //         if(this.pos.config.module_pos_restaurant!=true){
-    //             this.$('.filters .table-filter').css('display','none');
+    history_screens.OrdersHistoryScreenWidget.include({
+        show:function(){
+            this._super();
+            if(this.pos.config.module_pos_restaurant!=true){
+                this.$('.filters .table-filter').css('display','none');
 
-    //         }
-    //     }
-    // })
+            }
+        }
+    })
 })

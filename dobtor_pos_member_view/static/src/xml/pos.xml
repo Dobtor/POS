@@ -5,6 +5,9 @@
     <t t-extend="ClientDetailsEdit">
         <t t-jquery='div[t-attf-class*="client-detail"]' t-operation="replace"/>
         <t t-jquery='div.client-detail:last' t-operation="replace"/>
+        <t t-jquery='input.client-phone' t-operation="replace">
+            <input class='detail client-phone'  name='phone'    type='tel' onkeypress='return (event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57) || (event.charCode == 0 || event.charCode == 08  || event.charCode == 127)' maxlength="10" t-att-value='partner.phone || ""'></input>
+        </t>
         <t t-jquery="div.client-details-left" t-operation="append">
             <div class='client-detail'>
                 <span class='label'>Birthday</span>
