@@ -23,7 +23,7 @@
         'dobtor_pos_sfic_wallet',
         'point_of_sale',
         'dobtor_sale_member',
-        # 'pos_orders_history',
+        'pos_orders_history',
         ],
         # always loaded
     'data': [
