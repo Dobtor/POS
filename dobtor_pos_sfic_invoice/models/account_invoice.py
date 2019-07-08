@@ -18,7 +18,7 @@ class RoundOffSetting(models.TransientModel):
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
-    round_off_value = fields.Float(compute='_compute_amount', string='Round off amount')
+    round_off_value = fields.Float(string='Round off amount', default=0)
     rounded_total = fields.Float(compute='_compute_amount', string='Rounded Total')
     round_active = fields.Boolean(compute="get_round_active")
 
@@ -32,9 +32,8 @@ class AccountInvoice(models.Model):
     def _compute_amount(self):
         self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line_ids)
         self.amount_tax = sum(line.amount for line in self.tax_line_ids)
-        self.rounded_total = round(self.amount_untaxed + self.amount_tax)
         self.amount_total = self.amount_untaxed + self.amount_tax
-        self.round_off_value = self.rounded_total - (self.amount_untaxed + self.amount_tax)
+        self.rounded_total = self.amount_total + self.round_off_value
         amount_total_company_signed = self.amount_total
         amount_untaxed_signed = self.amount_untaxed
         if self.currency_id and self.company_id and self.currency_id != self.company_id.currency_id:
@@ -314,6 +313,16 @@ class AccountInvoice(models.Model):
             }
             inv.with_context(ctx).write(vals)
         return True
+
+    @api.multi
+    def set_round_off_value(self, order):
+        if order:
+            for rec in self:
+                if rec.round_active:
+                    sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
+                    rec.round_off_value = (order.amount_total - rec.amount_total) * sign
+                    rec._compute_amount()
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
