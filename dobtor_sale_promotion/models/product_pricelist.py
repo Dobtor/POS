@@ -225,31 +225,31 @@ class PricelistItem(models.Model):
     @api.depends('bxa_gyb_free_variant_ids', 'bxa_gyb_free_variant_ids.attribute_id')
     def _compute_bxa_gyb_free_attribute(self):
         for item in self:
-            item.bxa_gyb_free_attribute_id = item.bxa_gyb_free_variant_ids.mapped('attribute_id')
+            item.bxa_gyb_free_attribute_id = item.bxa_gyb_free_variant_ids.mapped(
+                'attribute_id')
 
     @api.multi
     @api.depends('bxa_gyb_discount_variant_ids', 'bxa_gyb_discount_variant_ids.attribute_id')
     def _compute_bxa_gyb_discount_attribute(self):
         for item in self:
-            item.bxa_gyb_discount_attribute_id = item.bxa_gyb_discount_variant_ids.mapped('attribute_id')
-
+            item.bxa_gyb_discount_attribute_id = item.bxa_gyb_discount_variant_ids.mapped(
+                'attribute_id')
 
     @api.one
     @api.depends('categ_id', 'product_tmpl_id', 'product_id', 'compute_price', 'fixed_price',
                  'pricelist_id', 'percent_price', 'price_discount', 'price_surcharge')
     def _get_pricelist_item_name_price(self):
         super()._get_pricelist_item_name_price()
-        if self.variant_ids:
-            self.name = _("Variant : {}".format(','.join([variant.name for variant in self.variant_ids])))
-            
         if self.level_on == 'order':
             if self.base_on == 'combo_sale':
                 self.price = _('Combo Promotion')
             if self.base_on == 'range':
                 self.price = _('Range based Discount')
-
-        if self.compute_price == 'bogo_sale':
-            self.price = _("bogo offer")
+        else:
+            if self.variant_ids:
+                self.name = _("Variant : {}".format(','.join([variant.name for variant in self.variant_ids])))
+            if self.compute_price == 'bogo_sale':
+                self.price = _("bogo offer")
 
     @api.onchange('level_on')
     def _onchange_level_on(self):
