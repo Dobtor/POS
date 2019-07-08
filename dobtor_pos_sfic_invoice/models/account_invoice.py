@@ -321,6 +321,7 @@ class AccountInvoice(models.Model):
                 if rec.round_active:
                     sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
                     rec.round_off_value = (order.amount_total - rec.amount_total) * sign
+                    rec._compute_amount()
 
 
 class AccountInvoiceLine(models.Model):
