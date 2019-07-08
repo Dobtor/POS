@@ -8,7 +8,13 @@ class PricelistItem(models.Model):
 
     is_primary_key = fields.Boolean(
         string=_('Primary key'),
-        default=False
+        default=False,
+        help=_("Rules are not integrated with orders")
+    )
+    repeat_ok = fields.Boolean(
+        string=_('Can be Repeat'),
+        default=False,
+        help=_("Rules are unique and not repeated")
     )
 
     sequence = fields.Integer(
@@ -87,26 +93,6 @@ class PricelistItem(models.Model):
         help="Specify a variant value if this rule only applies to one product. Keep empty otherwise."
     )
 
-    compute_price = fields.Selection(
-        selection_add=[
-            ('bogo_sale', _('BOGO Offer')),
-            # ('other_sale', _('Other Promotion')),
-        ]
-    )
-    bogo_base = fields.Selection(
-        string=_('bogo base on'),
-        selection=[
-            ('bxa_gya_free', _('Buy (X Unit) of Product , Get (Y Unit) of Product Free')),
-            ('bxa_gya_discount', _(
-                'Buy (X Unit) of Product , Get Product for % Discount')),
-            ('bxa_gyb_free', _(
-                'Buy (X Unit) of Product Get (Y Unit) of Another Products Free')),
-            ('bxa_gyb_discount', _(
-                'Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount'))
-        ],
-        index=True,
-        default='bxa_gya_free'
-    )
     # order by
     order_by_pirce = fields.Selection(
         string=_('Order by Price'),
@@ -117,123 +103,12 @@ class PricelistItem(models.Model):
         index=True,
         default='asc'
     )
-    # bxa_gya_free
-    bxa_gya_free_Aproduct_unit = fields.Integer(
-        string=_("Product Qty"),
-        default=1
-    )
-    bxa_gya_free_Bproduct_unit = fields.Integer(
-        string=_("Discounted Product Qty"),
-        default=1
-    )
-    # bxa_gya_discount
-    bxa_gya_discount_ids = fields.One2many(
-        string=_('BOGO Rule Lines'),
-        comodel_name='sale.promotion.bogo_offer.item',
-        inverse_name='promotion_id',
-    )
-
-    # bxa_gyb_free
-    bxa_gyb_free_Aproduct_unit = fields.Integer(
-        string=_("Product Qty"),
-        default=1
-    )
-    bxa_gyb_free_Bproduct_unit = fields.Integer(
-        string=_("Discounted Product Qty"),
-        default=1
-    )
-    bxa_gyb_free_gift_base_on = fields.Selection(
-        selection=[
-            ('product', _('Product')),
-            ('variant', _('Variant Value')),
-        ],
-        index=True,
-        default='product'
-    )
-    bxa_gyb_free_attribute_id = fields.Many2many(
-        string=_('BOGO Free Attribute'),
-        comodel_name='product.attribute',
-        compute='_compute_bxa_gyb_free_attribute')
-    bxa_gyb_free_variant_ids = fields.Many2many(
-        string=_('Discounted Variant Value'),
-        comodel_name='product.attribute.value',
-        relation='pricelist_bogo_free_variant_rel',
-        column1='pricelist_id',
-        column2='variant_id',
-    )
-    bxa_gyb_free_products = fields.Many2one(
-        string=_("Discounted Products"),
-        comodel_name='product.product',
-        ondelete='cascade',
-        domain="[('type','!=','service')]",
-    )
-    # bxa_gyb_discount
-    bxa_gyb_discount_Aproduct_unit = fields.Integer(
-        string=_("Product Qty"),
-        default=1
-    )
-    bxa_gyb_discount_Bproduct_unit = fields.Integer(
-        string=_("Discounted Product Qty"),
-        default=1
-    )
-    bxa_gyb_discount_base_on = fields.Selection([
-        ('fixed', _('Fix Price')),
-        ('percentage', _('Percentage (discount)'))
-    ],
-        string="Based On",
-        index=True
-    )
-    bxa_gyb_discount_gift_base_on = fields.Selection(
-        selection=[
-            ('product', _('Product')),
-            ('variant', _('Variant Value')),
-        ],
-        index=True,
-        default='product'
-    )
-    bxa_gyb_discount_attribute_id = fields.Many2many(
-        string=_('BOGO Discount Attribute'),
-        comodel_name='product.attribute',
-        compute='_compute_bxa_gyb_discount_attribute')
-    bxa_gyb_discount_variant_ids = fields.Many2many(
-        string=_('Discounted Variant Value'),
-        comodel_name='product.attribute.value',
-        relation='pricelist_bogo_discount_variant_rel',
-        column1='pricelist_id',
-        column2='variant_id',
-    )
-    bxa_gyb_discount_product = fields.Many2one(
-        comodel_name='product.product',
-        string=_("Discounted Product"),
-        domain="[('type','!=','service')]",
-        ondelete='cascade',
-    )
-    bxa_gyb_discount_fixed_price = fields.Float(
-        string=_("Fixed Discount")
-    )
-    bxa_gyb_discount_percentage_price = fields.Float(
-        string=_("Percentage Discount")
-    )
 
     @api.multi
     @api.depends('variant_ids', 'variant_ids.attribute_id')
     def _compute_attribute(self):
         for item in self:
             item.attribute_id = item.variant_ids.mapped('attribute_id')
-
-    @api.multi
-    @api.depends('bxa_gyb_free_variant_ids', 'bxa_gyb_free_variant_ids.attribute_id')
-    def _compute_bxa_gyb_free_attribute(self):
-        for item in self:
-            item.bxa_gyb_free_attribute_id = item.bxa_gyb_free_variant_ids.mapped(
-                'attribute_id')
-
-    @api.multi
-    @api.depends('bxa_gyb_discount_variant_ids', 'bxa_gyb_discount_variant_ids.attribute_id')
-    def _compute_bxa_gyb_discount_attribute(self):
-        for item in self:
-            item.bxa_gyb_discount_attribute_id = item.bxa_gyb_discount_variant_ids.mapped(
-                'attribute_id')
 
     @api.one
     @api.depends('categ_id', 'product_tmpl_id', 'product_id', 'compute_price', 'fixed_price',
@@ -247,7 +122,8 @@ class PricelistItem(models.Model):
                 self.price = _('Range based Discount')
         else:
             if self.variant_ids:
-                self.name = _("Variant : {}".format(','.join([variant.name for variant in self.variant_ids])))
+                self.name = _("Variant : {}".format(
+                    ','.join([variant.name for variant in self.variant_ids])))
             if self.compute_price == 'bogo_sale':
                 self.price = _("bogo offer")
 
@@ -266,12 +142,12 @@ class PricelistItem(models.Model):
     def _onchange_base_on(self):
         if self.base_on != 'combo_sale':
             self.combo_sale_ids = [(6, 0, [])]
-            self.is_primary_key = False
+            self.repeat_ok = False
             self.combo_order_by_pirce = 'asc'
         if self.base_on != 'range':
             self.range_based_ids = [(6, 0, [])]
         if self.base_on == 'combo_sale':
-            self.is_primary_key = True    
+            self.repeat_ok = True
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
@@ -279,38 +155,18 @@ class PricelistItem(models.Model):
         self.bxa_gya_free_Aproduct_unit = 1
         self.bxa_gya_free_Bproduct_unit = 1
 
-    @api.multi
-    def _get_default_bxa_gyb_free_value(self):
-        self.order_by_pirce = 'asc'
-        self.bxa_gyb_free_Aproduct_unit = 1
-        self.bxa_gyb_free_Bproduct_unit = 1
-        self.bxa_gyb_free_gift_base_on = 'product'
-        self.bxa_gyb_free_products = False
-        self.bxa_gyb_free_variant_ids = [(6, 0, [])]
-
-    @api.multi
-    def _get_default_bxa_gyb_discount_value(self):
-        self.order_by_pirce = 'asc'
-        self.bxa_gyb_discount_Aproduct_unit = 1
-        self.bxa_gyb_discount_Bproduct_unit = 1
-        self.bxa_gyb_discount_gift_base_on = 'product'
-        self.bxa_gyb_discount_product = False
-        self.bxa_gyb_discount_variant_ids = [(6, 0, [])]
-        self.bxa_gyb_discount_base_on = 'percentage'
-        self.bxa_gyb_discount_fixed_price = 0.0
-        self.bxa_gyb_discount_percentage_price = 0.0
-
     @api.onchange('compute_price')
     def _onchange_compute_price(self):
         super()._onchange_compute_price()
         if self.compute_price != 'bogo_sale':
-            self.bogo_base = 'bxa_gya_free'
+            self.bogo_base = 'bogo_promotion'
             self._get_default_bxa_gya_free_value()
             self._get_default_bxa_gyb_free_value()
             self._get_default_bxa_gyb_discount_value()
-            self.is_primary_key = False
+            self._get_default_bogo_value()
+            self.repeat_ok = False
         if self.compute_price == 'bogo_sale':
-            self.is_primary_key = True
+            self.repeat_ok = True
 
     @api.onchange('bogo_base')
     def _onchange_bogo_base(self):
@@ -322,31 +178,13 @@ class PricelistItem(models.Model):
             self._get_default_bxa_gyb_free_value()
         if self.bogo_base != 'bxa_gyb_discount':
             self._get_default_bxa_gyb_discount_value()
+        if self.bogo_base != 'bogo_discount':
+            self._get_default_bogo_value()
         if self.bogo_base == 'bxa_gya_discount':
             self.order_by_pirce = 'desc'
 
-    @api.onchange('bxa_gyb_free_gift_base_on')
-    def _onchange_bxa_gyb_free_gift_base_on(self):
-        if self.bxa_gyb_free_gift_base_on != 'product':
-            self.bxa_gyb_free_products = False
-        if self.bxa_gyb_free_gift_base_on != 'variant':
-            self.bxa_gyb_free_variant_ids = [(6, 0, [])]
-
-    @api.onchange('bxa_gyb_discount_gift_base_on')
-    def _onchange_bxa_gyb_discount_gift_base_on(self):
-        if self.bxa_gyb_discount_gift_base_on != 'product':
-            self.bxa_gyb_discount_product = False
-        if self.bxa_gyb_discount_gift_base_on != 'variant':
-            self.bxa_gyb_discount_variant_ids = [(6, 0, [])]
-
-    @api.onchange('bxa_gyb_discount_base_on')
-    def _onchange_bxa_gyb_discount_base_on(self):
-        if self.bxa_gyb_discount_base_on != 'fixed':
-            self.bxa_gyb_discount_fixed_price = 0.0
-        if self.bxa_gyb_discount_base_on != 'percentage':
-            self.bxa_gyb_discount_variant_ids = 0.0
-
-    @api.constrains('bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
+    @api.constrains('bogo_Aproduct_unit', 'bogo_Bproduct_unit',
+                    'bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
                     'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit',
                     'bxa_gyb_discount_Aproduct_unit', 'bxa_gyb_discount_Bproduct_unit',  'bxa_gyb_discount_percentage_price')
     def _check_rule_validation(self):
@@ -371,5 +209,17 @@ class PricelistItem(models.Model):
                 raise ValidationError(_("It has to be less than 100"))
             if record.bxa_gyb_discount_base_on == 'percentage':
                 if record.bxa_gyb_discount_percentage_price < 0.0:
+                    raise ValidationError(
+                        _("Please enter Some Value for Calculation"))
+
+            # bogo
+            if not (record.bogo_Aproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            if not (record.bogo_Bproduct_unit > 0):
+                raise ValidationError(_("It has to be greater than 0"))
+            if record.bogo_percentage_price > 100:
+                raise ValidationError(_("It has to be less than 100"))
+            if record.bogo_base_on == 'percentage':
+                if record.bogo_percentage_price < 0.0:
                     raise ValidationError(
                         _("Please enter Some Value for Calculation"))
