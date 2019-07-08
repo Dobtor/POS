@@ -4,6 +4,7 @@ import math
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import safe_eval
 
 _logger = logging.getLogger(__name__)
 
@@ -38,10 +39,8 @@ class PosOrder(models.Model):
 
             self.with_context(local_context)._action_create_invoice_lines(local_context, order, new_invoice.id)
 
-            # for line in order.lines:
-            #     self.with_context(local_context)._action_create_invoice_line(line, new_invoice.id)
-
             new_invoice.with_context(local_context).sudo().compute_taxes()
+            new_invoice.with_context(local_context).sudo().set_round_off_value(order)
             order.sudo().write({'state': 'invoiced'})
 
         if not Invoice:
@@ -64,11 +63,16 @@ class PosOrder(models.Model):
         InvoiceLine = self.env['account.invoice.line']
         Invoice = self.env["account.invoice"]
 
-        if not order:
+        if not order or not invoice_id:
             return
-        
-        for line in order.lines:
-            self.with_context(local_context)._create_invoice_line(line, invoice_id)
+
+        product_lines = order.lines.filtered(lambda x: not x.product_id.discount_type)
+        for product_line in product_lines:
+            self.with_context(local_context)._create_invoice_line(product_line, invoice_id)
+
+        discount_lines = order.lines.filtered(lambda x: x.product_id.discount_type)
+        for discount_line in order.lines.filtered(lambda x: x.product_id.discount_type):
+            self.with_context(local_context).calculate_invoice_discount_line(discount_line, invoice_id)
 
         for payment in order.statement_ids:
             if payment.journal_id.is_points:
@@ -76,16 +80,51 @@ class PosOrder(models.Model):
 
                 if inv:
                     amount = payment.amount
+                    invoice_amount = sum(x.price_unit * x.quantity for x in inv.invoice_line_ids)
                     for line in inv.invoice_line_ids:
-                        discount_value = line.discount_value
-                        point_diff = float((payment.amount * float(line.price_subtotal) / order.amount_total) / line.quantity)
-                        discount_value += point_diff
-                        percentage = ( float(discount_value) / line.price_unit ) * 100
+                        discount_value = float(amount) / float(invoice_amount) * (line.price_unit * line.quantity)
+                        line.discount_value += discount_value
+                        percentage = float(line.discount_value) * 100 / float(line.price_unit * line.quantity)
                         line.update({
-                            'discount': float("%.2f" % percentage),
-                            'discount_value': float("%.2f" % discount_value)
+                            'discount': float("%.2f" % percentage)
                         })
 
+        # raise UserError("Take a break!!!")
+
+    def calculate_invoice_discount_line(self, line=False, invoice_id=False):
+        if not line or not invoice_id:
+            return
+
+        if not line.product_id.discount_type:
+            return
+        
+        Invoice = self.env["account.invoice"].browse(invoice_id)
+        if not Invoice:
+            raise UserError(_("Invioce not found : %d" % invoice_id))
+        if line.relation_product:
+            relation_products = safe_eval('[' + line.relation_product + ']')
+
+            invoice_lines = []
+            for prod_id in relation_products:
+                inv_line = Invoice.invoice_line_ids.filtered(lambda x: x.product_id.id == prod_id)
+                if inv_line:
+                    invoice_lines.append(inv_line)
+            
+            if invoice_lines:
+                amount_total = sum(x.price_unit * x.quantity for x in invoice_lines)
+                for inv_line in invoice_lines:
+                    discount_value = float(line.price_unit * line.qty) * float(inv_line.price_unit * inv_line.quantity) / float(amount_total)
+                    inv_line.discount_value += float("%.2f" % abs(discount_value))
+                    percentage = float(inv_line.discount_value) * 100 / float(inv_line.price_unit * inv_line.quantity)
+                    inv_line.discount = float("%.2f" % percentage)
+        else:
+            if Invoice.invoice_line_ids:
+                amount_total = sum(x.price_unit * x.quantity for x in Invoice.invoice_line_ids)
+                for inv_line in Invoice.invoice_line_ids:
+                    discount_value = float(line.price_unit * line.qty) * float(inv_line.price_unit * inv_line.quantity) / float(amount_total)
+                    inv_line.discount_value += float("%.2f" % abs(discount_value))
+                    percentage = float(inv_line.discount_value) * 100 / float(inv_line.price_unit * inv_line.quantity)
+                    inv_line.discount = float("%.2f" % percentage)
 
     def _create_invoice_line(self, line=False, invoice_id=False):
         if not line or not invoice_id:
@@ -94,23 +133,4 @@ class PosOrder(models.Model):
         if line.product_id.discount_type:
             return
 
-        price_data = self.env['pos.order.line'].sudo().compute_product_price(line.product_id.id, line.qty, self.partner_id.id)
-
-        discount_list = [discount[0] for discount in price_data if discount[0] > 0]
-        percentage = False
-        discount_value = 0
-        if discount_list:
-            percentage = 1.0
-            product_price_modify = line.price_unit
-            for discount in discount_list:
-                product_price_modify *= (1 - float(discount))
-            discount_value = line.price_unit - product_price_modify
-            percentage = ( float(discount_value) / line.price_unit ) * 100
-
         invoice_line = self._action_create_invoice_line(line, invoice_id)
-        if invoice_line:
-            if percentage and discount_value:
-                invoice_line.update({
-                    'discount': float("%.2f" % percentage),
-                    'discount_value': float("%.2f" % discount_value)
-                })
