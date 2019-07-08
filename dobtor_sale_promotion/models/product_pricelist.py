@@ -159,7 +159,8 @@ class PricelistItem(models.Model):
     def _onchange_compute_price(self):
         super()._onchange_compute_price()
         if self.compute_price != 'bogo_sale':
-            self.bogo_base = 'bogo_promotion'
+            # self.bogo_base = 'bogo_promotion'
+            self.bogo_base = 'bxa_gya_free'
             self._get_default_bxa_gya_free_value()
             self._get_default_bxa_gyb_free_value()
             self._get_default_bxa_gyb_discount_value()
