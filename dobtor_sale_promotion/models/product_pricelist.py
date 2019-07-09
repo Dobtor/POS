@@ -159,7 +159,7 @@ class PricelistItem(models.Model):
     def _onchange_compute_price(self):
         super()._onchange_compute_price()
         if self.compute_price != 'bogo_sale':
-            # self.bogo_base = 'bogo_promotion'
+            # self.bogo_base = 'bogo'
             self.bogo_base = 'bxa_gya_free'
             self._get_default_bxa_gya_free_value()
             self._get_default_bxa_gyb_free_value()
@@ -184,7 +184,7 @@ class PricelistItem(models.Model):
         if self.bogo_base == 'bxa_gya_discount':
             self.order_by_pirce = 'desc'
 
-    @api.constrains('bogo_Aproduct_unit', 'bogo_Bproduct_unit',
+    @api.constrains('bogo_Aproduct_unit', 'bogo_Bproduct_unit', 'bogo_percentage_price',
                     'bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
                     'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit',
                     'bxa_gyb_discount_Aproduct_unit', 'bxa_gyb_discount_Bproduct_unit',  'bxa_gyb_discount_percentage_price')
@@ -206,7 +206,7 @@ class PricelistItem(models.Model):
                 raise ValidationError(_("It has to be greater than 0"))
             if not (record.bxa_gyb_discount_Bproduct_unit > 0):
                 raise ValidationError(_("It has to be greater than 0"))
-            if record.bxa_gyb_discount_percentage_price > 99:
+            if record.bxa_gyb_discount_percentage_price > 100:
                 raise ValidationError(_("It has to be less than 100"))
             if record.bxa_gyb_discount_base_on == 'percentage':
                 if record.bxa_gyb_discount_percentage_price < 0.0:

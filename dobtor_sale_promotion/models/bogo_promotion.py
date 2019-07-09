@@ -14,14 +14,14 @@ class PricelistItem(models.Model):
     # bogo_base = fields.Selection(
     #     string=_('bogo base on'),
     #     selection=[
-    #         ('bogo_promotion', _('Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount')),
+    #         ('bogo', _('Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount')),
     #         ('bxa_gya_discount', _('Buy (X Unit) of Product , Get Product for % Discount')),
     #     ],
     #     index=True,
-    #     default='bogo_promotion'
+    #     default='bogo'
     # )
 
-    # bogo_promotion
+    # bogo promotion
     bogo_Aproduct_unit = fields.Integer(
         string=_("Product Qty"),
         default=1

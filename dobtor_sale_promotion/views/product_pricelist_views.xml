@@ -128,14 +128,14 @@
                         <field name="bxa_gyb_discount_fixed_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'fixed')]}"/>
                         <field name="bxa_gyb_discount_percentage_price" class="oe_inline" attrs="{'invisible':[('bxa_gyb_discount_base_on', '!=', 'percentage')]}"/>
                     </group>
-                    <!-- <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bogo_promotion'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
+                    <!-- <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bogo'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bogo_Aproduct_unit" class="oe_inline" />
                         <field name="bogo_gift_base_on" widget="radio" />
-                        <field name="bogo_product" class="oe_inline" attrs="{'invisible':[('bogo_gift_base_on', '!=', 'product')],'required':[('bogo_base', '=', 'bogo_promotion'), ('bogo_gift_base_on', '=', 'product')]}"/>
+                        <field name="bogo_product" class="oe_inline" attrs="{'invisible':[('bogo_gift_base_on', '!=', 'product')],'required':[('bogo_base', '=', 'bogo'), ('bogo_gift_base_on', '=', 'product')]}"/>
                         <field name="bogo_attribute_id" widget="many2many_tags" readonly="1" invisible="1" />
-                        <field name="bogo_variant_ids" domain="[('attribute_id', 'not in', bogo_attribute_id),('create_variant', '=', 'no_variant')]" class="oe_inline" widget="many2many_tags" attrs="{'invisible':[('bogo_gift_base_on', '!=', 'variant')],'required':[('bogo_base', '=', 'bogo_promotion'), ('bogo_gift_base_on', '=', 'variant')]}"/>
+                        <field name="bogo_variant_ids" domain="[('attribute_id', 'not in', bogo_attribute_id),('create_variant', '=', 'no_variant')]" class="oe_inline" widget="many2many_tags" attrs="{'invisible':[('bogo_gift_base_on', '!=', 'variant')],'required':[('bogo_base', '=', 'bogo'), ('bogo_gift_base_on', '=', 'variant')]}"/>
                         <field name="bogo_Bproduct_unit" class="oe_inline" />
-                        <field name="bogo_base_on" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bogo_promotion')]}"/>
+                        <field name="bogo_base_on" class="oe_inline" attrs="{'required':[('bogo_base', '=', 'bogo')]}"/>
                         <field name="bogo_fixed_price" class="oe_inline" attrs="{'invisible':[('bogo_base_on', '!=', 'fixed')]}"/>
                         <field name="bogo_percentage_price" class="oe_inline" attrs="{'invisible':[('bogo_base_on', '!=', 'percentage')]}"/>
                     </group> -->
