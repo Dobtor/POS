@@ -17,7 +17,7 @@
                 <span class='label'>ExpiryDate</span>
                 <input class='detail client-expired_date' name='Term' readonly="1" t-att-value='partner.expired_date || ""'></input>
             </div>
-            <div class='client-detail'>
+           <!--  <div class='client-detail'>
                 <span class='label'>Gender</span>
                 <select t-if='!partner.id' class='detail client-gender' name="gender">
 　                  <option value="male">Male</option>
@@ -31,9 +31,9 @@
 　                  <option value="male">Male</option>
 　                  <option value="female" selected="true">Female</option>
                 </select>
-                <!-- <input class='detail client-gender' name='gender' type="radio" value='male' style="width:20px;">Male</input>
-                <input class='detail client-gender' name='gender' type="radio" value='female' style="width:20px;">Female</input> -->
-            </div>
+               <input class='detail client-gender' name='gender' type="radio" value='male' style="width:20px;">Male</input>
+                <input class='detail client-gender' name='gender' type="radio" value='female' style="width:20px;">Female</input> 
+            </div>-->
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
 
