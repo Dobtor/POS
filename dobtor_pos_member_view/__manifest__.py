@@ -28,7 +28,7 @@
         # always loaded
     'data': [
         'views/assets.xml',
-        'views/res_partner.xml',
+        # 'views/res_partner.xml',
     ],
     'qweb': ['static/src/xml/pos.xml'],
 }
