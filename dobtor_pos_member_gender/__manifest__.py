@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dobtor_pos_member_view",
+    'name': "dobtor_pos_member_gender",
 
     'summary': """
-       Add member info in POS UI """,
+       Add member gender info in POS UI """,
 
     'description': """
-        Add member info in POS UI
+        Add member gender info in POS UI
     """,
 
     'author': "Dobtor SI",
@@ -20,14 +20,13 @@
 
     # any module necessary for this one to work correctly
     'depends': [
-        'dobtor_pos_sfic_wallet',
+        'base',
         'point_of_sale',
-        'dobtor_sale_member',
-        'pos_orders_history',
         ],
         # always loaded
     'data': [
         'views/assets.xml',
+        'views/res_partner.xml',
 
     ],
     'qweb': ['static/src/xml/pos.xml'],

@@ -77,7 +77,7 @@
                     <span class='detail client-expired_date empty'>N/A</span>
                 </t>
             </div>
-             <div class='client-detail'>
+             <!-- <div class='client-detail'>
                 <span class='label'>Gender</span>
                 <t t-if='partner.gender'>
                     <span class='detail client-gender'>
@@ -87,7 +87,7 @@
                 <t t-if='!partner.gender'>
                     <span class='detail client-gender empty'>N/A</span>
                 </t>
-            </div>
+            </div> -->
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
             <div class='client-detail'>
