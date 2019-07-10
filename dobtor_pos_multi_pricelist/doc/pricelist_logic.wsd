@@ -1,0 +1,26 @@
+@startuml priclist activity diagram
+
+    (*) --> "Get all promotion rule of the product"
+    --> "Rules are sorted by sequence"
+    --> "Rules are filter by non-order level"
+    if (is this rule can repert?) then
+        -right--> [yes] "handle all {ganeral level} promotion"
+    else
+        --> [no] "find the rule"
+        if (meets rule need?) then
+            --> [yes] "execute it once"
+            --> "Rules are filter by order level"
+        else
+            -right--> [no] "handle all {ganeral level} promotion"
+            --> "Rules are filter by order level"
+        endif
+    endif
+    
+    if (is product has primary key?) then
+        --> [yes](*)
+    else
+        -right--> [no] "handle {order level} promotion"
+        --> (*)
+    endif
+
+@enduml
