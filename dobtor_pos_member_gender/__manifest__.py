@@ -20,9 +20,8 @@
 
     # any module necessary for this one to work correctly
     'depends': [
-        'dobtor_pos_sfic_wallet',
+        'base',
         'point_of_sale',
-        'dobtor_sale_member',
         ],
         # always loaded
     'data': [
