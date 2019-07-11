@@ -12,7 +12,6 @@ odoo.define('dobtor_pos_promotion.combo_promotion', function (require) {
             /**
              * @param {object} self pos order context
              * @param {object} combo_list array of combo info
-             * @param {object} event other function
              */
             let group_combo = _.groupBy(combo_list, 'rule_id');
             let result = [];

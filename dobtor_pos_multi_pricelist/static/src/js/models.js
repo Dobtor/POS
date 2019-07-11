@@ -237,49 +237,92 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 });
             });
         },
-        strategy_collection_data: function () {
+        strategy_promotion_list: function (strategy, result, combo_list, bogo_list) {
+            /**
+             * @param {string} strategy chose strategy
+             * @param {object} result get promotion rule info of the product
+             * @param {object} combo_list array of combo list
+             * @param {object} combo_list array of bogo list
+             */
+            switch (strategy) {
+                case 'combo':
+                    var comboqty = result.quantity;
+                    if (comboqty > 0) {
+                        _.each(_.range(comboqty), function (i) {
+                            _.extend(result, {
+                                quantity: 1,
+                            })
+                            combo_list.push(result);
+                        });
+                    }
+                    break;
+                case 'bogo':
+                    var qty = result.quantity;
+                    if (qty > 0) {
+                        _.each(_.range(qty), function (i) {
+                            _.extend(result, {
+                                quantity: 1,
+                            })
+                            bogo_list.push(result);
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return {
+                combo_list: combo_list,
+                bogo_list: bogo_list,
+            };
+        },
+        handle_ganeral_without_repert: function () {
             return true;
         },
         check_order_discount: function () {
             // Common Declare Variables
             var self = this;
-            var pricelists = self.pos.pricelists;
+            let pricelists = self.pos.pricelists;
             var customer = this.get_client();
             self.remove_discount();
             var member_list = [];
             var rule_sum = [];
             var combo_list = [];
-            var boso_list = [];
+            var bogo_list = [];
             window.order = self;
+
+            // new multi pricelist logic
+            let ganeral_with_repert_info = [];
+            let ganeral_without_repert = [];
+            let order_level_rules = [];
 
             // Per Line
             $.each(self.orderlines.models, function (i, line) {
                 var product = line.product;
                 var items = [];
-                $.each(pricelists, function (i, pl) {
-                    var pricelist_items = product.get_pricelist(pl, self.pos);
-                    $.each(pricelist_items, function (i, item) {
+                // Get all promotion rule of the product.
+                _.each(pricelists, function (pl) {
+                    let pricelist_items = product.get_pricelist(pl, self.pos);
+                    _.map(pricelist_items, (item) => {
                         items.push(item);
-                    })
+                    });
                 });
 
                 // check has pricelist item 
                 if (items.length > 0) {
                     // if only one pricelist item
-                    var pk = _.find(items, function (item) {
-                        return item.repeat_ok;
+                    // ---------------------------------------------------
+                    var ganeral_without_repert = _.find(items, function (item) {
+                        return item.not_repeat_ok;
                     });
 
-                    // let pk_list = _.filter(items, function (item) {
-                    //     return item.is_primary_key;
-                    // });
+                    var rule = ganeral_without_repert || items[0];
 
-                    var rule = pk || items[0];
-                    if (pk || items.length == 1) {
-                        // Special case (BOGO offer, Combo Promotion or do not want multi discount etc ...)
-                        console.log('pk or only one')
+                    if (ganeral_without_repert || items.length == 1) {
+                        // Special case (find the no repeat rule)
+                        console.log('ganeral without repert or only one');
                         self.add_discount_product(self, line, rule);
                         var result = line.get_price_byitem(rule);
+
                         // handle Range
                         if (result.type == 'range') {
                             rule_sum.push({
@@ -290,30 +333,19 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 round_value: round_pr(result.price * result.quantity, 1)
                             });
                         }
-                        // handle Combo
-                        if (result.type == 'combo') {
-                            var comboqty = result.quantity;
-                            if (comboqty > 0) {
-                                _.each(_.range(comboqty), function (i) {
-                                    _.extend(result, {
-                                        quantity: 1,
-                                    })
-                                    combo_list.push(result);
-                                });
-                            }
-                        }
-                        // handle BOGO offer
-                        if (result.type == 'bogo') {
-                            var qty = result.quantity;
-                            if (qty > 0) {
-                                _.each(_.range(qty), function (i) {
-                                    _.extend(result, {
-                                        quantity: 1,
-                                    })
-                                    boso_list.push(result);
-                                });
-                            }
-                        }
+                        // handle Combo and Bogo offer
+                        ({
+                            combo_list,
+                            bogo_list
+                        } = self.strategy_promotion_list(result.type, result, combo_list, bogo_list));
+                        // let ganeral_without_reperts = _.filter(items, function (item) {
+                        //     return item.not_repeat_ok;
+                        // });
+
+                        // _.each(ganeral_without_reperts, function() {
+                        //     ganeral_with_repert_info.push();
+                        // });
+
                     } else {
                         // multi (Do not process Combo)
                         console.log('multi')
@@ -364,6 +396,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                             round_value: round_pr(result_m.quantity * result_m.price, 1)
                                         });
                                     }
+                                    // handle Combo and Bogo offer
+                                    // ({
+                                    //     combo_list,
+                                    //     bogo_list
+                                    // } = self.strategy_promotion_list(result.type, result, combo_list, bogo_list));
+
                                     if (result_m.type == 'combo') {
                                         var comboqty_m = result_m.quantity;
                                         if (comboqty_m > 0) {
@@ -382,7 +420,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                                 _.extend(result_m, {
                                                     quantity: 1,
                                                 })
-                                                boso_list.push(result_m);
+                                                bogo_list.push(result_m);
                                             });
                                         }
                                     }
@@ -430,12 +468,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // End Combo
 
             // Per Line (BOGO)
-            var group_bogo = _.groupBy(boso_list, 'rule_id');
-            var all_gift = _.groupBy(boso_list, 'product_type')['gift'];
+            var group_bogo = _.groupBy(bogo_list, 'rule_id');
+            var all_gift = _.groupBy(bogo_list, 'product_type')['gift'];
             var gift_variant_group = _.groupBy(all_gift, 'marge_variant_ids');
-            var unlink_gift_of_boso_list = [];
-            window.history_boso_list = boso_list;
-            window.history_unlink_gift_of_boso_list = unlink_gift_of_boso_list;
+            var unlink_gift_of_bogo_list = [];
+            window.history_bogo_list = bogo_list;
+            window.history_unlink_gift_of_bogo_list = unlink_gift_of_bogo_list;
 
             // new modify 
             let bogo_discount_line = [];
@@ -465,12 +503,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
                 var should_remove_gift = false;
                 var should_remove_qty = 0;
-                if (group_where_type_gift.length && unlink_gift_of_boso_list.length) {
-                    _.find(unlink_gift_of_boso_list, function (ugobl_variant_ids) {
+                if (group_where_type_gift.length && unlink_gift_of_bogo_list.length) {
+                    _.find(unlink_gift_of_bogo_list, function (ugobl_variant_ids) {
                         should_remove_gift = _.pick(group_where_type_gift[0], 'marge_variant_ids').marge_variant_ids.join() === ugobl_variant_ids;
                         return should_remove_gift;
                     });
-                    should_remove_qty = _.filter(unlink_gift_of_boso_list, (items) => {
+                    should_remove_qty = _.filter(unlink_gift_of_bogo_list, (items) => {
                         return items == _.pick(group_where_type_gift[0], 'marge_variant_ids').marge_variant_ids.join();
                     }).length
                 }
@@ -601,8 +639,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         } else if (['bxa_gyb_free', 'bxa_gyb_discount'].includes(this_rule.bogo_base) && quant && (parseFloat(gift_set_qty) || 0)) {
                             ({
                                 bogo_promotion_line,
-                                unlink_gift_of_boso_list
-                            } = self.bogo_promotion(self, this_rule, bogo_promotion_line, Aproduct_unit, Bproduct_unit, quant, product_set, gift_set, gift_set_qty, unlink_gift_of_boso_list));
+                                unlink_gift_of_bogo_list
+                            } = self.bogo_promotion(self, this_rule, bogo_promotion_line, Aproduct_unit, Bproduct_unit, quant, product_set, gift_set, gift_set_qty, unlink_gift_of_bogo_list));
                         } else {
                             console.log('NO GOBO Offer');
                         }

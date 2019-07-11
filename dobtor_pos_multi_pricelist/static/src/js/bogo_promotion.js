@@ -6,7 +6,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
 
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
-        bogo_promotion: (self, rule, bogo_promotion_line, Aproduct_unit, Bproduct_unit, quant, product_set, gift_set, gift_set_qty, unlink_gift_of_boso_list) => {
+        bogo_promotion: (self, rule, bogo_promotion_line, Aproduct_unit, Bproduct_unit, quant, product_set, gift_set, gift_set_qty, unlink_gift_of_bogo_list) => {
             /**
              * @param {object} self class order execut context
              * @param {object} rule current product rule (pricelist item)
@@ -17,7 +17,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
              * @param {object} product_set array of product set
              * @param {object} gift_set array of gift set
              * @param {number} gift_set_qty number of gift set
-             * @param {object} unlink_gift_of_boso_list array of need unlike gift set
+             * @param {object} unlink_gift_of_bogo_list array of need unlike gift set
              */
             let i = 0;
             let gift_index = 0;
@@ -56,7 +56,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
 
                             gift_index++;
                             if (self.reflect_bogo(rule, '_variant_ids', []).lenght) {
-                                unlink_gift_of_boso_list.push(
+                                unlink_gift_of_bogo_list.push(
                                     self.reflect_bogo(rule, '_variant_ids', []).join(),
                                 );
                             }
@@ -69,7 +69,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
 
             return {
                 bogo_promotion_line: bogo_promotion_line,
-                unlink_gift_of_boso_list: unlink_gift_of_boso_list
+                unlink_gift_of_bogo_list: unlink_gift_of_bogo_list
             };
         },
         compute_relation_product: (product_set, gift_set, gift_index, i, Aproduct_unit, Bproduct_unit) => {
