@@ -8,6 +8,14 @@ from odoo import models, fields, api, _
 class PricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
 
+    # other option
+    repeat_ok = fields.Boolean(
+        string=_('Can be Repeat'),
+        default=False,
+        help=_("Rules are unique and not repeated")
+    )
+
+
     bogo_base = fields.Selection(
         string=_('bogo base on'),
         selection=[

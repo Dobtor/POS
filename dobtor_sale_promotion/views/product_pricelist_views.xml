@@ -88,7 +88,7 @@
                 <xpath expr="//group" position="before">
                     <group>
                         <field col="2" name="is_primary_key"/>
-                        <field col="2" name="repeat_ok"/>
+                        <field col="2" name="not_repeat_ok"/>
                     </group>
                 </xpath>
                 <xpath expr="//form" position="inside">

@@ -11,8 +11,8 @@ class PricelistItem(models.Model):
         default=False,
         help=_("Rules are not integrated with orders")
     )
-    repeat_ok = fields.Boolean(
-        string=_('Can be Repeat'),
+    not_repeat_ok = fields.Boolean(
+        string=_('Can not Repeat'),
         default=False,
         help=_("Rules are unique and not repeated")
     )
@@ -142,12 +142,9 @@ class PricelistItem(models.Model):
     def _onchange_base_on(self):
         if self.base_on != 'combo_sale':
             self.combo_sale_ids = [(6, 0, [])]
-            self.repeat_ok = False
             self.combo_order_by_pirce = 'asc'
         if self.base_on != 'range':
             self.range_based_ids = [(6, 0, [])]
-        if self.base_on == 'combo_sale':
-            self.repeat_ok = True
 
     @api.multi
     def _get_default_bxa_gya_free_value(self):
@@ -165,9 +162,6 @@ class PricelistItem(models.Model):
             self._get_default_bxa_gyb_free_value()
             self._get_default_bxa_gyb_discount_value()
             self._get_default_bogo_value()
-            self.repeat_ok = False
-        if self.compute_price == 'bogo_sale':
-            self.repeat_ok = True
 
     @api.onchange('bogo_base')
     def _onchange_bogo_base(self):
