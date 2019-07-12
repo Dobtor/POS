@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="dobtor_pos_sfic_invoice_pos_config_view_form" model="ir.ui.view">
+            <field name="name">dobtor.pos.sfic.invoice.pos.config.view.form</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='iface_invoicing']" position="after">
+                    <div class="col-12 col-lg-6 o_setting_box" id="auto_invoicing">
+                        <div class="o_setting_left_pane">
+                            <field name="auto_invoicing"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="auto_invoicing"/>
+                            <div class="text-muted" id="invoice_journal">
+                                Auto create invoices
+                            </div>
+                            <div class="content-group mt16" attrs="{'invisible': [('auto_invoicing', '=', False)]}">
+                                <div class="row mt16">
+                                    <label string="Invoice Journal" for="invoice_journal_id" class="col-lg-3 o_light_label"/>
+                                    <field name="invoice_journal_id"
+                                            attrs="{'required': [('auto_invoicing', '=', True)]}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

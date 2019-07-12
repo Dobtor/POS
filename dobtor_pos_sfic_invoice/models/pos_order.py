@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
 import math
+import psycopg2
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, tools, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import safe_eval
 
@@ -10,6 +11,56 @@ _logger = logging.getLogger(__name__)
 
 class PosOrder(models.Model):
     _inherit = "pos.order"
+
+    def _default_point_balance_product_id(self):
+        product_id = self.env["ir.config_parameter"].sudo().get_param("dobtor_pos_sfic_invoice.point_balance_product")
+        return self.env["product.product"].browse(int(product_id))
+
+    def _default_point_balance_account_id(self):
+        return self._default_point_balance_product_id().property_account_income_id
+
+    def _prepare_point_balance_product(self):
+        return {
+            'name': _('Point balance'),
+            'type': 'service',
+            'invoice_policy': 'order',
+            'property_account_income_id': self._default_point_balance_account_id().id,
+            'taxes_id': None,
+        }
+    
+    @api.model
+    def create_from_ui(self, orders):
+        # Keep only new orders
+        submitted_references = [o['data']['name'] for o in orders]
+        pos_order = self.search([('pos_reference', 'in', submitted_references)])
+        existing_orders = pos_order.read(['pos_reference'])
+        existing_references = set([o['pos_reference'] for o in existing_orders])
+        orders_to_save = [o for o in orders if o['data']['name'] not in existing_references]
+        order_ids = []
+        
+        for tmp_order in orders_to_save:
+            order = tmp_order['data']
+            pos_session = self.env["pos.session"].browse(order.get("pos_session_id"))
+            to_invoice = tmp_order['to_invoice'] or pos_session.config_id.auto_invoicing
+            if to_invoice:
+                self._match_payment_to_invoice(order)
+            pos_order = self._process_order(order)
+            order_ids.append(pos_order.id)
+
+            try:
+                pos_order.action_pos_order_paid()
+            except psycopg2.DatabaseError:
+                # do not hide transactional errors, the order(s) won't be saved!
+                raise
+            except Exception as e:
+                _logger.error('Could not fully process the POS Order: %s', tools.ustr(e))
+
+            if to_invoice:
+                pos_order.action_pos_order_invoice()
+                pos_order.invoice_id.sudo().with_context(force_company=self.env.user.company_id.id).action_invoice_open()
+                pos_order.account_move = pos_order.invoice_id.move_id
+        return order_ids
+
 
     @api.multi
     def action_pos_order_invoice(self):
@@ -74,22 +125,7 @@ class PosOrder(models.Model):
         for discount_line in order.lines.filtered(lambda x: x.product_id.discount_type):
             self.with_context(local_context).calculate_invoice_discount_line(discount_line, invoice_id)
 
-        for payment in order.statement_ids:
-            if payment.journal_id.is_points:
-                inv = Invoice.browse(invoice_id)
-
-                if inv:
-                    amount = payment.amount
-                    invoice_amount = sum(x.price_unit * x.quantity for x in inv.invoice_line_ids)
-                    for line in inv.invoice_line_ids:
-                        discount_value = float(amount) / float(invoice_amount) * (line.price_unit * line.quantity)
-                        line.discount_value += discount_value
-                        percentage = float(line.discount_value) * 100 / float(line.price_unit * line.quantity)
-                        line.update({
-                            'discount': float("%.2f" % percentage)
-                        })
-
-        # raise UserError("Take a break!!!")
+        self._calculate_point_discount_line(local_context, order, invoice_id)
 
     def calculate_invoice_discount_line(self, line=False, invoice_id=False):
         if not line or not invoice_id:
@@ -134,3 +170,53 @@ class PosOrder(models.Model):
             return
 
         invoice_line = self._action_create_invoice_line(line, invoice_id)
+
+    def _calculate_point_discount_line(self, local_context, order, invoice_id):
+        Invoice = self.env["account.invoice"]
+
+        for payment in order.statement_ids:
+            if payment.journal_id.is_points:
+                inv = Invoice.browse(invoice_id)
+                if inv:
+                    amount = payment.amount
+                    invoice_amount = sum(x.price_unit * x.quantity for x in inv.invoice_line_ids)
+                    for line in inv.invoice_line_ids:
+                        discount_value = float(amount) * (line.price_unit * line.quantity) / float(invoice_amount)
+                        line.discount_value += discount_value
+                        percentage = float(line.discount_value) * 100 / float(line.price_unit * line.quantity)
+                        line.update({
+                            'discount': float("%.2f" % percentage)
+                        })
+                    self.with_context(local_context)._create_point_balance_invoice_line(float(amount), False, invoice_id)
+
+    def _create_point_balance_invoice_line(self, amount, line=False, invoice_id=False):
+        if not invoice_id:
+            return
+
+        point_product_id = self._default_point_balance_product_id()
+
+        if not point_product_id:
+            vals = self._prepare_point_balance_product()
+            point_product_id = self.env["product.product"].create(vals)
+            self.env["ir.config_parameter"].sudo().set_param("dobtor_pos_sfic_invoice.point_balance_product", point_product_id.id)
+
+        AccountInvoiceLine = self.env["account.invoice.line"].sudo()
+
+        inv_line = {
+            "name": point_product_id.name,
+            "quantity": 1,
+            "product_id": point_product_id.id,
+            "invoice_id": invoice_id,
+            "account_analytic_id": self._prepare_analytic_account(line),
+            "invoice_id": invoice_id,
+            "price_unit": amount,
+            "discount": 0,
+        }
+
+        invoice_line = AccountInvoiceLine.sudo().new(inv_line)
+        invoice_line._onchange_product_id()
+        inv_line = invoice_line._convert_to_write({name: invoice_line[name] for name in invoice_line._cache})
+        inv_line.update(price_unit=amount, discount=0, name=point_product_id.name, invoice_line_tax_ids=None)
+        invoice_line = AccountInvoiceLine.create(inv_line)
+
+        return invoice_line

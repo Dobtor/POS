@@ -28,6 +28,7 @@
         'views/templates.xml',
         'views/res_config_settings_views.xml',
         'views/account_invoice_views.xml',
+        'views/pos_config_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
