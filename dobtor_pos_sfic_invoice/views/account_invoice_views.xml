@@ -5,11 +5,17 @@
       <field name="model">account.invoice</field>
       <field name="inherit_id" ref="account.invoice_form"/>
       <field name="arch" type="xml">
+        <xpath expr="//field[@name='date_invoice']" position="after">
+          <field name="date_settlement"/>
+        </xpath>
         <xpath expr="//field[@name='amount_tax']" position="after">
           <field name="round_active" invisible="1"/>
           <field name="rounded_total" attrs="{'invisible': True}"/>
           <field name="round_off_value"/>
         </xpath>
+        <!-- <xpath expr="//tree/field[@name='price_subtotal']" position="after">
+          <field name="discount_value"/>
+        </xpath> -->
       </field>
     </record>
   </data>

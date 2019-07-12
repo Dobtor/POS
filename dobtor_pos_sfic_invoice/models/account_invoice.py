@@ -18,6 +18,7 @@ class RoundOffSetting(models.TransientModel):
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
+    date_settlement = fields.Date(string='Settlement Date', index=True, default=fields.Date.context_today)
     round_off_value = fields.Float(string='Round off amount', default=0)
     rounded_total = fields.Float(compute='_compute_amount', string='Rounded Total')
     round_active = fields.Boolean(compute="get_round_active")
@@ -80,8 +81,8 @@ class AccountInvoice(models.Model):
         payment_vals = []
         currency_id = self.currency_id
         for payment in self.payment_move_line_ids:
-            if payment.journal_id.is_points:
-                continue
+            # if payment.journal_id.is_points:
+            #     continue
             payment_currency_id = False
             if self.type in ('out_invoice', 'in_refund'):
                 amount = sum([p.amount for p in payment.matched_debit_ids if p.debit_move_id in self.move_id.line_ids])
@@ -318,8 +319,9 @@ class AccountInvoice(models.Model):
     def set_round_off_value(self, order):
         if order:
             for rec in self:
-                if rec.round_active:
+                if rec.round_active: 
                     sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
+                    print("AccountInvoice - order_amount: {}, rec_amount: {}".format(order.amount_total, rec.amount_total))
                     rec.round_off_value = (order.amount_total - rec.amount_total) * sign
                     rec._compute_amount()
 
@@ -329,3 +331,9 @@ class AccountInvoiceLine(models.Model):
 
     discount_value = fields.Monetary("Discount Value", default=0)
     # discount_percent = fields.Float("Discount %", default=0.0)
+
+    # @api.model
+    # def create(self, vals):
+    #     print("AccountInvoiceLine - create -- vals: {}".format(vals))
+    #     inv_line = super(AccountInvoiceLine, self).create(vals)
+    #     return inv_line

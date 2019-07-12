@@ -15,8 +15,8 @@ class AccountMoveLine(models.Model):
     @api.multi
     def auto_reconcile_lines(self):
         # Create list of debit and list of credit move ordered by date-currency
-        debit_moves = self.filtered(lambda r: (r.debit != 0 or r.amount_currency > 0) and not r.journal_id.is_points)
-        credit_moves = self.filtered(lambda r: (r.credit != 0 or r.amount_currency < 0) and not r.journal_id.is_points)
+        debit_moves = self.filtered(lambda r: (r.debit != 0 or r.amount_currency > 0))
+        credit_moves = self.filtered(lambda r: (r.credit != 0 or r.amount_currency < 0))
         debit_moves = debit_moves.sorted(key=lambda a: (a.date_maturity or a.date, a.currency_id))
         credit_moves = credit_moves.sorted(key=lambda a: (a.date_maturity or a.date, a.currency_id))
         # Compute on which field reconciliation should be based upon:
