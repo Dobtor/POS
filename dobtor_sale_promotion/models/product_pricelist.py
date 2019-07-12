@@ -30,8 +30,8 @@ class PricelistItem(models.Model):
     level_on = fields.Selection(
         string=_('level on'),
         selection=[
-            ('order', 'Applied on Order'),
-            ('line', 'Per Product or Line')
+            ('order', _('Applied on After Order')),
+            ('line', _('General Promotion'))
         ],
         index=True,
         default='line'
@@ -44,6 +44,11 @@ class PricelistItem(models.Model):
         ],
         default='range',
         help='Promotion rule applicable on selected option'
+    )
+    compute_price = fields.Selection(
+        selection_add=[
+            ('combo_sale', _('Combo Promotion')),
+        ]
     )
     # Not for form views yet.
     range_based_on = fields.Selection(
@@ -126,6 +131,8 @@ class PricelistItem(models.Model):
                     ','.join([variant.name for variant in self.variant_ids])))
             if self.compute_price == 'bogo_sale':
                 self.price = _("bogo offer")
+            if self.compute_price == 'combo_sale':
+                self.price = _('Combo Promotion')
 
     @api.onchange('level_on')
     def _onchange_level_on(self):

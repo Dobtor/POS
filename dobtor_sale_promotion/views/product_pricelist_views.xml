@@ -56,8 +56,8 @@
                             </tree>
                         </field>
                     </group>
-                    <group attrs="{'invisible':['|',('base_on', '!=', 'combo_sale'),('level_on', '!=', 'order')]}">
-                        <field name="combo_order_by_pirce" widget="radio" attrs="{'required':[('base_on', '=', 'bogo_sale')]}"/>
+                    <group attrs="{'invisible':['|',('compute_price', '!=', 'combo_sale'),('level_on', '!=', 'line')]}">
+                        <field name="combo_order_by_pirce" widget="radio" attrs="{'required':[('compute_price', '=', 'combo_sale')]}"/>
                         <field name="combo_sale_ids">
                             <tree string="Rule Lines" editable="bottom">
                                 <field name="applied_on"/>
