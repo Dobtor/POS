@@ -58,6 +58,7 @@ odoo.define('dobtor_pos_promotion.combo_promotion', function (require) {
                                         quantity: 1,
                                         discount: discount,
                                         line: undefined,
+                                        relation_products: [item.product_id],
                                     });
 
                                 }

@@ -6,6 +6,215 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
 
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
+        compute_bogo_promotion: function (self, bogo_list, unlink_gift_of_bogo_list) {
+            var group_bogo = _.groupBy(bogo_list, 'rule_id');
+            var all_gift = _.groupBy(bogo_list, 'product_type')['gift'];
+            var gift_variant_group = _.groupBy(all_gift, 'marge_variant_ids');
+            // var unlink_gift_of_bogo_list = [];
+
+            // new modify 
+            let output_bogo_line = [];
+            let bogo_discount_line = [];
+            let bogo_promotion_line = [];
+            // {
+            //     rule: this_rule,
+            //     rule_id: key,
+            //     product: item.product,
+            //     price: price,
+            //     quantity: 1,
+            //     discount: discount,
+            //     line: undefined,
+            // }
+
+            console.log('inside bogo');
+
+            $.each(Object.keys(group_bogo), function (i, t) {
+                // sub query (like sql with)
+                var this_rule = group_bogo[t][0].rule;
+                let group_where_type_product = self.prepare_group_bogo(group_bogo[t], 'product');
+                let group_where_type_gift = self.prepare_group_bogo(group_bogo[t], 'gift');
+
+                /* handle multi promotion have same gift
+                /*
+                /*      if this rule is Bug product A, Get product C
+                /*      And anthor rule is Bug product B, Get product C
+                /*      then the anthor rule should be minus this rule product C qty.
+                */
+
+                var should_remove_gift = false;
+                var should_remove_qty = 0;
+                if (group_where_type_gift.length && unlink_gift_of_bogo_list.length) {
+                    _.find(unlink_gift_of_bogo_list, function (ugobl_variant_ids) {
+                        should_remove_gift = _.pick(group_where_type_gift[0], 'marge_variant_ids').marge_variant_ids.join() === ugobl_variant_ids;
+                        return should_remove_gift;
+                    });
+                    should_remove_qty = _.filter(unlink_gift_of_bogo_list,
+                        unlink_gift_item => unlink_gift_item == _.pick(group_where_type_gift[0], 'marge_variant_ids').marge_variant_ids.join()
+                    ).length
+                }
+                var gift_set_qty = self.get_promotion_qty(group_where_type_gift);
+                gift_set_qty = should_remove_gift ? gift_set_qty - should_remove_qty : gift_set_qty;
+                gift_set_qty = gift_set_qty < 0 ? 0 : gift_set_qty;
+                var gift_set = self.get_bogo_product_set(group_where_type_gift, this_rule.order_by_pirce);
+                // end handle multi promotion have same gift
+
+                // get product set, and product qty
+                var product_set = self.get_bogo_product_set(group_where_type_product, this_rule.order_by_pirce);
+                var product_set_qty = self.get_promotion_qty(group_where_type_product);
+
+                if (should_remove_gift && gift_set_qty < group_where_type_gift.length) {
+                    for (var remove = 0; remove < should_remove_qty; remove++) {
+                        gift_set.shift();
+                    }
+                }
+
+                // handle the same
+                var the_same = false;
+                if (the_same && (parseFloat(gift_set_qty) || 0)) {
+                    the_same = group_where_type_gift[0].gift_product_the_same;
+                    product_set = gift_set;
+                    product_set_qty = gift_set_qty;
+                }
+
+                // check system log
+                if (is_debug) {
+                    console.log('gift_set : ', gift_set);
+                    console.log('gift_set_qty : ', gift_set_qty);
+                    console.log('product_set : ', product_set);
+                    console.log('product_set_qty : ', product_set_qty);
+                    console.log('the_same : ', the_same);
+                    console.log('this_rule : ', this_rule);
+                }
+
+                // Compute Promotion
+                if (product_set.length) {
+                    const quant = parseFloat(product_set_qty) || 0;
+                    let discount_product = self.pos.db.get_product_by_id(this_rule.related_product[0]);
+                    let temp_product = $.extend(true, {}, discount_product);
+                    let discount = 0;
+                    let i = 0;
+                    let gift_index = 0;
+                    let round = 0;
+                    // let prefix = this_rule.bogo_base;
+                    let Aproduct_unit = self.reflect_bogo(this_rule, '_Aproduct_unit', 0);
+                    let Bproduct_unit = self.reflect_bogo(this_rule, '_Bproduct_unit', 0);
+
+                    // console.log('discount_product : ', discount_product);
+                    if (discount_product) {
+                        if ((this_rule.bogo_base === 'bxa_gya_free' && quant) || the_same) {
+                            do {
+                                i += Aproduct_unit;
+                                if (!this_rule.min_quantity || round < this_rule.min_quantity) {
+                                    _.each(_.range(Bproduct_unit), function (s) {
+                                        i++;
+                                        if (i <= quant) {
+                                            var promotion_pirce = product_set[gift_index].line_price;
+                                            if (the_same && this_rule.bogo_base === 'bxa_gyb_discount') {
+                                                if (this_rule.bxa_gyb_discount_base_on === 'percentage') {
+                                                    promotion_pirce = round_pr((promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
+                                                    discount = round_pr(this_rule.bxa_gyb_discount_percentage_price, 0.01);
+                                                } else if (this_rule.bxa_gyb_discount_base_on === 'fixed') {
+                                                    promotion_pirce = round_pr(promotion_pirce - this_rule.bxa_gyb_discount_fixed_price, 1);
+                                                    discount = round_pr((((product_set[gift_index].line_price - promotion_pirce) / product_set[gift_index].line_price) * 100.00), 0.01);
+                                                }
+                                            } else {
+                                                discount = 100;
+                                            }
+
+                                            bogo_promotion_line.push({
+                                                rule: rule,
+                                                rule_id: rule.id,
+                                                product: product_set[gift_index],
+                                                price: -promotion_pirce,
+                                                quantity: 1,
+                                                discount: discount,
+                                                line: undefined,
+                                                relation_products: self.compute_relation_product(product_set, [], gift_index, i, Aproduct_unit, Bproduct_unit)
+                                            });
+
+                                            output_bogo_line = output_bogo_line.concat(bogo_promotion_line);
+
+                                            gift_index++;
+                                        }
+                                    });
+                                }
+                                round++;
+                            }
+                            while (i <= quant);
+                        } else if (this_rule.bogo_base === 'bxa_gya_discount' && quant) {
+                            var get_bogo_offer_itme = undefined;
+                            var filter_this_rule_bogo_items = _.filter(self.pos.bogo_offer_items, function (bogo_item) {
+                                return bogo_item.promotion_id[0] == group_bogo[t][0].rule_id
+                            });
+                            var max_bogo_count = filter_this_rule_bogo_items.length;
+                            if (max_bogo_count) {
+                                do {
+                                    i += 1;
+                                    if (i <= max_bogo_count) {
+                                        get_bogo_offer_itme = _.find(filter_this_rule_bogo_items, bogo_item => bogo_item.buy_x == i);
+                                    } else if (i > max_bogo_count && (!this_rule.min_quantity || (i - max_bogo_count) < this_rule.min_quantity)) {
+                                        get_bogo_offer_itme = _.last(filter_this_rule_bogo_items);
+                                    }
+                                    if (i <= quant) {
+                                        if (get_bogo_offer_itme) {
+                                            let bogo_promotion_pirce = product_set[gift_index].line_price;
+                                            bogo_promotion_pirce = -bogo_promotion_pirce * (get_bogo_offer_itme.based_on_percentage / 100);
+                                            discount = get_bogo_offer_itme.based_on_percentage;
+
+                                            let relation_product_lists = [];
+                                            relation_product_lists.push(product_set[gift_index].id);
+                                            bogo_discount_line.push({
+                                                rule: this_rule,
+                                                rule_id: t,
+                                                product: product_set[gift_index],
+                                                price: bogo_promotion_pirce,
+                                                quantity: 1,
+                                                discount: discount,
+                                                line: undefined,
+                                                origin_price: product_set[gift_index].line_price,
+                                                relation_products: relation_product_lists
+                                            });
+                                        }
+                                        gift_index++;
+                                        get_bogo_offer_itme = undefined;
+                                    }
+                                }
+                                while (i <= quant);
+                            }
+                        } else if (['bxa_gyb_free', 'bxa_gyb_discount'].includes(this_rule.bogo_base) && quant && (parseFloat(gift_set_qty) || 0)) {
+                            ({
+                                bogo_promotion_line,
+                                unlink_gift_of_bogo_list
+                            } = self.bogo_promotion(self, this_rule, bogo_promotion_line, Aproduct_unit, Bproduct_unit, quant, product_set, gift_set, gift_set_qty, unlink_gift_of_bogo_list));
+                            output_bogo_line = output_bogo_line.concat(bogo_promotion_line);
+                        } else {
+                            console.log('NO GOBO Offer');
+                        }
+                    } else {
+                        alert(_t("You should be setting pricelist of discount product !!!"));
+                    }
+                }
+                if (bogo_discount_line.length) {
+                    let last_discount = _.last(bogo_discount_line).discount;
+                    if (bogo_discount_line[0].rule.bxa_gya_discount_apply_all) {
+                        _.each(bogo_discount_line, function (product_itmes) {
+                            _.extend(product_itmes, {
+                                price: -product_itmes.origin_price * (last_discount / 100),
+                                discount: last_discount
+                            });
+                        });
+                    }
+                }
+                output_bogo_line = output_bogo_line.concat(bogo_discount_line);
+                
+                // console.log('bogo output_bogo_line : ', output_bogo_line);
+            });
+
+            return {
+                output_bogo_line: output_bogo_line,
+                unlink_gift_of_bogo_list: unlink_gift_of_bogo_list
+            };
+        },
         bogo_promotion: (self, rule, bogo_promotion_line, Aproduct_unit, Bproduct_unit, quant, product_set, gift_set, gift_set_qty, unlink_gift_of_bogo_list) => {
             /**
              * @param {object} self class order execut context
@@ -55,7 +264,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                             });
 
                             gift_index++;
-                            if (self.reflect_bogo(rule, '_variant_ids', []).lenght) {
+                            if (self.reflect_bogo(rule, '_variant_ids', []).length) {
                                 unlink_gift_of_bogo_list.push(
                                     self.reflect_bogo(rule, '_variant_ids', []).join(),
                                 );
