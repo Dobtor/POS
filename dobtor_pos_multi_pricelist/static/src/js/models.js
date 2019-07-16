@@ -362,13 +362,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 relation_products: [item.product_id],
                             }));
                         }
-                        console.log('after price promotion_line :', promotion_line);
+                        // console.log('after price promotion_line :', promotion_line);
                     }
                 });
                 if (handle_data.length) {
                     if (handle_data[0].type === 'combo') {
                         promotion_line = promotion_line.concat(self.compute_combo_promotion(self, handle_data));
-                        console.log('after combo promotion_line :', promotion_line);
+                        // console.log('after combo promotion_line :', promotion_line);
                     }
                     if (handle_data[0].type === 'bogo') {
                         let output_bogo_line = [];
@@ -376,10 +376,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             output_bogo_line,
                             unlink_gift_of_bogo_list
                         } = self.compute_bogo_promotion(self, handle_data, unlink_gift_of_bogo_list));
-                        console.log('new bogo output_bogo_line :', output_bogo_line);
+                        // console.log('new bogo output_bogo_line :', output_bogo_line);
 
                         promotion_line = promotion_line.concat(output_bogo_line);
-                        console.log('after bogo :', promotion_line);
+                        // console.log('after bogo :', promotion_line);
                     }
                 }
             });
@@ -436,7 +436,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 other_mix: realtion_rule
                             }));
                         }
-                    });     
+                    });
                 });
             });
             return promotion_line
@@ -482,6 +482,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             let order_without_repeat_info = [];
             let promotion_line = [];
 
+            let order_info = [];
+
             // Per Line
             $.each(self.orderlines.models, function (i, line) {
                 var product = line.product;
@@ -513,7 +515,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         order_without_repeat_info = self.get_promotion_model(self, line, product_mapping_all_rule, false, 'order', order_without_repeat_info);
                         order_with_repeat_info = self.get_promotion_model(self, line, product_mapping_all_rule, true, 'order', order_with_repeat_info);
 
-                        rule_sum = [...order_with_repeat_info];
+                        order_info = _.union(order_without_repeat_info, order_with_repeat_info);
+                        rule_sum = [...order_info];
 
                     }
                     // ------------------------------------------------------------
@@ -595,18 +598,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             sub_rate: sub_rate,
                         });
 
-                        let group_product = _.groupBy(rule_sum, 'product_id');
-                        window.group_product = group_product;
-                        _.each(Object.keys(group_product), function (group_product_key) {
-                            _.each(group_product[group_product_key], function (product_itmes) {
-                                let this_promtion_value = _.filter(total_promotion_value, item => product_itmes.product_id == item.product_id);
-                                let get_this_promtion_value = _.pluck(this_promtion_value, 'promotion_value');
-                                let sum_promtion_value = _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
-                                $.extend(product_itmes, {
-                                    round_value: product_itmes.round_value + sum_promtion_value
-                                });
-                            })
-                        });
+
                     }
                 }
             });
@@ -663,8 +655,30 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // End Handle Order Rule
 
 
-
-
+            
+            let group_product = _.groupBy(rule_sum, 'product_id');
+            window.group_product = group_product;
+            _.each(Object.keys(group_product), function (group_product_key) {
+                _.each(group_product[group_product_key], function (product_itmes) {
+                    let that_promotion = _.filter(promotion_line, item => product_itmes.product_id == item.product_id);
+                    _.map(that_promotion, (item) => {
+                        item.promotion_value = item.price * item.quantity
+                    });
+                    
+                    // let this_promtion_value = _.filter(total_promotion_value, item => product_itmes.product_id == item.product_id);
+                    let get_this_promtion_value = _.pluck(that_promotion, 'promotion_value');
+                    
+                    let sum_promtion_value = _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
+                    console.log('product_itmes :', product_itmes);
+                    console.log('product_itmes.product_id :', product_itmes.product_id);
+                    console.log('that_promotion :', that_promotion);
+                    console.log('get_this_promtion_value :', get_this_promtion_value);
+                    console.log('sum_promtion_value :', sum_promtion_value);
+                    $.extend(product_itmes, {
+                        round_value: product_itmes.round_value + (sum_promtion_value ? sum_promtion_value: 0)
+                    });
+                })
+            });
 
 
 
