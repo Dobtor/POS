@@ -320,64 +320,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
 
             return model;
         },
-        compute_multi_price: function (model, promotion_line) {
-            var total_promotion_value = [];
-
-            let get_other_promotion = [];
-            // let get_other_promotion_discount = [];
-            let get_other_promotion_price = [];
-            let sum_promotion_price = 0;
-            let get_relation_product = _.pluck(promotion_line, 'relation_products');
-
-            _.each(model, function (item) {
-                let output = _.extend({}, item);
-                if (item.type == 'price') {
-                    if (get_relation_product.length) {
-                        get_relation_product = _.uniq(get_relation_product.join().split(','));
-                        get_other_promotion = _.filter(group_by_rule[key], function (item) {
-                            return get_relation_product.includes(item.product_id + '');
-                        });
-                    }
-                    console.log(get_other_promotion);
-                    let this_percentage = 1;
-                    _.each(get_other_promotion, function (rule) {
-                        if (rule.quantity > item.quantity) {
-                            this_percentage = this_percentage * (1 - discount_rate / 100.0);
-                        }
-                    });
-                    // get qty
-                    let get_other_promotion_quantity = _.pluck(get_other_promotion, 'quantity');
-
-
-                    // compute percentage 
-                    let get_other_promotion_discount = _.pluck(get_other_promotion, 'discount');
-                    _.each(get_other_promotion_discount, function (discount_rate) {
-
-                    });
-
-                    // let promotion_pirce = item. * (1-item.discount/100.0);
-
-                    // if (promotion_pirce > 0) {
-                    //     promotion_line.push(_.extend(output, {
-                    //         price: -promotion_pirce,
-                    //         line: undefined,
-                    //         relation_products: [item.product_id],
-                    //     }));
-                    //     total_promotion_value.push({
-                    //         product_id: product.id,
-                    //         promotion_value: round_pr(item.quantity * -promotion_pirce, 1)
-                    //     })
-                    // }
-                    // console.log('after price promotion_line :', promotion_line);
-
-
-                }
-            });
-            return {
-                promotion_line: promotion_line,
-                // total_promotion_value: total_promotion_value,
-            }
-        },
         handle_ganeral_rule: function (self, model, repeat, promotion_line, unlink_gift_of_bogo_list) {
             /**
              * @param {object} self class order execut context
