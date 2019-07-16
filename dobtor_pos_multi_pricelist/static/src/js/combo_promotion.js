@@ -52,7 +52,7 @@ odoo.define('dobtor_pos_promotion.combo_promotion', function (require) {
 
                                     result.push({
                                         rule: this_rule,
-                                        rule_id: key,
+                                        rule_id: this_rule.id,
                                         product: item.product,
                                         price: price,
                                         quantity: 1,

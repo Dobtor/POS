@@ -7,6 +7,12 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
     var _super_order = exports.Order;
     exports.Order = exports.Order.extend({
         compute_bogo_promotion: function (self, bogo_list, unlink_gift_of_bogo_list) {
+            /**
+             * @param {object} self class order execut context
+             * @param {object} bogo_list array of bogo info
+             * @param {object} unlink_gift_of_bogo_list array of need unlike gift set
+             */
+
             var group_bogo = _.groupBy(bogo_list, 'rule_id');
             var all_gift = _.groupBy(bogo_list, 'product_type')['gift'];
             var gift_variant_group = _.groupBy(all_gift, 'marge_variant_ids');
@@ -125,6 +131,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                                 rule: rule,
                                                 rule_id: rule.id,
                                                 product: product_set[gift_index],
+                                                product_id: product_set[gift_index].id,
                                                 price: -promotion_pirce,
                                                 quantity: 1,
                                                 discount: discount,
@@ -167,6 +174,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                                 rule: this_rule,
                                                 rule_id: t,
                                                 product: product_set[gift_index],
+                                                product_id: product_set[gift_index].id,
                                                 price: bogo_promotion_pirce,
                                                 quantity: 1,
                                                 discount: discount,
@@ -206,7 +214,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                     }
                 }
                 output_bogo_line = output_bogo_line.concat(bogo_discount_line);
-                
+
                 // console.log('bogo output_bogo_line : ', output_bogo_line);
             });
 
@@ -256,6 +264,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                 rule: rule,
                                 rule_id: rule.id,
                                 product: gift_set[gift_index],
+                                product_id: gift_set[gift_index].id,
                                 price: -promotion_pirce,
                                 quantity: 1,
                                 discount: discount,
@@ -314,6 +323,11 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
             return Reflect.has(rule, rule.bogo_base.concat(keyword)) ?
                 Reflect.get(rule, rule.bogo_base.concat(keyword)) :
                 _default;
+        },
+        prepare_group_bogo: (source, type) => {
+            return _.filter(source, function (item) {
+                return item.product_type === type;
+            });
         },
     });
 });
