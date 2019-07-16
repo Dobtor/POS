@@ -125,6 +125,9 @@ class PricelistItem(models.Model):
                 self.price = _('Combo Promotion')
             if self.base_on == 'range':
                 self.price = _('Range based Discount')
+            if self.variant_ids:
+                self.name = _("Variant : {}".format(
+                    ','.join([variant.name for variant in self.variant_ids])))
         else:
             if self.variant_ids:
                 self.name = _("Variant : {}".format(
@@ -133,6 +136,7 @@ class PricelistItem(models.Model):
                 self.price = _("bogo offer")
             if self.compute_price == 'combo_sale':
                 self.price = _('Combo Promotion')
+
 
     @api.onchange('level_on')
     def _onchange_level_on(self):
