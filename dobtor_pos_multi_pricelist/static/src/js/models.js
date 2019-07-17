@@ -65,19 +65,16 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             if (line || product) {
                 product_display_name = line ? line.product.display_name : product.display_name;
             }
-            if (rule_description) {
-                item.related_discount_name = rule_description;
-            }
             if (discount && product_display_name) {
-                return `${item.related_discount_name} [${product_display_name}] (${discount > 0 ? '-': '+'} ${Math.abs(discount)} %)`;
+                return `${rule_description ? rule_description : item.related_discount_name} [${product_display_name}] (${discount > 0 ? '-': '+'} ${Math.abs(discount)} %)`;
             } else {
                 if (description) {
-                    return `${item.related_discount_name} [${description}]`;
+                    return `${rule_description ? rule_description : item.related_discount_name} [${description}]`;
                 }
                 if (product_display_name) {
-                    return `${item.related_discount_name} [${product_display_name}]`;
+                    return `${rule_description ? rule_description : item.related_discount_name} [${product_display_name}]`;
                 }
-                return `${item.related_discount_name}`;
+                return `${rule_description ? rule_description : item.related_discount_name}`;
             }
         },
         add_promotion_product: function (product, promotion_product, line, rule, price, quantity, discount, event, relation_products, description, rule_description) {
