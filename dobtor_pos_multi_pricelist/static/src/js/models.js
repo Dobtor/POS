@@ -523,12 +523,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             _.each(Object.keys(group_by_line_of_product), function (old_line) {
                 let this_rule = _.first(group_by_line_of_product[old_line]).rule; // that have diff rule, in here just get fist rule
                 let that_product = _.first(group_by_line_of_product[old_line]).product; // same product
-                console.log('group_by_line_of_product[old_line] :', group_by_line_of_product[old_line]);
+                _.map(group_by_line_of_product[old_line], (item) => {
+                    item.promotion_value = item.price * item.quantity
+                });
                 let get_line_promotion_value = _.pluck(group_by_line_of_product[old_line], 'promotion_value');
                 let sum_line_promotion_value = _.reduce(get_line_promotion_value, (memo, num) => memo + num, 0);
 
-                console.log('get_line_promotion_value :', get_line_promotion_value);
-                console.log('sum_line_promotion_value :', sum_line_promotion_value);
                 real_promotion_line.push({
                     discount: undefined,
                     line: undefined,
