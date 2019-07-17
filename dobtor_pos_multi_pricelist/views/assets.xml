@@ -7,6 +7,7 @@
             <!-- <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/promotion_schema.js"></script> -->
             <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/bogo_promotion.js"></script>
             <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/combo_promotion.js"></script>
+            <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/range_promotion.js"></script>
             <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/models.js"></script>
             <script type="text/javascript" src="/dobtor_pos_multi_pricelist/static/src/js/screens.js"></script>
         </xpath>

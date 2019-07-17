@@ -360,27 +360,41 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             });
             return promotion_line
         },
-        handle_order_rule: function (self, model, repeat, promotion_line, promotion_order_line) {
+        handle_order_rule: function (self, model, repeat, promotion_line) {
             /**
              * @param {object} self class order execut context
              * @param {object} model array of specific rule info 
              * @param {boolean} repeat is rule repeat ?
              * @param {object} promotion_line array of need to add discount line
-             * @param {object} promotion_order_line array of need to add discount line for order rule
              */
             let group_by_rule = _.groupBy(model, 'rule_id');
 
             // let result = [];
             _.each(Object.keys(group_by_rule), function (key) {
                 let this_rule = _.first(group_by_rule[key]).rule;
-                if (!promotion_line.length || !!promotion_order_line.length == repeat) { //promotion_order_line
-                    if (group_by_rule[key][0].type === 'range') {
-                        // promotion_line = promotion_line.concat(self.compute_combo_promotion(self, group_by_rule[key]));
-                        // console.log('after combo promotion_line :', promotion_line);
+                // handle repraet
+                let after_except_data = [];
+                let handle_data = [];
+                let order_promotion_line = _.filter(promotion_line, item => item.type === 'range');
+                let get_relation_product = _.pluck(order_promotion_line, 'relation_products');
+                if (get_relation_product.length) {
+                    get_relation_product = _.uniq(get_relation_product.join().split(','));
+                    after_except_data = _.filter(group_by_rule[key], function (item) {
+                        return !get_relation_product.includes(item.product_id + '') || repeat;
+                    });
+                }
+                if (after_except_data.length || (after_except_data.length == 0 && group_by_rule[key].length && order_promotion_line.length)) {
+                    handle_data = [...after_except_data];
+                } else {
+                    handle_data = [...group_by_rule[key]];
+                }
+                if (handle_data.length) {
+                    if (handle_data[0].type === 'range') {
+                        promotion_line = promotion_line.concat(self.compute_range_promotion(self, handle_data));
                     }
                 }
             });
-            return promotion_order_line;
+            return promotion_line;
         },
         check_order_discount: function () {
             // Common Declare Variables
@@ -429,8 +443,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     order_without_repeat_info = self.get_promotion_model(self, line, product_mapping_all_rule, false, 'order', order_without_repeat_info);
                     order_with_repeat_info = self.get_promotion_model(self, line, product_mapping_all_rule, true, 'order', order_with_repeat_info);
 
-                    order_info = _.union(order_without_repeat_info, order_with_repeat_info);
-                    rule_sum = [...order_info];
+                    // order_info = _.union(order_without_repeat_info, order_with_repeat_info);
+                    // rule_sum = [...order_info];
 
                     member_list.push({
                         product_id: product.id,
@@ -467,27 +481,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // Handle Order Rule
             console.log('order_without_repeat_info :', order_without_repeat_info);
             console.log('order_with_repeat_info :', order_with_repeat_info);
-
-            // promotion_order_line = self.handle_order_rule(self, order_without_repeat_info, false, promotion_line);
-
-            // if (promotion_order_line.length) {
-            //     console.log('go order without repeat');
-            //     let promotion_event = {
-            //         'compute_promotion_relation_product': self.compute_promotion_relation_product
-            //     };
-            //     self.add_promotion_products(self, promotion_order_line, promotion_event);
-            // }
-            // console.log('go order with repeat');
-            // promotion_order_line = self.handle_order_rule(self, order_with_repeat_info, true, promotion_line);
-            // if (promotion_order_line.length) {
-            //     let promotion_event2 = {
-            //         'compute_promotion_relation_product': self.compute_promotion_relation_product
-            //     };
-            //     self.add_promotion_products(self, promotion_order_line, promotion_event2);
-            // }
-            // End Handle Order Rule
-
-            let group_product = _.groupBy(rule_sum, 'product_id');
+            let group_product = _.groupBy(order_without_repeat_info, 'product_id');
             window.group_product = group_product;
             _.each(Object.keys(group_product), function (group_product_key) {
                 _.each(group_product[group_product_key], function (product_itmes) {
@@ -497,44 +491,35 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     });
                 })
             });
+            promotion_line = self.handle_order_rule(self, order_without_repeat_info, false, promotion_line);
+
+            let promotion_order_line = _.filter(promotion_line, item => item.tpye === 'range');
+            let get_relation_product_by_order = _.pluck(promotion_order_line, 'relation_products');
+            get_relation_product_by_order = _.uniq(get_relation_product_by_order.join().split(','));
+
+            let order_except_without_repeat_info = _.filter(order_with_repeat_info, function (item) {
+                return !get_relation_product_by_order.includes(item.product_id + '');
+            });
+            
+            console.log('go order with repeat');
+            console.log('order_except_without_repeat_info :', order_except_without_repeat_info);
+            let group_product_repeat = _.groupBy(order_except_without_repeat_info, 'product_id');
+            window.group_product_repeat = group_product_repeat;
+            _.each(Object.keys(group_product_repeat), function (group_product_key) {
+                _.each(group_product_repeat[group_product_key], function (product_itmes) {
+                    let sum_promtion_value = self.compute_total_promotion_by_product(product_itmes.product_id, 'general', promotion_line);
+                    $.extend(product_itmes, {
+                        round_value: product_itmes.round_value + (sum_promtion_value ? sum_promtion_value : 0)
+                    });
+                })
+            });
+            promotion_line = self.handle_order_rule(self, order_except_without_repeat_info, true, promotion_line);
+            // End Handle Order Rule
 
             // Per Order (Range)
-            window.history_rule_sum = rule_sum;
-            var group_rule = _.groupBy(rule_sum, 'rule_id');
-            _.each(Object.keys(group_rule), function (t) {
-                var pluck_qty = _.pluck(group_rule[t], 'quantity');
-                var pluck_val = _.pluck(group_rule[t], 'round_value');
-                var this_rule = group_rule[t][0].rule;
-                var rule_total = _.reduce(pluck_val, (memo, num) => memo + num, 0);
-                var qty_total = _.reduce(pluck_qty, (memo, num) => memo + num, 0);
-
-                var get_range_promotion = _.find(self.pos.range_promotion, function (range) {
-                    if (range.promotion_id[0] == group_rule[t][0].rule_id) {
-                        return rule_total >= range.start;
-                    }
-                    return false;
-                });
-
-                if (get_range_promotion && (!this_rule.min_quantity || qty_total >= this_rule.min_quantity)) {
-                    let promotion_pirce = rule_total;
-                    if (get_range_promotion.based_on === 'rebate') {
-                        promotion_pirce = get_range_promotion.based_on_rebate;
-                    } else if (get_range_promotion.based_on === 'percentage') {
-                        promotion_pirce = round_pr(rule_total * (get_range_promotion.based_on_percentage / 100), 1);
-                    }
-                    let output_promtion = _.extend({}, group_rule[t][0]);
-                    promotion_line.push(_.extend(output_promtion, {
-                        product: undefined,
-                        product_id: undefined,
-                        price: -promotion_pirce,
-                        quantity: 1,
-                        line: undefined,
-                        discount: undefined,
-                        relation_products: _.pluck(group_rule[t], 'product_id'),
-                        description: _t('Range based Discount'),
-                    }));
-                }
-            });
+            // window.history_rule_sum = rule_sum;
+            // let range_result = self.compute_range_promotion(self, rule_sum);
+            // promotion_line = promotion_line.concat(range_result);
             // End Range
 
             // Show all Promotion line
