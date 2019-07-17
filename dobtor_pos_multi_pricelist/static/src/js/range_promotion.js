@@ -17,15 +17,15 @@ odoo.define('dobtor_pos_promotion.range_promotion', function (require) {
              */
 
             let result = [];
-            var group_rule = _.groupBy(rule_sum, 'rule_id');
+            let group_rule = _.groupBy(rule_sum, 'rule_id');
             _.each(Object.keys(group_rule), function (t) {
-                var pluck_qty = _.pluck(group_rule[t], 'quantity');
-                var pluck_val = _.pluck(group_rule[t], 'round_value');
-                var this_rule = group_rule[t][0].rule;
-                var rule_total = _.reduce(pluck_val, (memo, num) => memo + num, 0);
-                var qty_total = _.reduce(pluck_qty, (memo, num) => memo + num, 0);
+                let pluck_qty = _.pluck(group_rule[t], 'quantity');
+                let pluck_val = _.pluck(group_rule[t], 'round_value');
+                let this_rule = group_rule[t][0].rule;
+                let rule_total = _.reduce(pluck_val, (memo, num) => memo + num, 0);
+                let qty_total = _.reduce(pluck_qty, (memo, num) => memo + num, 0);
 
-                var get_range_promotion = _.find(self.pos.range_promotion, function (range) {
+                let get_range_promotion = _.find(self.pos.range_promotion, function (range) {
                     if (range.promotion_id[0] == group_rule[t][0].rule_id) {
                         return rule_total >= range.start;
                     }

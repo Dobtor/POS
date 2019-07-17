@@ -32,8 +32,6 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
             //     line: undefined,
             // }
 
-            console.log('inside bogo');
-
             $.each(Object.keys(group_bogo), function (i, t) {
                 // sub query (like sql with)
                 var this_rule = group_bogo[t][0].rule;
@@ -214,8 +212,6 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                     }
                 }
                 output_bogo_line = output_bogo_line.concat(bogo_discount_line);
-
-                // console.log('bogo output_bogo_line : ', output_bogo_line);
             });
 
             return {
