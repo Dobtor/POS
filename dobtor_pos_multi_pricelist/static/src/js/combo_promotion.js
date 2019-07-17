@@ -69,5 +69,16 @@ odoo.define('dobtor_pos_promotion.combo_promotion', function (require) {
             });
             return result;
         },
+        inner_join_combo_product: (rule, pos) => {
+            let combo_promotion = [];
+            let get_combo_promotion;
+            if (pos) {
+                get_combo_promotion = _.filter(pos.combo_promotion, combo => combo.promotion_id[0] == rule.id);
+                if (get_combo_promotion) {
+                    combo_promotion = _.pluck(_.pluck(get_combo_promotion, 'product_id'), 0);
+                }
+            }
+            return combo_promotion;
+        },
     });
 });
