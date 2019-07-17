@@ -126,8 +126,8 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                             }
 
                                             bogo_promotion_line.push({
-                                                rule: rule,
-                                                rule_id: rule.id,
+                                                rule: this_rule,
+                                                rule_id: this_rule.id,
                                                 product: product_set[gift_index],
                                                 product_id: product_set[gift_index].id,
                                                 price: -promotion_pirce,
@@ -257,8 +257,8 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                             }
 
                             bogo_promotion_line.push({
-                                rule: rule,
-                                rule_id: rule.id,
+                                rule: this_rule,
+                                rule_id: this_rule.id,
                                 product: gift_set[gift_index],
                                 product_id: gift_set[gift_index].id,
                                 price: -promotion_pirce,
