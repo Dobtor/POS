@@ -329,5 +329,18 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                 return item.product_type === type;
             });
         },
+        get_promotion_qty: (source) => {
+            return _.chain(source)
+                .pluck('quantity')
+                .reduce((memo, num) => memo + num, 0)
+                .value();
+        },
+        get_bogo_product_set: (source, order_by) => {
+            let product_set = _.chain(source)
+                .sortBy('price')
+                .pluck('product');
+            product_set = order_by === 'desc' ? product_set.reverse().value() : product_set.value();
+            return product_set;
+        },
     });
 });

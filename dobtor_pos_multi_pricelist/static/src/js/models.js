@@ -59,32 +59,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 });
             }
         },
-        // add_discount_product: function (self, line, rule) {
-        //     var result = line.get_price_byitem(rule);
-        //     var product = line.product;
-        //     if (result.quantity > 0) {
-        //         var discount_product = self.pos.db.get_product_by_id(rule.related_product[0]);
-        //         if (discount_product) {
-        //             var temp_product = $.extend(true, {}, discount_product);
-        //             if (result.type == 'price') {
-        //                 if (round_pr((result.price - product.lst_price), 1)) {
-        //                     self.add_product(temp_product, {
-        //                         'price': round_pr((result.price - product.lst_price), 1),
-        //                         'quantity': result.quantity,
-        //                     });
-        //                     self.selected_orderline.compute_name = self.add_line_description(rule, line);
-        //                     self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
-        //                     // handle relation product 
-        //                     let relation_product = [];
-        //                     relation_product.push(product.id);
-        //                     self.selected_orderline.set_relation_product(relation_product.join());
-        //                 }
-        //             }
-        //         } else {
-        //             alert(_t("You should be setting pricelist of discount product !!!"));
-        //         }
-        //     }
-        // },
         add_line_description: function (item, line = undefined, discount = 0, product = undefined, description = undefined) {
             var product_display_name;
             if (line || product) {
@@ -488,13 +462,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             console.log('ganeral_except_without_repeat_info :', ganeral_except_without_repeat_info);
             promotion_line = self.handle_ganeral_rule(self, ganeral_except_without_repeat_info, true, promotion_line, unlink_gift_of_bogo_list);
             promotion_line = self.compute_mix_promotion(self, promotion_line);
-            // console.log('promotion_line :', promotion_line);
-            // if (promotion_line.length) {
-            //     let promotion_event2 = {
-            //         'compute_promotion_relation_product': self.compute_promotion_relation_product
-            //     };
-            //     self.add_promotion_products(self, promotion_line, promotion_event2);
-            // }
             // End Handle General Rule
 
             // Handle Order Rule
@@ -556,9 +523,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 if (get_range_promotion && (!this_rule.min_quantity || qty_total >= this_rule.min_quantity)) {
                     let promotion_pirce = rule_total;
                     if (get_range_promotion.based_on === 'rebate') {
-                        promotion_pirce = -get_range_promotion.based_on_rebate;
+                        promotion_pirce = get_range_promotion.based_on_rebate;
                     } else if (get_range_promotion.based_on === 'percentage') {
-                        promotion_pirce = -round_pr(rule_total * (get_range_promotion.based_on_percentage / 100), 1);
+                        promotion_pirce = round_pr(rule_total * (get_range_promotion.based_on_percentage / 100), 1);
                         // discount_rate = get_range_promotion.based_on_percentage;
                     }
                     let output_promtion = _.extend({}, group_rule[t][0]);
@@ -588,15 +555,28 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             let group_member = _.groupBy(member_list, 'product_id');
             _.each(Object.keys(group_member), function (group_product_key) {
                 _.each(group_member[group_product_key], function (member_itmes) {
+                    // general rule
                     let that_promotion = _.filter(promotion_line, item => member_itmes.product_id == item.product_id && !!!item.rule.is_primary_key);
                     _.map(that_promotion, (item) => {
                         item.promotion_value = item.price * item.quantity
                     });
                     let get_this_promtion_value = _.pluck(that_promotion, 'promotion_value');
                     let sum_promtion_value = _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
+                    // order rule
+                    let that_order_promotion = _.filter(promotion_line, item => item.type === 'range' && item.relation_products.includes(member_itmes.product_id) && !!!item.rule.is_primary_key);
+                    _.map(that_order_promotion, (item) => {
+                        item.promotion_value = item.price * item.quantity
+                    });
+                    let get_this_order_promtion_value = _.pluck(that_order_promotion, 'promotion_value');
+                    let sum_order_promtion_value = _.reduce(get_this_order_promtion_value, (memo, num) => memo + num, 0);
+                    // total 
+                    let total_sum = sum_promtion_value + sum_order_promtion_value;
+                    console.log('sum_promtion_value : ', sum_promtion_value);
+                    console.log('sum_order_promtion_value : ', sum_order_promtion_value);
+                    console.log('total_sum : ', total_sum);
                     $.extend(member_itmes, {
-                        sub_rate: (member_itmes.product_price + (sum_promtion_value ? sum_promtion_value : 0)) / member_itmes.product_price,
-                        product_price: member_itmes.product_price + (sum_promtion_value ? sum_promtion_value : 0),
+                        sub_rate: (member_itmes.product_price + (total_sum ? total_sum : 0)) / member_itmes.product_price,
+                        product_price: member_itmes.product_price + (total_sum ? total_sum : 0),
                     });
                 })
             });
@@ -609,29 +589,9 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             if (self.orderlines.models.length) {
                 this.select_orderline(self.orderlines.models[0]);
             }
-
         },
         compute_promotion_relation_product: (self, relation_products) => {
             self.selected_orderline.set_relation_product(relation_products.join());
-        },
-        get_promotion_qty: (source) => {
-            return _.chain(source)
-                .pluck('quantity')
-                .reduce((memo, num) => memo + num, 0)
-                .value();
-        },
-        get_bogo_product_set: (source, order_by) => {
-            let product_set = _.chain(source)
-                .sortBy('price')
-                .pluck('product');
-            product_set = order_by === 'desc' ? product_set.reverse().value() : product_set.value();
-            return product_set;
-        },
-        compute_range_promotion: () => {
-            return true;
-        },
-        warning_no_config_discount_product: () => {
-            return true;
         },
     });
 
