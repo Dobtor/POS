@@ -518,11 +518,15 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             let get_mix_line = _.filter(promotion_line, line => line.discount < 0);
             let get_not_mix_line = _.filter(promotion_line, line => line.discount >= 0 || line.discount === undefined);
             let group_by_line_of_product = _.groupBy(get_mix_line, 'product_id');
+            window.group_by_line_of_product = group_by_line_of_product;
             _.each(Object.keys(group_by_line_of_product), function (old_line) {
                 let this_rule = _.first(group_by_line_of_product[old_line]).rule; // that have diff rule, in here just get fist rule
                 let that_product = _.first(group_by_line_of_product[old_line]).product; // same product
                 let get_line_promotion_value = _.pluck(group_by_line_of_product[old_line], 'promotion_value');
                 let sum_line_promotion_value = _.reduce(get_line_promotion_value, (memo, num) => memo + num, 0);
+
+                console.log('get_line_promotion_value :', get_line_promotion_value);
+                console.log('sum_line_promotion_value :', sum_line_promotion_value);
                 real_promotion_line.push({
                     discount: undefined,
                     line: undefined,
@@ -532,7 +536,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     product_id: that_product.id,
                     rule: this_rule,
                     rule_id: this_rule.id,
-                    relation_products: [old_line],
+                    relation_products: [that_product.id],
                     rule_description: _t('Mix Promotion Repay'),
                 });
             });
