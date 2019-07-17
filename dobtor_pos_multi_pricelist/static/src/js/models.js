@@ -491,12 +491,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             window.group_product = group_product;
             _.each(Object.keys(group_product), function (group_product_key) {
                 _.each(group_product[group_product_key], function (product_itmes) {
-                    let that_promotion = _.filter(promotion_line, item => product_itmes.product_id == item.product_id && !!!item.rule.is_primary_key);
-                    _.map(that_promotion, (item) => {
-                        item.promotion_value = item.price * item.quantity
-                    });
-                    let get_this_promtion_value = _.pluck(that_promotion, 'promotion_value');
-                    let sum_promtion_value = _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
+                    let sum_promtion_value = self.compute_total_promotion_by_product(product_itmes.product_id, 'general', promotion_line);
                     $.extend(product_itmes, {
                         round_value: product_itmes.round_value + (sum_promtion_value ? sum_promtion_value : 0)
                     });
@@ -526,7 +521,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         promotion_pirce = get_range_promotion.based_on_rebate;
                     } else if (get_range_promotion.based_on === 'percentage') {
                         promotion_pirce = round_pr(rule_total * (get_range_promotion.based_on_percentage / 100), 1);
-                        // discount_rate = get_range_promotion.based_on_percentage;
                     }
                     let output_promtion = _.extend({}, group_rule[t][0]);
                     promotion_line.push(_.extend(output_promtion, {
@@ -539,11 +533,11 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         relation_products: _.pluck(group_rule[t], 'product_id'),
                         description: _t('Range based Discount'),
                     }));
-                    // Compute Sub Rate - member_list
-                    // self.compute_member_promotion(self, customer, member_list, get_range_promotion, rule_total, discount_rate / 100);
                 }
             });
+            // End Range
 
+            // Show all Promotion line
             console.log('promotion_line :', promotion_line);
             if (promotion_line.length) {
                 let promotion_event2 = {
@@ -551,44 +545,49 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 };
                 self.add_promotion_products(self, promotion_line, promotion_event2);
             }
+            // End Show all Promotion line
 
+            // Handle Member Promotion  
             let group_member = _.groupBy(member_list, 'product_id');
             _.each(Object.keys(group_member), function (group_product_key) {
                 _.each(group_member[group_product_key], function (member_itmes) {
                     // general rule
-                    let that_promotion = _.filter(promotion_line, item => member_itmes.product_id == item.product_id && !!!item.rule.is_primary_key);
-                    _.map(that_promotion, (item) => {
-                        item.promotion_value = item.price * item.quantity
-                    });
-                    let get_this_promtion_value = _.pluck(that_promotion, 'promotion_value');
-                    let sum_promtion_value = _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
+                    let sum_promtion_value = self.compute_total_promotion_by_product(member_itmes.product_id, 'general', promotion_line);
                     // order rule
-                    let that_order_promotion = _.filter(promotion_line, item => item.type === 'range' && item.relation_products.includes(member_itmes.product_id) && !!!item.rule.is_primary_key);
-                    _.map(that_order_promotion, (item) => {
-                        item.promotion_value = item.price * item.quantity
-                    });
-                    let get_this_order_promtion_value = _.pluck(that_order_promotion, 'promotion_value');
-                    let sum_order_promtion_value = _.reduce(get_this_order_promtion_value, (memo, num) => memo + num, 0);
+                    let sum_order_promtion_value = self.compute_total_promotion_by_product(member_itmes.product_id, 'order', promotion_line);
                     // total 
                     let total_sum = sum_promtion_value + sum_order_promtion_value;
-                    console.log('sum_promtion_value : ', sum_promtion_value);
-                    console.log('sum_order_promtion_value : ', sum_order_promtion_value);
-                    console.log('total_sum : ', total_sum);
                     $.extend(member_itmes, {
                         sub_rate: (member_itmes.product_price + (total_sum ? total_sum : 0)) / member_itmes.product_price,
                         product_price: member_itmes.product_price + (total_sum ? total_sum : 0),
                     });
                 })
             });
-
             self.compute_member_promotion(self, customer, member_list);
-
-            // End Range
+            // End Member Promotion
 
             // GO Back first orderline (display correct discount proudct name) 
             if (self.orderlines.models.length) {
                 this.select_orderline(self.orderlines.models[0]);
             }
+        },
+        compute_total_promotion_by_product: (porduct_id, type, promotion_line) => {
+            /**
+             * @param {object} product_id id of prodcut 
+             * @param {string} type type is "general" or "order" ?
+             * @param {object} promotion_line array of pormotion line
+             */
+            let that_promotion = [];
+            if (type === 'general') {
+                that_promotion = _.filter(promotion_line, item => porduct_id == item.product_id && !!!item.rule.is_primary_key);
+            } else {
+                that_promotion = _.filter(promotion_line, item => item.type === 'range' && item.relation_products.includes(porduct_id) && !!!item.rule.is_primary_key);
+            }
+            _.map(that_promotion, (item) => {
+                item.promotion_value = item.price * item.quantity
+            });
+            let get_this_promtion_value = _.pluck(that_promotion, 'promotion_value');
+            return _.reduce(get_this_promtion_value, (memo, num) => memo + num, 0);
         },
         compute_promotion_relation_product: (self, relation_products) => {
             self.selected_orderline.set_relation_product(relation_products.join());
