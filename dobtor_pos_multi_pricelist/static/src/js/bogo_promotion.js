@@ -32,7 +32,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
             //     line: undefined,
             // }
 
-            $.each(Object.keys(group_bogo), function (i, t) {
+            _.each(Object.keys(group_bogo), function (t) {
                 // sub query (like sql with)
                 var this_rule = group_bogo[t][0].rule;
                 let group_where_type_product = self.prepare_group_bogo(group_bogo[t], 'product');
@@ -137,7 +137,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                                 relation_products: self.compute_relation_product(product_set, [], gift_index, i, Aproduct_unit, Bproduct_unit)
                                             });
 
-                                            output_bogo_line = output_bogo_line.concat(bogo_promotion_line);
+                                            
 
                                             gift_index++;
                                         }
@@ -146,6 +146,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                 round++;
                             }
                             while (i <= quant);
+                            output_bogo_line = output_bogo_line.concat(bogo_promotion_line);
                         } else if (this_rule.bogo_base === 'bxa_gya_discount' && quant) {
                             var get_bogo_offer_itme = undefined;
                             var filter_this_rule_bogo_items = _.filter(self.pos.bogo_offer_items, function (bogo_item) {
