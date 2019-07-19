@@ -636,13 +636,16 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             // End Show all Promotion line
 
             // Handle Member Promotion  
+            // member_list = self.exclude_not_repeatable(promotion_line, member_list);
+            member_list = self.exclude_member_not_repeatable(promotion_line, member_list);
             let group_member = _.groupBy(member_list, 'product_id');
             _.each(Object.keys(group_member), function (group_product_key) {
                 _.each(group_member[group_product_key], function (member_itmes) {
                     // deduction promotion general rule
-                    let sum_promotion_value = self.compute_total_promotion_by_product(member_itmes.product_id, 'general', promotion_line);
-                    let sum_order_promotion_value = self.compute_total_promotion_by_product(member_itmes.product_id, 'order', promotion_line);
+                    let sum_promotion_value = self.compute_total_promotion_by_product(member_itmes.product_id, 'general', promotion_line, false);
+                    let sum_order_promotion_value = self.compute_total_promotion_by_product(member_itmes.product_id, 'order', promotion_line, false);
                     let total_sum = sum_promotion_value + sum_order_promotion_value;
+                    console.log(total_sum);
                     // deduction 
                     $.extend(member_itmes, {
                         sub_rate: (member_itmes.product_price + (total_sum ? total_sum : 0)) / member_itmes.product_price,
@@ -658,6 +661,23 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             if (self.orderlines.models.length) {
                 this.select_orderline(self.orderlines.models[0]);
             }
+        },
+        exclude_member_not_repeatable: (promotion_line, model) => {
+            _.map(model, info => {
+                let that_promotion = [];
+                that_promotion = _.filter(promotion_line, item => info.product_id == item.product_id && item.promotion_type != 'mix' && item.rule.is_primary_key == true);
+                let get_need_remove_product = _.pluck(that_promotion, 'if_need_remove_product');
+                get_need_remove_product = get_need_remove_product.join().split(',');
+                console.log('get_need_remove_product xx :', get_need_remove_product);
+                _.map(get_need_remove_product, product_id => {
+                    if (product_id == info.product_id)
+                        info.quantity--;
+                });
+            });
+            _.map(model, info => {
+                info.product_price = info.price * (info.quantity > 0 ? info.quantity : 0);
+            });
+            return model;
         },
         recompute_range_round_value: (promotion_line, type, model) => {
             /**
