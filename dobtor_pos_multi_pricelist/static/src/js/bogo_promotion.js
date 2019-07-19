@@ -122,7 +122,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                             discount = 100;
                                         }
                                         let relation_product = self.compute_relation_product(product_set, [], gift_index, i, Aproduct_unit, Bproduct_unit);
-                                        let if_need_remove_porduct = (gift_index + 1) % Bproduct_unit ? relation_product : [product_set[gift_index]];
+                                        let if_need_remove_product = (gift_index + 1) % Bproduct_unit ? [product_set[gift_index].id] : relation_product;
 
                                         bogo_promotion_line.push({
                                             rule: this_rule,
@@ -134,7 +134,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                             discount: discount,
                                             line: undefined,
                                             relation_products: relation_product,
-                                            if_need_remove_porduct: if_need_remove_porduct,
+                                            if_need_remove_product: if_need_remove_product,
                                         });
                                         gift_index++;
                                     }
@@ -169,7 +169,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                         relation_product_lists.push(product_set[gift_index].id);
                                         bogo_discount_line.push({
                                             rule: this_rule,
-                                            rule_id: t,
+                                            rule_id: this_rule.id,
                                             product: product_set[gift_index],
                                             product_id: product_set[gift_index].id,
                                             price: bogo_promotion_pirce,
@@ -178,7 +178,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                             line: undefined,
                                             origin_price: product_set[gift_index].line_price,
                                             relation_products: relation_product_lists,
-                                            if_need_remove_porduct: relation_product_lists,
+                                            if_need_remove_product: relation_product_lists,
                                         });
                                     }
                                     gift_index++;
@@ -254,11 +254,11 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                             }
 
                             let relation_product = self.compute_relation_product(product_set, gift_set, gift_index, i, Aproduct_unit, Bproduct_unit);
-                            let if_need_remove_porduct = (gift_index + 1) % Bproduct_unit ? relation_product : [gift_set[gift_index]];
+                            let if_need_remove_product = (gift_index + 1) % Bproduct_unit ? relation_product : [gift_set[gift_index].id];
 
                             bogo_promotion_line.push({
-                                rule: this_rule,
-                                rule_id: this_rule.id,
+                                rule: rule,
+                                rule_id: rule.id,
                                 product: gift_set[gift_index],
                                 product_id: gift_set[gift_index].id,
                                 price: -promotion_pirce,
@@ -266,7 +266,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                 discount: discount,
                                 line: undefined,
                                 relation_products: relation_product,
-                                if_need_remove_porduct: if_need_remove_porduct,
+                                if_need_remove_product: if_need_remove_product,
                             });
 
                             gift_index++;

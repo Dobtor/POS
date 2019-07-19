@@ -49,6 +49,7 @@ odoo.define('dobtor_pos_promotion.range_promotion', function (require) {
                         discount: undefined,
                         relation_products: _.pluck(group_rule[t], 'product_id'),
                         description: _t('Range based Discount'),
+                        if_need_remove_product: _.pluck(group_rule[t], 'product_id'),
                     }));
                 }
             });
