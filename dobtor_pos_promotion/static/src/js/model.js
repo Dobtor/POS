@@ -383,18 +383,18 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
 
             if (rule.compute_price === 'fixed') {
                 new_price = round_pr(rule.fixed_price, 1);
-                let fixed_discount = 0;
-                if ((price - new_price) < 0) {
-                    fixed_discount = -((new_price - price) / price) * 100.00
-                } else {
-                    fixed_discount = ((price - new_price) / price) * 100.00
-                }
+                // let fixed_discount = 0;
+                // if ((price - new_price) < 0) {
+                //     fixed_discount = -((new_price - price) / price) * 100.00
+                // } else {
+                //     fixed_discount = ((price - new_price) / price) * 100.00
+                // }
                 return {
                     rule_id: rule.id,
                     rule: rule,
                     type: 'price',
                     price: new_price,
-                    discount: fixed_discount,
+                    discount: ((price - new_price) / price) * 100.00,
                     quantity: quantity,
                     product_id: self.product.id,
                     product: $.extend(self.product, {
