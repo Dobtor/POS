@@ -8,7 +8,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
     var round_pr = utils.round_precision;
     var exports = models;
     var is_debug = true;
-    var show_flow = true;
+    var show_flow = false;
 
     exports.load_domain = function (model_name, domain) {
         var models = exports.PosModel.prototype.models;
@@ -341,16 +341,19 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             qty = line.quantity;
                         }
                         realtion_rule += ',' + oline.rule_id;
-                        let promotion_for_product = _.filter(except_not_mix_promotion, pline => product_id == pline.product_id && pline.promotion_type === 'mix');
+                        let get_current_except_not_mix_promotion = _.filter(promotion_line, line => !line.promotion_type || line.promotion_type != 'unmix');
+                        let promotion_for_product = _.filter(get_current_except_not_mix_promotion, pline => product_id == pline.product_id && pline.promotion_type === 'mix');
 
                         let G = _.groupBy(promotion_for_product, 'base_mix');
                         let outs = [];
                         _.each(Object.keys(G), k => {
-                            let mrl = _.max(G[k], mix => mix.realtion_rule.length);
-                            outs.push(mrl);
+                            let mrl = _.max(G[k], mix => mix.realtion_rule.split(',').length);
+                            let mrl_set = _.filter(G[k], mix => mix.realtion_rule == mrl.realtion_rule);
+                            outs = [...mrl_set];
                         });
-
-                        let done = _.filter(outs, pfp => pfp.other_mix.indexOf(',' + line.rule_id + realtion_rule) != -1 && pfp.base_mix != line.rule_id);
+                        let done = _.filter(outs, pfp => (pfp.other_mix.indexOf(',' + line.rule_id + realtion_rule) != -1 || pfp.other_mix.indexOf(',' + line.rule_id + line.other_mix) != -1) && pfp.base_mix != line.rule_id);
+                        if (show_flow) 
+                            console.log('rule plus : ', line.rule_id + realtion_rule);
                         if (done.length) {
                             qty = qty - _.reduce(_.pluck(done, 'quantity'), (memo, num) => memo + num, 0);
                         }
