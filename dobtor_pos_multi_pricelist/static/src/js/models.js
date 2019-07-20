@@ -82,8 +82,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             self.add_product(promotion_product, {
                 price: price,
                 quantity: quantity,
+                merge: false
             });
-            console.log(`qty : ${quantity}, price : ${price}, product: ${product.id}, discount : ${discount}`)
+            console.log(`qty : ${quantity}, price : ${price}, product: ${product.id}, discount : ${discount}`);
+            // console.log('promotion_product :', promotion_product);
             self.selected_orderline.compute_name = self.add_line_description(rule, line, discount, product, description, rule_description);
             self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
 
@@ -113,7 +115,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         } = group_rule[key][keys];
                         relation_products = relation_products ? relation_products : product;
                         if (discount || discount == undefined) {
-                            self.add_promotion_product.apply(self, [product, promotion_product, line, rule, round_pr(price, 1), quantity, round_pr(discount, 0.01), event, relation_products, description, rule_description]);
+                            self.add_promotion_product.apply(self, [product, promotion_product, line, rule, round_pr(price, 1), quantity, discount == undefined ? undefined : round_pr(discount, 0.01), event, relation_products, description, rule_description]);
                         }
                     } else {
                         alert(_t("You should be setting pricelist of discount product !!!"));
