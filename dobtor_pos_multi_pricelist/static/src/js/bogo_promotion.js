@@ -254,7 +254,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                             }
 
                             let relation_product = self.compute_relation_product(product_set, gift_set, gift_index, i, Aproduct_unit, Bproduct_unit);
-                            let if_need_remove_product = (gift_index + 1) % Bproduct_unit ? relation_product : [gift_set[gift_index].id];
+                            let if_need_remove_product = (gift_index + 1) % Bproduct_unit ? [gift_set[gift_index].id] :relation_product;
 
                             bogo_promotion_line.push({
                                 rule: rule,
@@ -298,7 +298,17 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
              * @param {number} Bproduct_unit B product unit
              */
             let relation_product_lists = [];
-            let slice_product_set = product_set.slice(-Aproduct_unit);
+            
+            let slice_all_product_set = product_set.slice(-(Aproduct_unit) * Math.ceil((gift_index + 1) / Bproduct_unit));
+            let slice_product_set = slice_all_product_set.slice(0,Aproduct_unit);
+            if (is_debug) {
+                console.log('(gift_index + 1) / Bproduct_unit) :', (gift_index + 1) / Bproduct_unit);
+                console.log('ceil :', Math.ceil((gift_index + 1) / Bproduct_unit));
+                console.log('product_set : ', product_set);
+                console.log('slice_all_product_set :', slice_all_product_set);
+                console.log('slice_product_set :', slice_product_set);
+            }
+            
             let A_puls_B_unit = Aproduct_unit + Bproduct_unit;
             let get_times = parseInt((i - 1) / A_puls_B_unit);
             if (get_times) {
