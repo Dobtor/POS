@@ -84,7 +84,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 quantity: quantity,
                 merge: false
             });
-            console.log(`qty : ${quantity}, price : ${price}, product: ${product.id}, discount : ${discount}`);
+            // console.log(`qty : ${quantity}, price : ${price}, discount : ${discount}`);
             // console.log('promotion_product :', promotion_product);
             self.selected_orderline.compute_name = self.add_line_description(rule, line, discount, product, description, rule_description);
             self.selected_orderline.product.display_name = self.selected_orderline.compute_name;
