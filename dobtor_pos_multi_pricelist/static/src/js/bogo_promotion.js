@@ -309,7 +309,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                 desc_unit = Bproduct_unit;
                 relation_product_set = _.sortBy(relation_product_set, 'lst_price');
             }
-            let slice_length = -(Aproduct_unit) * Math.ceil((gift_index + 1) / Bproduct_unit) - desc_unit;
+            let slice_length = -(Aproduct_unit) * Math.ceil((gift_index + 1) / Bproduct_unit) - desc_unit * Math.ceil((gift_index + 1) / Bproduct_unit);
             
             let slice_all_product_set = relation_product_set.slice(slice_length);
             let slice_product_set = slice_all_product_set.slice(-slice_length > product_set.length ? 0 : desc_unit, Aproduct_unit + desc_unit);
@@ -317,6 +317,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                 console.log('slice_length : ', slice_length);
                 // console.log('(gift_index + 1) / Bproduct_unit) :', (gift_index + 1) / Bproduct_unit);
                 console.log('ceil :', Math.ceil((gift_index + 1) / Bproduct_unit));
+                console.log('desc_unit:', desc_unit);
                 console.log('product_set : ', product_set);
                 console.log('relation_product_set : ', relation_product_set);
                 console.log('slice_all_product_set :', slice_all_product_set);
