@@ -109,26 +109,31 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                 _.each(_.range(Bproduct_unit), function (s) {                                    
                                     i++;
                                     if (i <= quant) {
-                                        var promotion_pirce = product_set[gift_index].line_price;
+                                        let new_gift_index = gift_index;
+                                        if (this_rule.order_by_pirce === 'desc') {
+                                            new_gift_index = gift_index + (round+1) * Aproduct_unit;
+                                        }
+
+                                        var promotion_pirce = product_set[new_gift_index].line_price;
                                         if (the_same && this_rule.bogo_base === 'bxa_gyb_discount') {
                                             if (this_rule.bxa_gyb_discount_base_on === 'percentage') {
                                                 promotion_pirce = round_pr((promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
                                                 discount = round_pr(this_rule.bxa_gyb_discount_percentage_price, 0.01);
                                             } else if (this_rule.bxa_gyb_discount_base_on === 'fixed') {
                                                 promotion_pirce = round_pr(promotion_pirce - this_rule.bxa_gyb_discount_fixed_price, 1);
-                                                discount = round_pr((((product_set[gift_index].line_price - promotion_pirce) / product_set[gift_index].line_price) * 100.00), 0.01);
+                                                discount = round_pr((((product_set[new_gift_index].line_price - promotion_pirce) / product_set[new_gift_index].line_price) * 100.00), 0.01);
                                             }
                                         } else {
                                             discount = 100;
                                         }
-                                        let relation_product = self.compute_relation_product(product_set, [], gift_index, i, Aproduct_unit, Bproduct_unit);
-                                        let if_need_remove_product = (gift_index + 1) % Bproduct_unit ? [product_set[gift_index].id] : relation_product;
+                                        let relation_product = self.compute_relation_product(product_set, [], gift_index, i, Aproduct_unit, Bproduct_unit, this_rule.order_by_pirce, new_gift_index);
+                                        let if_need_remove_product = (gift_index + 1) % Bproduct_unit ? [product_set[new_gift_index].id] : relation_product;
 
                                         bogo_promotion_line.push({
                                             rule: this_rule,
                                             rule_id: this_rule.id,
-                                            product: product_set[gift_index],
-                                            product_id: product_set[gift_index].id,
+                                            product: product_set[new_gift_index],
+                                            product_id: product_set[new_gift_index].id,
                                             price: -promotion_pirce,
                                             quantity: 1,
                                             discount: discount,
@@ -287,7 +292,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                 unlink_gift_of_bogo_list: unlink_gift_of_bogo_list
             };
         },
-        compute_relation_product: (product_set, gift_set, gift_index, i, Aproduct_unit, Bproduct_unit) => {
+        compute_relation_product: (product_set, gift_set, gift_index, i, Aproduct_unit, Bproduct_unit, order = 'acs', new_gift_index = 0) => {
             /**
              * Compute this bogo promotion relation product.
              * @param {object} product_set array of product set
@@ -298,13 +303,22 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
              * @param {number} Bproduct_unit B product unit
              */
             let relation_product_lists = [];
+            let relation_product_set = [...product_set];
+            let desc_unit = 0;
+            if (order === 'desc' && !gift_set.length) {
+                desc_unit = Bproduct_unit;
+                relation_product_set = _.sortBy(relation_product_set, 'lst_price');
+            }
+            let slice_length = -(Aproduct_unit) * Math.ceil((gift_index + 1) / Bproduct_unit) - desc_unit;
             
-            let slice_all_product_set = product_set.slice(-(Aproduct_unit) * Math.ceil((gift_index + 1) / Bproduct_unit));
-            let slice_product_set = slice_all_product_set.slice(0,Aproduct_unit);
-            if (is_debug) {
-                console.log('(gift_index + 1) / Bproduct_unit) :', (gift_index + 1) / Bproduct_unit);
+            let slice_all_product_set = relation_product_set.slice(slice_length);
+            let slice_product_set = slice_all_product_set.slice(-slice_length > product_set.length ? 0 : desc_unit, Aproduct_unit + desc_unit);
+            if (!is_debug) {
+                console.log('slice_length : ', slice_length);
+                // console.log('(gift_index + 1) / Bproduct_unit) :', (gift_index + 1) / Bproduct_unit);
                 console.log('ceil :', Math.ceil((gift_index + 1) / Bproduct_unit));
                 console.log('product_set : ', product_set);
+                console.log('relation_product_set : ', relation_product_set);
                 console.log('slice_all_product_set :', slice_all_product_set);
                 console.log('slice_product_set :', slice_product_set);
             }
@@ -319,7 +333,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                     relation_product_lists.push(item.id);
                 }
             );
-            relation_product_lists.push(gift_set.length ? gift_set[gift_index].id : product_set[gift_index].id);
+            relation_product_lists.push(gift_set.length ? gift_set[gift_index].id : product_set[new_gift_index].id);
             return relation_product_lists;
         },
         reflect_bogo: (rule, keyword, _default = undefined) => {
