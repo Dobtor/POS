@@ -313,9 +313,8 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
             
             let slice_all_product_set = relation_product_set.slice(slice_length);
             let slice_product_set = slice_all_product_set.slice(-slice_length > product_set.length ? 0 : desc_unit, Aproduct_unit + desc_unit);
-            if (!is_debug) {
+            if (is_debug) {
                 console.log('slice_length : ', slice_length);
-                // console.log('(gift_index + 1) / Bproduct_unit) :', (gift_index + 1) / Bproduct_unit);
                 console.log('ceil :', Math.ceil((gift_index + 1) / Bproduct_unit));
                 console.log('desc_unit:', desc_unit);
                 console.log('product_set : ', product_set);
@@ -324,11 +323,11 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                 console.log('slice_product_set :', slice_product_set);
             }
             
-            let A_puls_B_unit = Aproduct_unit + Bproduct_unit;
-            let get_times = parseInt((i - 1) / A_puls_B_unit);
-            if (get_times) {
-                slice_product_set = product_set.slice(-Aproduct_unit * (get_times + 1), -Aproduct_unit * get_times);
-            }
+            // let A_puls_B_unit = Aproduct_unit + Bproduct_unit;
+            // let get_times = parseInt((i - 1) / A_puls_B_unit);
+            // if (get_times) {
+            //     slice_product_set = product_set.slice(-Aproduct_unit * (get_times + 1), -Aproduct_unit * get_times);
+            // }
             _.map(slice_product_set,
                 (item) => {
                     relation_product_lists.push(item.id);

@@ -55,7 +55,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 return product.discount_type;
             });
             if (discount_line) {
-                $.each(discount_line, function (inedx, d_line) {
+                _.each(discount_line, function (d_line) {
                     self.remove_orderline(d_line);
                 });
             }
@@ -269,14 +269,14 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         });
                         return item;
                     });
-                    after_except_data = _.filter(group_by_rule[key], item => item.quantity > 0 );
+                    after_except_data = _.filter(group_by_rule[key], item => item.quantity > 0);
                 }
                 if (after_except_data.length || (after_except_data.length == 0 && group_by_rule[key].length && promotion_line.length)) {
                     handle_data = [...after_except_data];
                 } else {
                     handle_data = [...group_by_rule[key]];
                 }
-                handle_data = _.filter(group_by_rule[key], item => item.quantity > 0 );
+                handle_data = _.filter(group_by_rule[key], item => item.quantity > 0);
 
                 _.each(handle_data, function (item) {
                     let output = _.extend({}, item);
@@ -355,7 +355,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             outs = [...mrl_set];
                         });
                         let done = _.filter(outs, pfp => (pfp.other_mix.indexOf(',' + line.rule_id + realtion_rule) != -1 || pfp.other_mix.indexOf(',' + line.rule_id + line.other_mix) != -1) && pfp.base_mix != line.rule_id);
-                        if (show_flow) 
+                        if (show_flow)
                             console.log('rule plus : ', line.rule_id + realtion_rule);
                         if (done.length) {
                             qty = qty - _.reduce(_.pluck(done, 'quantity'), (memo, num) => memo + num, 0);
@@ -391,9 +391,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 // handle repraet
                 let after_except_data = [];
                 let handle_data = [];
-                let order_promotion_line = _.filter(promotion_line, item => item.type === 'range');
+                let order_promotion_line = _.filter(promotion_line, item => item.type === 'range' || item.promotion_type == 'unmix');
 
                 let get_need_remove_product = _.pluck(order_promotion_line, 'if_need_remove_product');
+                console.log('handle_order_rule get_need_remove_product : ', get_need_remove_product);
                 if (get_need_remove_product.length && !repeat) {
                     get_need_remove_product = get_need_remove_product.join().split(',');
                     after_except_data = _.map(group_by_rule[key], function (item) {
@@ -412,20 +413,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 }
                 handle_data = _.filter(group_by_rule[key], item => item.quantity > 0);
 
-
-                // let order_promotion_line = _.filter(promotion_line, item => item.type === 'range');
-                // let get_relation_product = _.pluck(order_promotion_line, 'relation_products');
-                // if (get_relation_product.length) {
-                //     get_relation_product = _.uniq(get_relation_product.join().split(','));
-                //     after_except_data = _.filter(group_by_rule[key], function (item) {
-                //         return !get_relation_product.includes(item.product_id + '') || repeat;
-                //     });
-                // }
-                // if (after_except_data.length || (after_except_data.length == 0 && group_by_rule[key].length && order_promotion_line.length)) {
-                //     handle_data = [...after_except_data];
-                // } else {
-                //     handle_data = [...group_by_rule[key]];
-                // }
                 if (handle_data.length) {
                     if (handle_data[0].type === 'range') {
                         promotion_line = promotion_line.concat(self.compute_range_promotion(self, handle_data));
@@ -444,12 +431,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             console.log('get_need_remove_product :', get_need_remove_product);
             let ganeral_except_without_repeat_info = _.map(ganeral_with_repeat_info, item => {
                 _.each(get_need_remove_product, product_id => {
-                    if (product_id == item.product_id){
+                    if (product_id == item.product_id) {
                         item.quantity--;
                     }
-                    console.log('product_id:', product_id);
                 });
-                console.log('item :', item);
                 return item;
             });
             return ganeral_except_without_repeat_info;
@@ -474,7 +459,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             let order_info = [];
 
             // Per Line
-            $.each(self.orderlines.models, function (i, line) {
+            _.each(self.orderlines.models, function (line) {
                 var product = line.product;
                 // following priclist activity diagram :
                 // Get all promotion rule of the product & 
@@ -526,17 +511,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 line.promotion_type = 'unmix'
             });
 
-            // let get_need_remove_product = _.pluck(promotion_line, 'if_need_remove_product');
-            // get_need_remove_product = _.uniq(get_need_remove_product.join().split(','));
 
-            // let ganeral_except_without_repeat_info = _.map(ganeral_with_repeat_info, function (item) {
-            //     _.each(get_need_remove_product, (product_id) => {
-            //         if (product_id == item.product_id)
-            //             item.quantity--;
-            //     });
-            //     return item;
-            // });
-
+            // exclude not repeatable
             let ganeral_except_without_repeat_info = self.exclude_not_repeatable(promotion_line, ganeral_with_repeat_info);
 
             console.log('ganeral_except_without_repeat_info :', ganeral_except_without_repeat_info);
@@ -560,31 +536,27 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 console.log('go ganeral without repeat');
                 console.log('order_without_repeat_info :', order_without_repeat_info);
             }
-
+            // let promotion_order_line = _.filter(promotion_line, item => item.promotion_type == 'unmix');
             order_without_repeat_info = self.recompute_range_round_value(promotion_line, 'general', order_without_repeat_info);
             let group_product = _.groupBy(order_without_repeat_info, 'product_id');
             _.each(Object.keys(group_product), function (group_product_key) {
                 _.each(group_product[group_product_key], function (product_itmes) {
                     let sum_promotion_value = self.compute_total_promotion_by_product(product_itmes.product_id, 'general', promotion_line, false);
-                    console.log('sum_promotion_value 1: ', sum_promotion_value)
-                    $.extend(product_itmes, {
+                    _.extend(product_itmes, {
                         round_value: product_itmes.round_value + (sum_promotion_value ? sum_promotion_value : 0)
                     });
                 })
             });
             promotion_line = self.handle_order_rule(self, order_without_repeat_info, false, promotion_line);
             console.log('order_without_repeat_info :', order_without_repeat_info);
-            let promotion_order_line = _.filter(promotion_line, item => item.tpye === 'range' || item.promotion_type == 'unmix');
+            // get need want to remove product
+            let promotion_order_line = _.filter(promotion_line, item => item.tpye === 'range');
             console.log('promotion_order_line :', promotion_order_line);
+            let s_order_with_repeat_info = [...order_with_repeat_info];
+            console.log('order_with_repeat_info : ', s_order_with_repeat_info);
             let order_except_without_repeat_info = self.exclude_not_repeatable(promotion_order_line, order_with_repeat_info);
-            // let get_relation_product_by_order = _.pluck(promotion_order_line, 'relation_products');
-            // get_relation_product_by_order = _.uniq(get_relation_product_by_order.join().split(','));
 
-            // let order_except_without_repeat_info = _.filter(order_with_repeat_info, function (item) {
-            //     return !get_relation_product_by_order.includes(item.product_id + '');
-            // });
-
-            if (!show_flow) {
+            if (show_flow) {
                 console.log('go order with repeat');
                 console.log('order_with_repeat_info :', order_with_repeat_info);
                 console.log('order_except_without_repeat_info :', order_except_without_repeat_info);
@@ -596,7 +568,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 _.each(group_product_repeat[group_product_key], function (product_itmes) {
                     let sum_promotion_value = self.compute_total_promotion_by_product(product_itmes.product_id, 'general', promotion_line, false);
                     console.log('sum_promotion_value :', sum_promotion_value);
-                    $.extend(product_itmes, {
+                    _.extend(product_itmes, {
                         round_value: product_itmes.round_value + (sum_promotion_value ? sum_promotion_value : 0)
                     });
                 })
@@ -659,7 +631,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     let total_sum = sum_promotion_value + sum_order_promotion_value;
                     // console.log(total_sum);
                     // deduction 
-                    $.extend(member_itmes, {
+                    _.extend(member_itmes, {
                         sub_rate: (member_itmes.product_price + (total_sum ? total_sum : 0)) / member_itmes.product_price,
                         product_price: member_itmes.product_price + (total_sum ? total_sum : 0),
                     });
@@ -675,13 +647,20 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             }
         },
         exclude_member_not_repeatable: (promotion_line, model) => {
+            /**
+             * @param {object} promotion_line array of pormotion line
+             * @param {object} model array of order level product info 
+             */
+            let total_remove_product = [];
             _.map(model, info => {
                 let that_promotion = [];
                 that_promotion = _.filter(promotion_line, item => info.product_id == item.product_id && item.promotion_type != 'mix' && item.rule.is_primary_key == true);
                 let get_need_remove_product = _.pluck(that_promotion, 'if_need_remove_product');
                 get_need_remove_product = get_need_remove_product.join().split(',');
-                // console.log('get_need_remove_product xx :', get_need_remove_product);
-                _.map(get_need_remove_product, product_id => {
+                total_remove_product = total_remove_product.concat(get_need_remove_product);
+            });
+            _.map(model, info => {
+                _.map(total_remove_product, product_id => {
                     if (product_id == info.product_id)
                         info.quantity--;
                 });
@@ -697,6 +676,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
              * @param {string} type type is "general" or "order" ?
              * @param {object} model array of order level product info 
              */
+            let total_remove_product = [];
             _.map(model, info => {
                 let that_promotion = [];
                 if (type === 'general') {
@@ -706,12 +686,16 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 }
                 let get_need_remove_product = _.pluck(that_promotion, 'if_need_remove_product');
                 get_need_remove_product = get_need_remove_product.join().split(',');
-                _.map(get_need_remove_product, product_id => {
+                total_remove_product = total_remove_product.concat(get_need_remove_product);
+            });
+            _.map(model, info => {
+                _.map(total_remove_product, product_id => {
                     if (product_id == info.product_id)
                         info.quantity--;
                 });
             });
             _.map(model, info => {
+                
                 info.round_value = info.price * (info.quantity > 0 ? info.quantity : 0);
             });
             return model;
