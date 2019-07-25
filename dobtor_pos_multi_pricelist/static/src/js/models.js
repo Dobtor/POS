@@ -442,7 +442,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
         check_order_discount: function () {
             // Common Declare Variables
             var self = this;
-            let pricelists = _.chain(self.pos.pricelists).sortBy('sequence').sortBy('pricelist_sequence').value();
+            let pricelists = self.pos.pricelists;
             let customer = this.get_client();
             self.remove_discount();
 
@@ -468,10 +468,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 let product_mapping_all_rule = [];
                 _.each(pricelists, function (pl) {
                     let pricelist_items = product.get_pricelist(pl, self.pos);
+                    pricelist_items = _.chain(pricelist_items).sortBy('sequence').sortBy('pricelist_sequence').value();
                     _.map(pricelist_items, item => {
                         product_mapping_all_rule.push(item);
                     });
                 });
+                product_mapping_all_rule = _.chain(product_mapping_all_rule).sortBy('sequence').sortBy('pricelist_sequence').value();
                 // ------------------------------------------------------------
 
                 // check has pricelist item 
