@@ -386,7 +386,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
              * @param {object} promotion_line array of need to add discount line
              */
             // let group_by_rule = _.groupBy(model, 'rule_id');
-            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.pricelist_sequence).sortBy(item => item.sequence).value();
+            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.pricelist_sequence).value();
 
             // let result = [];
             _.each(group_by_rule, function (group) {
