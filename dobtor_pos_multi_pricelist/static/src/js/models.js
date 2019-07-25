@@ -474,7 +474,6 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     });
                 });
                 product_mapping_all_rule = _.chain(product_mapping_all_rule).sortBy('sequence').sortBy('pricelist_sequence').value();
-                console.log('product_mapping_all_rule : ', product_mapping_all_rule);
                 // ------------------------------------------------------------
 
                 // check has pricelist item 
@@ -497,11 +496,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     });
                 }
             });
+            
+            ganeral_without_repeat_info = _.chain(ganeral_without_repeat_info).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
+            ganeral_with_repeat_info = _.chain(ganeral_with_repeat_info).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
+            order_without_repeat_info = _.chain(order_without_repeat_info).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
+            order_with_repeat_info = _.chain(order_with_repeat_info).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
             console.log('ganeral_without_repeat_info : ', ganeral_without_repeat_info);
-            ganeral_without_repeat_info = _.chain(ganeral_without_repeat_info).sortBy(item => item.rule.sequence).sortBy(item => item.rule.pricelist_sequence).value();
-            ganeral_with_repeat_info = _.chain(ganeral_with_repeat_info).sortBy(item => item.rule.sequence).sortBy(item => item.rule.pricelist_sequence).value();
-            order_without_repeat_info = _.chain(order_without_repeat_info).sortBy(item => item.rule.sequence).sortBy(item => item.rule.pricelist_sequence).value();
-            order_with_repeat_info = _.chain(order_with_repeat_info).sortBy(item => item.rule.sequence).sortBy(item => item.rule.pricelist_sequence).value();
             // End Per Line
 
             // Handle General Rule

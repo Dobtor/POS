@@ -233,6 +233,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     return {
                         rule_id: rule.id,
                         rule: rule,
+                        sequence: rule.sequence,
+                        pricelist_sequence: rule.pricelist_sequence,
                         type: 'range',
                         price: price,
                         discount: 0,
@@ -249,6 +251,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'price',
                     price: price,
                     discount: 0,
@@ -279,6 +283,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'bogo',
                     price: price,
                     discount: 0,
@@ -322,6 +328,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'combo',
                     price: price,
                     discount: 0,
@@ -341,6 +349,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'price',
                     price: new_price,
                     discount: ((price - new_price) / price) * 100.00,
@@ -355,6 +365,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'price',
                     price: new_price,
                     discount: ((price - new_price) / price) * 100.00,
@@ -370,6 +382,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'price',
                     price: price,
                     discount: 0,
@@ -392,6 +406,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'price',
                     price: new_price,
                     discount: ((price - new_price) / price) * 100.00,
@@ -406,6 +422,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'price',
                     price: new_price,
                     discount: rule.percent_price,
@@ -433,6 +451,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 return {
                     rule_id: rule.id,
                     rule: rule,
+                    sequence: rule.sequence,
+                    pricelist_sequence: rule.pricelist_sequence,
                     type: 'price',
                     price: price,
                     discount: 0,
@@ -448,6 +468,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             return {
                 rule_id: rule.id,
                 rule: rule,
+                sequence: rule.sequence,
+                pricelist_sequence: rule.pricelist_sequence,
                 type: 'price',
                 price: price,
                 discount: 0,
