@@ -442,7 +442,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
         check_order_discount: function () {
             // Common Declare Variables
             var self = this;
-            let pricelists = self.pos.pricelists;
+            let pricelists = _.chain(self.pos.pricelists).sortBy('sequence').sortBy('pricelist_sequence').value();
             let customer = this.get_client();
             self.remove_discount();
 
