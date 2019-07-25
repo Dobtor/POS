@@ -244,72 +244,68 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
              * @param {object} promotion_line array of need to add discount line
              * @param {object} unlink_gift_of_bogo_list array of need unlike gift set
              */
+            let grp_pricelist_sequence = _.groupBy(model, 'pricelist_sequence');
+            _.each(Object.keys(grp_pricelist_sequence), pricelist_sequence_key => {
+                let grp_sequence = _.groupBy(grp_pricelist_sequence[pricelist_sequence_key], 'sequence');
+                _.each(Object.keys(grp_sequence), sequence_key => {
+                    let grp_rule = _.groupBy(grp_sequence[sequence_key], 'rule_id');
+                    _.each(Object.keys(grp_rule), key => {
+                        // handle repraet
+                        let after_except_data = [];
+                        let handle_data = [];
 
-            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.pricelist_sequence).value();
-            console.log('group_by_rule :', group_by_rule);
-            _.each(group_by_rule, function (group) {
-                // let this_rule = _.first(group_by_rule[key]).rule;
-                // handle repraet
-                let after_except_data = [];
-                let handle_data = [];
-                // let get_relation_product = _.pluck(promotion_line, 'relation_products');
-                // if (get_relation_product.length) {
-                //     get_relation_product = _.uniq(get_relation_product.join().split(','));
-                //     after_except_data = _.filter(group_by_rule[key], function (item) {
-                //         return !get_relation_product.includes(item.product_id + '') || repeat;
-                //     });
-                // }
-
-                let get_need_remove_product = _.pluck(promotion_line, 'if_need_remove_product');
-                if (get_need_remove_product.length && !repeat) {
-                    get_need_remove_product = get_need_remove_product.join().split(',');
-                    after_except_data = _.map(group, function (item) {
-                        _.each(get_need_remove_product, product_id => {
-                            if (product_id == item.product_id)
-                                item.quantity--;
-                        });
-                        return item;
-                    });
-                    after_except_data = _.filter(group, item => item.quantity > 0);
-                }
-                if (after_except_data.length || (after_except_data.length == 0 && group.length && promotion_line.length)) {
-                    handle_data = [...after_except_data];
-                } else {
-                    handle_data = [...group];
-                }
-                handle_data = _.filter(group, item => item.quantity > 0);
-                handle_data = _.chain(handle_data).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
-
-                _.each(handle_data, function (item) {
-                    let output = _.extend({}, item);
-
-                    if (item.type === 'price') {
-                        let promotion_pirce = round_pr((item.price - item.product.lst_price), 1);
-                        if (promotion_pirce) {
-                            let if_need_remove_product = [];
-                            _.map(_.range(item.quantity), index => if_need_remove_product.push(item.product_id))
-                            promotion_line.push(_.extend(output, {
-                                price: promotion_pirce,
-                                line: undefined,
-                                relation_products: [item.product_id],
-                                if_need_remove_product: if_need_remove_product,
-                            }));
+                        let get_need_remove_product = _.pluck(promotion_line, 'if_need_remove_product');
+                        if (get_need_remove_product.length && !repeat) {
+                            get_need_remove_product = get_need_remove_product.join().split(',');
+                            after_except_data = _.map(grp_rule[key], function (item) {
+                                _.each(get_need_remove_product, product_id => {
+                                    if (product_id == item.product_id)
+                                        item.quantity--;
+                                });
+                                return item;
+                            });
+                            after_except_data = _.filter(grp_rule[key], item => item.quantity > 0);
                         }
-                    }
+                        if (after_except_data.length || (after_except_data.length == 0 && grp_rule[key].length && promotion_line.length)) {
+                            handle_data = [...after_except_data];
+                        } else {
+                            handle_data = [...grp_rule[key]];
+                        }
+                        handle_data = _.filter(grp_rule[key], item => item.quantity > 0);
+                        handle_data = _.chain(handle_data).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
+
+                        _.each(handle_data, function (item) {
+                            let output = _.extend({}, item);
+
+                            if (item.type === 'price') {
+                                let promotion_pirce = round_pr((item.price - item.product.lst_price), 1);
+                                if (promotion_pirce) {
+                                    let if_need_remove_product = [];
+                                    _.map(_.range(item.quantity), index => if_need_remove_product.push(item.product_id))
+                                    promotion_line.push(_.extend(output, {
+                                        price: promotion_pirce,
+                                        line: undefined,
+                                        relation_products: [item.product_id],
+                                        if_need_remove_product: if_need_remove_product,
+                                    }));
+                                }
+                            }
+                        });
+                        if (handle_data.length) {
+                            if (handle_data[0].type === 'combo') {
+                                promotion_line = promotion_line.concat(self.compute_combo_promotion(self, handle_data));
+                            }
+                            if (handle_data[0].type === 'bogo') {
+                                let output_bogo_line = [];
+                                ({
+                                    output_bogo_line,
+                                    unlink_gift_of_bogo_list
+                                } = self.compute_bogo_promotion(self, handle_data, unlink_gift_of_bogo_list));
+                                promotion_line = promotion_line.concat(output_bogo_line);
+                            }
+                        }
+                    });
                 });
-                if (handle_data.length) {
-                    if (handle_data[0].type === 'combo') {
-                        promotion_line = promotion_line.concat(self.compute_combo_promotion(self, handle_data));
-                    }
-                    if (handle_data[0].type === 'bogo') {
-                        let output_bogo_line = [];
-                        ({
-                            output_bogo_line,
-                            unlink_gift_of_bogo_list
-                        } = self.compute_bogo_promotion(self, handle_data, unlink_gift_of_bogo_list));
-                        promotion_line = promotion_line.concat(output_bogo_line);
-                    }
-                }
             });
             return {
                 promotion_line: promotion_line,
@@ -385,42 +381,44 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
              * @param {boolean} repeat is rule repeat ?
              * @param {object} promotion_line array of need to add discount line
              */
-            // let group_by_rule = _.groupBy(model, 'rule_id');
-            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.pricelist_sequence).value();
+            let grp_pricelist_sequence = _.groupBy(model, 'pricelist_sequence');
+            _.each(Object.keys(grp_pricelist_sequence), pricelist_sequence_key => {
+                let grp_sequence = _.groupBy(grp_pricelist_sequence[pricelist_sequence_key], 'sequence');
+                _.each(Object.keys(grp_sequence), sequence_key => {
+                    let grp_rule = _.groupBy(grp_sequence[sequence_key], 'rule_id');
+                    _.each(Object.keys(grp_rule), key => {
+                        // handle repraet
+                        let after_except_data = [];
+                        let handle_data = [];
+                        let order_promotion_line = _.filter(promotion_line, item => item.type === 'range' || item.promotion_type == 'unmix');
 
-            // let result = [];
-            _.each(group_by_rule, function (group) {
-                // let this_rule = _.first(group).rule;
-                // handle repraet
-                let after_except_data = [];
-                let handle_data = [];
-                let order_promotion_line = _.filter(promotion_line, item => item.type === 'range' || item.promotion_type == 'unmix');
+                        let get_need_remove_product = _.pluck(order_promotion_line, 'if_need_remove_product');
+                        console.log('handle_order_rule get_need_remove_product : ', get_need_remove_product);
+                        if (get_need_remove_product.length && !repeat) {
+                            get_need_remove_product = get_need_remove_product.join().split(',');
+                            after_except_data = _.map(grp_rule[key], function (item) {
+                                _.each(get_need_remove_product, product_id => {
+                                    if (product_id == item.product_id)
+                                        item.quantity--;
+                                });
+                                return item;
+                            });
+                            after_except_data = _.filter(grp_rule[key], item => item.quantity > 0);
+                        }
+                        if (after_except_data.length || (after_except_data.length == 0 && grp_rule[key].length && order_promotion_line.length)) {
+                            handle_data = [...after_except_data];
+                        } else {
+                            handle_data = [...grp_rule[key]];
+                        }
+                        handle_data = _.filter(grp_rule[key], item => item.quantity > 0);
 
-                let get_need_remove_product = _.pluck(order_promotion_line, 'if_need_remove_product');
-                console.log('handle_order_rule get_need_remove_product : ', get_need_remove_product);
-                if (get_need_remove_product.length && !repeat) {
-                    get_need_remove_product = get_need_remove_product.join().split(',');
-                    after_except_data = _.map(group, function (item) {
-                        _.each(get_need_remove_product, product_id => {
-                            if (product_id == item.product_id)
-                                item.quantity--;
-                        });
-                        return item;
+                        if (handle_data.length) {
+                            if (handle_data[0].type === 'range') {
+                                promotion_line = promotion_line.concat(self.compute_range_promotion(self, handle_data));
+                            }
+                        }
                     });
-                    after_except_data = _.filter(group, item => item.quantity > 0);
-                }
-                if (after_except_data.length || (after_except_data.length == 0 && group.length && order_promotion_line.length)) {
-                    handle_data = [...after_except_data];
-                } else {
-                    handle_data = [...group];
-                }
-                handle_data = _.filter(group, item => item.quantity > 0);
-
-                if (handle_data.length) {
-                    if (handle_data[0].type === 'range') {
-                        promotion_line = promotion_line.concat(self.compute_range_promotion(self, handle_data));
-                    }
-                }
+                });
             });
             return promotion_line;
         },
