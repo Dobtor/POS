@@ -245,7 +245,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
              * @param {object} unlink_gift_of_bogo_list array of need unlike gift set
              */
 
-            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
+            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.pricelist_sequence).value();
             console.log('group_by_rule :', group_by_rule);
             _.each(group_by_rule, function (group) {
                 // let this_rule = _.first(group_by_rule[key]).rule;
