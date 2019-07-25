@@ -245,9 +245,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
              * @param {object} unlink_gift_of_bogo_list array of need unlike gift set
              */
 
-            let group_by_rule = _.groupBy(model, 'rule_id');
-            _.each(Object.keys(group_by_rule), function (key) {
-                let this_rule = _.first(group_by_rule[key]).rule;
+            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
+            console.log('group_by_rule :', group_by_rule);
+            _.each(group_by_rule, function (group) {
+                // let this_rule = _.first(group_by_rule[key]).rule;
                 // handle repraet
                 let after_except_data = [];
                 let handle_data = [];
@@ -262,21 +263,22 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 let get_need_remove_product = _.pluck(promotion_line, 'if_need_remove_product');
                 if (get_need_remove_product.length && !repeat) {
                     get_need_remove_product = get_need_remove_product.join().split(',');
-                    after_except_data = _.map(group_by_rule[key], function (item) {
+                    after_except_data = _.map(group, function (item) {
                         _.each(get_need_remove_product, product_id => {
                             if (product_id == item.product_id)
                                 item.quantity--;
                         });
                         return item;
                     });
-                    after_except_data = _.filter(group_by_rule[key], item => item.quantity > 0);
+                    after_except_data = _.filter(group, item => item.quantity > 0);
                 }
-                if (after_except_data.length || (after_except_data.length == 0 && group_by_rule[key].length && promotion_line.length)) {
+                if (after_except_data.length || (after_except_data.length == 0 && group.length && promotion_line.length)) {
                     handle_data = [...after_except_data];
                 } else {
-                    handle_data = [...group_by_rule[key]];
+                    handle_data = [...group];
                 }
-                handle_data = _.filter(group_by_rule[key], item => item.quantity > 0);
+                handle_data = _.filter(group, item => item.quantity > 0);
+                handle_data = _.chain(handle_data).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
 
                 _.each(handle_data, function (item) {
                     let output = _.extend({}, item);
@@ -383,11 +385,12 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
              * @param {boolean} repeat is rule repeat ?
              * @param {object} promotion_line array of need to add discount line
              */
-            let group_by_rule = _.groupBy(model, 'rule_id');
+            // let group_by_rule = _.groupBy(model, 'rule_id');
+            let group_by_rule = _.chain(model).groupBy('rule_id').sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
 
             // let result = [];
-            _.each(Object.keys(group_by_rule), function (key) {
-                let this_rule = _.first(group_by_rule[key]).rule;
+            _.each(group_by_rule, function (group) {
+                // let this_rule = _.first(group).rule;
                 // handle repraet
                 let after_except_data = [];
                 let handle_data = [];
@@ -397,21 +400,21 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 console.log('handle_order_rule get_need_remove_product : ', get_need_remove_product);
                 if (get_need_remove_product.length && !repeat) {
                     get_need_remove_product = get_need_remove_product.join().split(',');
-                    after_except_data = _.map(group_by_rule[key], function (item) {
+                    after_except_data = _.map(group, function (item) {
                         _.each(get_need_remove_product, product_id => {
                             if (product_id == item.product_id)
                                 item.quantity--;
                         });
                         return item;
                     });
-                    after_except_data = _.filter(group_by_rule[key], item => item.quantity > 0);
+                    after_except_data = _.filter(group, item => item.quantity > 0);
                 }
-                if (after_except_data.length || (after_except_data.length == 0 && group_by_rule[key].length && order_promotion_line.length)) {
+                if (after_except_data.length || (after_except_data.length == 0 && group.length && order_promotion_line.length)) {
                     handle_data = [...after_except_data];
                 } else {
-                    handle_data = [...group_by_rule[key]];
+                    handle_data = [...group];
                 }
-                handle_data = _.filter(group_by_rule[key], item => item.quantity > 0);
+                handle_data = _.filter(group, item => item.quantity > 0);
 
                 if (handle_data.length) {
                     if (handle_data[0].type === 'range') {
@@ -468,12 +471,10 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 let product_mapping_all_rule = [];
                 _.each(pricelists, function (pl) {
                     let pricelist_items = product.get_pricelist(pl, self.pos);
-                    pricelist_items = _.chain(pricelist_items).sortBy('sequence').sortBy('pricelist_sequence').value();
                     _.map(pricelist_items, item => {
                         product_mapping_all_rule.push(item);
                     });
                 });
-                product_mapping_all_rule = _.chain(product_mapping_all_rule).sortBy('sequence').sortBy('pricelist_sequence').value();
                 // ------------------------------------------------------------
 
                 // check has pricelist item 
@@ -496,7 +497,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     });
                 }
             });
-            
+
             ganeral_without_repeat_info = _.chain(ganeral_without_repeat_info).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
             ganeral_with_repeat_info = _.chain(ganeral_with_repeat_info).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
             order_without_repeat_info = _.chain(order_without_repeat_info).sortBy(item => item.sequence).sortBy(item => item.pricelist_sequence).value();
@@ -703,7 +704,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 });
             });
             _.map(model, info => {
-                
+
                 info.round_value = info.price * (info.quantity > 0 ? info.quantity : 0);
             });
             return model;
