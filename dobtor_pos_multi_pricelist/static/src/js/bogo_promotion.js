@@ -124,7 +124,8 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                                 discount = round_pr((((product_set[new_gift_index].line_price - promotion_pirce) / product_set[new_gift_index].line_price) * 100.00), 0.01);
                                             }
                                         } else {
-                                            discount = 100;
+                                            promotion_pirce = promotion_pirce * (self.reflect_bogo(this_rule, '_percentage_price', 100) / 100);
+                                            discount = self.reflect_bogo(this_rule, '_percentage_price', 100);
                                         }
                                         let relation_product = self.compute_relation_product(product_set, [], gift_index, i, Aproduct_unit, Bproduct_unit, this_rule.order_by_pirce, new_gift_index);
                                         let if_need_remove_product = (gift_index + 1) % Bproduct_unit ? [product_set[new_gift_index].id] : relation_product;
