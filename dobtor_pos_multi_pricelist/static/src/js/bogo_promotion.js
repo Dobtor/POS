@@ -307,7 +307,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
             let desc_unit = 0;
             if (order === 'desc' && !gift_set.length) {
                 desc_unit = Bproduct_unit;
-                relation_product_set = _.sortBy(relation_product_set, 'lst_price');
+                relation_product_set = relation_product_set.reverse();
             }
             let slice_length = -(Aproduct_unit) * Math.ceil((gift_index + 1) / Bproduct_unit) - desc_unit * Math.ceil((gift_index + 1) / Bproduct_unit);
             
