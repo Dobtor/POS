@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class PricelistItem(models.Model):
@@ -162,6 +163,7 @@ class PricelistItem(models.Model):
         self.order_by_pirce = 'asc'
         self.bxa_gya_free_Aproduct_unit = 1
         self.bxa_gya_free_Bproduct_unit = 1
+        self.bxa_gya_free_percentage_price = 100
 
     @api.onchange('compute_price')
     def _onchange_compute_price(self):
@@ -190,7 +192,7 @@ class PricelistItem(models.Model):
             self.order_by_pirce = 'desc'
 
     @api.constrains('bogo_Aproduct_unit', 'bogo_Bproduct_unit', 'bogo_percentage_price',
-                    'bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit',
+                    'bxa_gya_free_Aproduct_unit', 'bxa_gya_free_Bproduct_unit', 'bxa_gya_free_percentage_price',
                     'bxa_gyb_free_Aproduct_unit', 'bxa_gyb_free_Bproduct_unit',
                     'bxa_gyb_discount_Aproduct_unit', 'bxa_gyb_discount_Bproduct_unit',  'bxa_gyb_discount_percentage_price')
     def _check_rule_validation(self):
@@ -201,6 +203,11 @@ class PricelistItem(models.Model):
                 raise ValidationError(_("It has to be greater than 0"))
             if not (record.bxa_gya_free_Bproduct_unit > 0):
                 raise ValidationError(_("It has to be greater than 0"))
+            if record.bxa_gya_free_percentage_price > 100:
+                raise ValidationError(_("It has to be less than 100"))
+            if record.bxa_gya_free_percentage_price < 0.0:
+                raise ValidationError(
+                    _("Please enter Some Value for Calculation"))
             # bxa_gyb_free
             if not (record.bxa_gyb_free_Aproduct_unit > 0):
                 raise ValidationError(_("It has to be greater than 0"))

@@ -99,6 +99,7 @@
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_free'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gya_free_Aproduct_unit" class="oe_inline" />
                         <field name="bxa_gya_free_Bproduct_unit" class="oe_inline" />
+                        <field name="bxa_gya_free_percentage_price" class="oe_inline" />
                     </group>
                     <group attrs="{'invisible':['|','|',('bogo_base', '!=', 'bxa_gya_discount'),('compute_price', '!=', 'bogo_sale'),('level_on', '!=', 'line')]}">
                         <field name="bxa_gya_discount_apply_all" />

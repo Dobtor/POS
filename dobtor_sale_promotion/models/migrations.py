@@ -40,6 +40,11 @@ class PricelistItem(models.Model):
         string=_("Discounted Product Qty"),
         default=1
     )
+    bxa_gya_free_percentage_price = fields.Float(
+        string=_("Percentage Discount"),
+        default=100,
+        digits=(5,2)
+    )
 
     # bxa_gyb_free
     bxa_gyb_free_Aproduct_unit = fields.Integer(
