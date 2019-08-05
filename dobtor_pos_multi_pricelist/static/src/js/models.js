@@ -144,7 +144,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         if (get_range_promotion.based_on === 'rebate') {
                             discount_rate = rule_total == 0 ? 0 : (get_range_promotion.based_on_rebate) / rule_total;
                         }
-                        $.extend(_proudct, {
+                        _.extend(_proudct, {
                             sub_rate: _proudct.sub_rate * (1 - discount_rate)
                         });
                     }
@@ -509,7 +509,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                 console.log('ganeral_without_repeat_info :', ganeral_without_repeat_info);
             }
 
-            let unlink_gift_of_bogo_list = [];
+            var unlink_gift_of_bogo_list = [];
             ({
                 promotion_line,
                 unlink_gift_of_bogo_list

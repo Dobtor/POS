@@ -44,7 +44,6 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                 /*      And anthor rule is Bug product B, Get product C
                 /*      then the anthor rule should be minus this rule product C qty.
                 */
-
                 var should_remove_gift = false;
                 var should_remove_qty = 0;
                 if (group_where_type_gift.length && unlink_gift_of_bogo_list.length) {
@@ -55,9 +54,11 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                     should_remove_qty = _.filter(unlink_gift_of_bogo_list,
                         unlink_gift_item => unlink_gift_item == _.pick(group_where_type_gift[0], 'marge_variant_ids').marge_variant_ids.join()
                     ).length
+                    console.log('should_remove_qty :', should_remove_qty);
                 }
                 var gift_set_qty = self.get_promotion_qty(group_where_type_gift);
-                gift_set_qty = should_remove_gift ? gift_set_qty - should_remove_qty : gift_set_qty;
+                // gift_set_qty = should_remove_gift ? gift_set_qty - should_remove_qty : gift_set_qty;
+
                 gift_set_qty = gift_set_qty < 0 ? 0 : gift_set_qty;
                 var gift_set = self.get_bogo_product_set(group_where_type_gift, this_rule.order_by_pirce);
                 // end handle multi promotion have same gift
@@ -67,7 +68,7 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                 var product_set_qty = self.get_promotion_qty(group_where_type_product);
 
                 if (should_remove_gift && gift_set_qty < group_where_type_gift.length) {
-                    for (var remove = 0; remove < should_remove_qty; remove++) {
+                    for (let remove = 0; remove < should_remove_qty; remove++) {
                         gift_set.shift();
                     }
                 }
