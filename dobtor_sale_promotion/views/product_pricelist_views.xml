@@ -10,6 +10,10 @@
                 <xpath expr="//tree/field[@name='name']" position="before">
                     <field name="sequence" widget="handle"/>
                 </xpath>
+                <xpath expr="//tree/field[@name='name']" position="after">
+                    <field name="not_repeat_ok" />
+                    <field name="is_primary_key" />
+                </xpath>
             </field>
         </record>
 
