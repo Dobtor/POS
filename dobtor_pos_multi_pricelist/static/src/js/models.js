@@ -473,6 +473,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         product_mapping_all_rule.push(item);
                     });
                 });
+                console.log('product_mapping_all_rule : ', product_mapping_all_rule);
                 // ------------------------------------------------------------
 
                 // check has pricelist item 
