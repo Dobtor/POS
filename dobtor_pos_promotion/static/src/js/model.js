@@ -6,7 +6,7 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
     var field_utils = require('web.field_utils');
     var round_pr = utils.round_precision;
     var _t = core._t;
-    var is_debug = true;
+    var is_debug = false;
     var exports = models
 
     models.load_models([{
@@ -142,16 +142,16 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 var find_gift_product = self.inner_join_gift_product(item);
                 if (is_debug) {
                     console.log('name :', item.related_discount_name);
-                    // console.log('product template : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant));
-                    // console.log('product product : ', (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant));
-                    // console.log('bogo offer product: ', ((!item.bxa_gyb_free_products || find_gift_product || find_gift_variant) ||
-                    //     (!item.bxa_gyb_discount_product || find_gift_product || find_gift_variant)));
-                    // console.log('product vaniant : ', (!item.variant_ids.length || find_variant || find_gift_variant));
-                    // console.log('bogo offer vaniant : ', ((!item.bxa_gyb_free_variant_ids.length || find_gift_product || find_gift_variant) ||
-                    //     (!item.bxa_gyb_discount_variant_ids.length || find_gift_product || find_gift_variant)));
-                    // console.log('category : ', (!item.categ_id || _.contains(category_ids, item.categ_id[0]) || find_gift_product || find_gift_variant));
-                    // console.log('date_start :', (!item.date_start || moment(item.date_start).isSameOrBefore(date)));
-                    // console.log('date_end :', (!item.date_end || moment(item.date_end).isSameOrAfter(date)));
+                    console.log('product template : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant));
+                    console.log('product product : ', (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant));
+                    console.log('bogo offer product: ', ((!item.bxa_gyb_free_products || find_gift_product || find_gift_variant) ||
+                        (!item.bxa_gyb_discount_product || find_gift_product || find_gift_variant)));
+                    console.log('product vaniant : ', (!item.variant_ids.length || find_variant || find_gift_variant));
+                    console.log('bogo offer vaniant : ', ((!item.bxa_gyb_free_variant_ids.length || find_gift_product || find_gift_variant) ||
+                        (!item.bxa_gyb_discount_variant_ids.length || find_gift_product || find_gift_variant)));
+                    console.log('category : ', (!item.categ_id || _.contains(category_ids, item.categ_id[0]) || find_gift_product || find_gift_variant));
+                    console.log('date_start :', (!item.date_start || moment(item.date_start).isSameOrBefore(date)));
+                    console.log('date_end :', (!item.date_end || moment(item.date_end).isSameOrAfter(date)));
                 }
 
                 // handle combo promotion.

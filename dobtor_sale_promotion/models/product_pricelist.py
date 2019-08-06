@@ -152,9 +152,6 @@ class PricelistItem(models.Model):
 
     @api.onchange('base_on')
     def _onchange_base_on(self):
-        if self.base_on != 'combo_sale':
-            self.combo_sale_ids = [(6, 0, [])]
-            self.combo_order_by_pirce = 'asc'
         if self.base_on != 'range':
             self.range_based_ids = [(6, 0, [])]
 
@@ -165,6 +162,12 @@ class PricelistItem(models.Model):
         self.bxa_gya_free_Bproduct_unit = 1
         self.bxa_gya_free_percentage_price = 100
 
+    @api.multi
+    def _get_default_bxa_gya_discount_value(self):
+        self.order_by_pirce = 'desc'
+        self.bxa_gya_discount_apply_all = False
+        self.bxa_gya_discount_ids = [(6, 0, [])]
+
     @api.onchange('compute_price')
     def _onchange_compute_price(self):
         super()._onchange_compute_price()
@@ -172,15 +175,20 @@ class PricelistItem(models.Model):
             # self.bogo_base = 'bogo'
             self.bogo_base = 'bxa_gya_free'
             self._get_default_bxa_gya_free_value()
+            self._get_default_bxa_gya_discount_value()
             self._get_default_bxa_gyb_free_value()
             self._get_default_bxa_gyb_discount_value()
             self._get_default_bogo_value()
+        if self.compute_price != 'combo_sale':
+            self.combo_sale_ids = [(6, 0, [])]
+            self.combo_order_by_pirce = 'asc'
 
     @api.onchange('bogo_base')
     def _onchange_bogo_base(self):
         if self.bogo_base != 'bxa_gya_free':
             self._get_default_bxa_gya_free_value()
         if self.bogo_base != 'bxa_gya_discount':
+            self._get_default_bxa_gya_discount_value()
             self.order_by_pirce = 'asc'
         if self.bogo_base != 'bxa_gyb_free':
             self._get_default_bxa_gyb_free_value()
