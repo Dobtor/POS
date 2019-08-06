@@ -148,6 +148,14 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 console.log('product vaniant : ', (!item.variant_ids.length || find_variant || find_gift_variant));
                 console.log('bogo offer vaniant : ', ((!item.bxa_gyb_free_variant_ids.length || find_gift_product || find_gift_variant) ||
                     (!item.bxa_gyb_discount_variant_ids.length || find_gift_product || find_gift_variant)));
+                console.log('category : ', (!item.categ_id || _.contains(category_ids, item.categ_id[0]) || find_gift_product || find_gift_variant));
+                console.log('date_start :', (!item.date_start || moment(item.date_start).isSameOrBefore(date)));
+                console.log('date_end :', (!item.date_end || moment(item.date_end).isSameOrAfter(date)));
+                console.log('other : ',(!item.variant_ids.length || find_variant || find_gift_variant || find_gift_product) &&
+                    ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
+                        (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)) &&
+                    (!combo_promotion.length || combo_promotion.includes(self.id) || find_combo_variant) &&
+                    (!combo_variant_promotion.length || combo_promotion.includes(self.id) || find_combo_variant));
                 // handle combo promotion.
                 var combo_promotion = self.inner_join_combo_product(item, pos);
                 var combo_variant_promotion = self.inner_join_combo_variant(item, pos);
