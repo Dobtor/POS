@@ -173,8 +173,12 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                     console.log('variant gift : ', (!item.variant_ids.length || find_variant || find_gift_variant || find_gift_product) &&
                         ((!item.bxa_gyb_free_variant_ids.length || find_gift_variant || find_gift_product) ||
                             (!item.bxa_gyb_discount_variant_ids.length || find_gift_variant || find_gift_product)));
-                    console.log('other : ', (!combo_promotion.length || combo_promotion.includes(self.id) || find_combo_variant) &&
-                        (!combo_variant_promotion.length || combo_promotion.includes(self.id) || find_combo_variant));
+                    console.log('combo_promotion #1: ', combo_promotion);
+                    console.log('combo_variant_promotion #1: ', combo_variant_promotion);
+                    console.log('combo promotion #3: ', combo_promotion.includes(self.id));
+                    console.log('combo promotion #2: ', find_combo_variant);
+                    console.log('combo promotion product : ', (!combo_promotion.length || combo_promotion.includes(self.id) || find_combo_variant));
+                    console.log('combo promotion varinat : ', (!combo_variant_promotion.length || combo_promotion.includes(self.id) || find_combo_variant));
                     if (item.compute_price === 'bogo_sale') {
                         console.log('total : ', (!item.product_tmpl_id || item.product_tmpl_id[0] === self.product_tmpl_id || find_gift_product || find_gift_variant) &&
                             (!item.product_id || item.product_id[0] === self.id || find_gift_product || find_gift_variant) &&
