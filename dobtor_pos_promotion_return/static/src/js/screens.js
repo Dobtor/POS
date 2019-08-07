@@ -221,4 +221,14 @@ odoo.define('dobtor_pos_promotion_return.screens', function (require) {
         },
     });
 
+    history_screens.OrdersHistoryScreenWidget.include({
+        show: function () {
+            this._super();
+            if (this.pos.config.module_pos_restaurant != true) {
+                this.$('.filters .table-filter').css('display', 'none');
+
+            }
+        }
+    });
+
 });

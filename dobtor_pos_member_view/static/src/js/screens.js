@@ -2,7 +2,6 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
     "use strict";
     
     var screens = require('point_of_sale.screens');
-    var history_screens = require('pos_orders_history.screens');
     screens.ClientListScreenWidget.include({
 
         show: function(){
@@ -32,14 +31,6 @@ odoo.define('dobtor_pos_member_view.screens', function (require) {
             this._super();
             this.render_list([]);
         },
-    })
-    history_screens.OrdersHistoryScreenWidget.include({
-        show:function(){
-            this._super();
-            if(this.pos.config.module_pos_restaurant!=true){
-                this.$('.filters .table-filter').css('display','none');
-
-            }
-        }
-    })
+    });
+    
 })
