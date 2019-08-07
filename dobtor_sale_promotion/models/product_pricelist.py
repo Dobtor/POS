@@ -41,7 +41,6 @@ class PricelistItem(models.Model):
         string=_('Promotion Method'),
         selection=[
             ('range', _('Range based Discount')),
-            ('combo_sale', _('Combo Promotion')),
         ],
         default='range',
         help='Promotion rule applicable on selected option'
@@ -122,8 +121,6 @@ class PricelistItem(models.Model):
     def _get_pricelist_item_name_price(self):
         super()._get_pricelist_item_name_price()
         if self.level_on == 'order':
-            if self.base_on == 'combo_sale':
-                self.price = _('Combo Promotion')
             if self.base_on == 'range':
                 self.price = _('Range based Discount')
             if self.variant_ids:
