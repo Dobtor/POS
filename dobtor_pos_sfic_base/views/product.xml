@@ -11,5 +11,18 @@
                 </xpath>
             </field>
         </record>
+
+
+        <record id="dobtor_pos_sfic_base_product_template_form_view" model="ir.ui.view">
+            <field name="name">dobtor.pos.sfic.base.product.template.form.view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view" />
+            <field name="arch" type="xml">
+                <header position="inside">
+                    <button string="Update Extra variant" type="object" name="create_extra_variant_ids" groups="product.group_product_variant"/>
+                </header>
+            </field>
+        </record>
     </data>
 </odoo>
+                
