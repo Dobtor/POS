@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo import models, fields, api, _
 
-from odoo import models, fields, api,_
 
 class dobtor_sale_member(models.Model):
     _name = 'sales.member'
 
+
     name = fields.Char(string='name',required=True,)
+    # Member
     member_ids =  fields.One2many(string='Members',comodel_name='res.partner',inverse_name='member_id')
     description = fields.Text(string="Description")
     # pricelist_id = fields.Many2one(string='Pricelist', comodel_name='product.pricelist')
@@ -15,8 +17,29 @@ class dobtor_sale_member(models.Model):
     single_threshold = fields.Float(string="Single Threshold",required=True)
     annual_threshold = fields.Float(string="Threshold",required=True)
     next_threshold = fields.Float(string='next Threshold',required=True)
+    # is_member_discount = fields.Boolean(
+    #     string='Use Member Discount',
+    #     help=_('Available Using Member Discount in POS.')
+    # )
+    # limit_disount = fields.Float(
+    #     string='Limit Disocunt (Member)',
+    #     default=40,
+    #     help=_('The VIP discount cannot be combined with other promotions on this constraint.')
+    # )
+
+    # Birthday 
     birthday_discount_times = fields.Integer(string='Birthday Discount Times')
     birthday_discount = fields.Float(string="Birthday Discount",default=0.3)
+    # is_birthday_discount = fields.Boolean(
+    #     string='Use Member Discount',
+    #     help=_('Available Using Birthday Discount in POS.')
+    # )
+    # limit_birthday_disount = fields.Float(
+    #     string='Limit Disocunt (Birthday)',
+    #     default=40,
+    #     help=_('The VIP discount cannot be combined with other promotions on this constraint.')
+    # )    
+
 
     @api.one
     @api.depends('discount_rate')
