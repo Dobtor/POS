@@ -37,7 +37,7 @@ class PosOrder(models.Model):
         existing_references = set([o['pos_reference'] for o in existing_orders])
         orders_to_save = [o for o in orders if o['data']['name'] not in existing_references]
         order_ids = []
-        
+
         for tmp_order in orders_to_save:
             order = tmp_order['data']
             pos_session = self.env["pos.session"].browse(order.get("pos_session_id"))

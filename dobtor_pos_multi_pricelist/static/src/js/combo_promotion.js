@@ -46,7 +46,8 @@ odoo.define('dobtor_pos_promotion.combo_promotion', function (require) {
                                         price = item.combo_promotion.based_on_price - item.product.line_price
                                         discount = round_pr((((item.product.line_price - item.combo_promotion.based_on_price) / item.product.line_price) * 100.00), 0.01);
                                     } else if (item.combo_promotion.based_on === 'percentage') {
-                                        price = -round_pr(item.product.line_price * (item.combo_promotion.based_on_percentage / 100), 1)
+                                        // price = -round_pr(item.product.line_price * (item.combo_promotion.based_on_percentage / 100), 1)
+                                        price = -(item.product.line_price * (item.combo_promotion.based_on_percentage / 100))
                                         discount = item.combo_promotion.based_on_percentage;
                                     }
 

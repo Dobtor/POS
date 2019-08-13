@@ -260,7 +260,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                         product: $.extend(self.product, {
                             line_price: price
                         }),
-                        round_value: round_pr(price * quantity, 1)
+                        round_value: price * quantity
+                        // round_value: round_pr(price * quantity, 1)
                     };
                 } else if (rule.base_on === 'combo_sale') {
                     console.log('moving to level on is line and compute_price is combo_sale');
@@ -413,7 +414,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
             }
 
             if (rule.compute_price === 'fixed') {
-                new_price = round_pr(rule.fixed_price, 1);
+                // new_price = round_pr(rule.fixed_price, 1);
+                new_price = rule.fixed_price;
                 // let fixed_discount = 0;
                 // if ((price - new_price) < 0) {
                 //     fixed_discount = -((new_price - price) / price) * 100.00
@@ -454,7 +456,8 @@ odoo.define('dobtor.pos.promotion.model', function (require) {
                 var price_limit = price;
                 price = price - (price * (rule.price_discount / 100));
                 if (rule.price_round) {
-                    price = round_pr(price, rule.price_round);
+                    // price = round_pr(price, rule.price_round);
+                    price = price, rule.price_round;
                 }
                 if (rule.price_surcharge) {
                     price += rule.price_surcharge;

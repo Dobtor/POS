@@ -118,11 +118,15 @@ odoo.define('dobtor_pos_promotion.bogo_promotion', function (require) {
                                         var promotion_pirce = product_set[new_gift_index].line_price;
                                         if (the_same && this_rule.bogo_base === 'bxa_gyb_discount') {
                                             if (this_rule.bxa_gyb_discount_base_on === 'percentage') {
-                                                promotion_pirce = round_pr((promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
-                                                discount = round_pr(this_rule.bxa_gyb_discount_percentage_price, 0.01);
+                                                // promotion_pirce = round_pr((promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)), 1);
+                                                // discount = round_pr(this_rule.bxa_gyb_discount_percentage_price, 0.01);
+                                                promotion_pirce = ((promotion_pirce * (this_rule.bxa_gyb_discount_percentage_price / 100)));
+                                                // discount = round_pr(this_rule.bxa_gyb_discount_percentage_price, 0.01);
                                             } else if (this_rule.bxa_gyb_discount_base_on === 'fixed') {
                                                 promotion_pirce = round_pr(promotion_pirce - this_rule.bxa_gyb_discount_fixed_price, 1);
-                                                discount = round_pr((((product_set[new_gift_index].line_price - promotion_pirce) / product_set[new_gift_index].line_price) * 100.00), 0.01);
+                                                // discount = round_pr((((product_set[new_gift_index].line_price - promotion_pirce) / product_set[new_gift_index].line_price) * 100.00), 0.01);
+                                                promotion_pirce = (promotion_pirce - this_rule.bxa_gyb_discount_fixed_price);
+                                                // discount = round_pr((((product_set[new_gift_index].line_price - promotion_pirce) / product_set[new_gift_index].line_price) * 100.00), 0.01);
                                             }
                                         } else {
                                             promotion_pirce = promotion_pirce * (self.reflect_bogo(this_rule, '_percentage_price', 100) / 100);

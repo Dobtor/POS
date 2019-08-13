@@ -37,7 +37,8 @@ odoo.define('dobtor_pos_promotion.range_promotion', function (require) {
                     if (get_range_promotion.based_on === 'rebate') {
                         promotion_pirce = get_range_promotion.based_on_rebate;
                     } else if (get_range_promotion.based_on === 'percentage') {
-                        promotion_pirce = round_pr(rule_total * (get_range_promotion.based_on_percentage / 100), 1);
+                        // promotion_pirce = round_pr(rule_total * (get_range_promotion.based_on_percentage / 100), 1);
+                        promotion_pirce = (rule_total * (get_range_promotion.based_on_percentage / 100));
                     }
                     let output_promtion = _.extend({}, group_rule[t][0]);
                     result.push(_.extend(output_promtion, {

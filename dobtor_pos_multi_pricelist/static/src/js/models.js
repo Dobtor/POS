@@ -115,7 +115,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         } = group_rule[key][keys];
                         relation_products = relation_products ? relation_products : product;
                         if (discount || discount == undefined) {
-                            self.add_promotion_product.apply(self, [product, promotion_product, line, rule, round_pr(price, 1), quantity, discount == undefined ? undefined : round_pr(discount, 0.01), event, relation_products, description, rule_description]);
+                            // self.add_promotion_product.apply(self, [product, promotion_product, line, rule, round_pr(price, 1), quantity, discount == undefined ? undefined : round_pr(discount, 0.01), event, relation_products, description, rule_description]);
+                            self.add_promotion_product.apply(self, [product, promotion_product, line, rule, price, quantity, discount == undefined ? undefined : round_pr(discount, 0.01), event, relation_products, description, rule_description]);
                         }
                     } else {
                         alert(_t("You should be setting pricelist of discount product !!!"));
@@ -161,7 +162,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 var member_product = self.pos.db.get_product_by_id(customer.related_discount_product[0])
                                 var temp_product = $.extend(true, {}, member_product);
                                 self.add_product(temp_product, {
-                                    'price': -round_pr(line.price * sub_rate * customer.birthday_discount, 1),
+                                    // 'price': -round_pr(line.price * sub_rate * customer.birthday_discount, 1),
+                                    'price': -(line.price * sub_rate * customer.birthday_discount),
                                     'quantity': _.min([line.quantity, customer.can_discount_times])
                                 });
 
@@ -177,7 +179,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                                 var temp_product = $.extend(true, {}, member_product);
 
                                 self.add_product(temp_product, {
-                                    'price': -round_pr(line.price * sub_rate * customer.related_discount, 1),
+                                    // 'price': -round_pr(line.price * sub_rate * customer.related_discount, 1),
+                                    'price': -(line.price * sub_rate * customer.related_discount),
                                     'quantity': current_qty
                                 });
                                 self.selected_orderline.compute_name = _t(`${customer.member_id[1]} [${line.product.display_name}] ( - ${customer.related_discount * 100} %)`);
@@ -278,7 +281,8 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                             let output = _.extend({}, item);
 
                             if (item.type === 'price') {
-                                let promotion_pirce = round_pr((item.price - item.product.lst_price), 1);
+                                // let promotion_pirce = round_pr((item.price - item.product.lst_price), 1);
+                                let promotion_pirce = ((item.price - item.product.lst_price));
                                 if (promotion_pirce) {
                                     let if_need_remove_product = [];
                                     _.map(_.range(item.quantity), index => if_need_remove_product.push(item.product_id))
