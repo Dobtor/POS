@@ -12,6 +12,13 @@ _logger = logging.getLogger(__name__)
 class PosOrder(models.Model):
     _inherit = "pos.order"
 
+    invoice_state = fields.Selection(
+        string='Invoice state',
+        selection=[('to_invoice', _('To invoice')), ('invoiced', _('Fully invoiced'))],
+        default='to_invoice'
+    )
+    
+
     def _default_point_balance_product_id(self):
         product_id = self.env["ir.config_parameter"].sudo().get_param("dobtor_pos_sfic_invoice.point_balance_product")
         return self.env["product.product"].browse(int(product_id))
@@ -27,9 +34,22 @@ class PosOrder(models.Model):
             'property_account_income_id': self._default_point_balance_account_id().id,
             'taxes_id': None,
         }
+
+    @api.model
+    def create_from_ui_with_exiting_orders(self, orders):
+        submitted_references = [o['data']['name'] for o in orders]
+        pos_order = self.search([('pos_reference', 'in', submitted_references)])
+        existing_orders = pos_order.read(['pos_reference'])
+        existing_references = set([o['pos_reference'] for o in existing_orders])
+        orders_to_save = [o for o in orders if o['data']['name'] in existing_references]
+        
+        self.return_from_ui(orders_to_save)
+        return orders
     
     @api.model
     def create_from_ui(self, orders):
+        orders = self.create_from_ui_with_exiting_orders(orders)
+
         # Keep only new orders
         submitted_references = [o['data']['name'] for o in orders]
         pos_order = self.search([('pos_reference', 'in', submitted_references)])
@@ -85,14 +105,16 @@ class PosOrder(models.Model):
             new_invoice = Invoice.with_context(local_context).sudo().create(inv)
             message = _("This invoice has been created from the point of sale session: <a href=# data-oe-model=pos.order data-oe-id=%d>%s</a>") % (order.id, order.name)
             new_invoice.message_post(body=message)
-            order.write({'invoice_id': new_invoice.id, 'state': 'invoiced'})
+            # order.write({'invoice_id': new_invoice.id, 'state': 'invoiced'})
+            order.write({'invoice_id': new_invoice.id, 'invoice_state': 'invoiced'})
             Invoice += new_invoice
 
             self.with_context(local_context)._action_create_invoice_lines(local_context, order, new_invoice.id)
 
             new_invoice.with_context(local_context).sudo().compute_taxes()
             new_invoice.with_context(local_context).sudo().set_round_off_value(order)
-            order.sudo().write({'state': 'invoiced'})
+            # order.sudo().write({'state': 'invoiced'})
+            order.sudo().write({'invoice_state': 'invoiced'})
 
         if not Invoice:
             return {}

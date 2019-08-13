@@ -19,7 +19,8 @@
         'base',
         'account',
         'dobtor_pos_sfic_wallet',
-        'dobtor_pos_multi_pricelist'
+        'dobtor_pos_multi_pricelist',
+        'pos_orders_history_return',
     ],
 
     'data': [
@@ -27,5 +28,6 @@
         'views/res_config_settings_views.xml',
         'views/account_invoice_views.xml',
         'views/pos_config_view.xml',
+        'views/pos_order_views.xml',
     ],
 }
