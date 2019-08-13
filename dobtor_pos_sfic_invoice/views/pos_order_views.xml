@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-        
-        <record id="pos_order_sfic_invoice_form_view" model="ir.ui.view">
-            <field name="name">pos.order.sfic.invoice.form</field>
+
+        <record id="pos_order_sfic_invoice_tree_view" model="ir.ui.view">
+            <field name="name">pos.order.sfic.invoice.tree</field>
             <field name="model">pos.order</field>
             <field name="inherit_id" ref="point_of_sale.view_pos_order_tree" />
             <field name="arch" type="xml">
@@ -12,6 +12,17 @@
                 </xpath>
             </field>
         </record>
-        
+
+        <record id="pos_order_sfic_invoice_form_view" model="ir.ui.view">
+            <field name="name">pos.order.sfic.invoice.form</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='extra']/group/group/field[@name='account_move']" position="after">
+                    <field name="invoice_state" readonly="1" />
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
