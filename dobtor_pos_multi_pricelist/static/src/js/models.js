@@ -115,8 +115,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                         } = group_rule[key][keys];
                         relation_products = relation_products ? relation_products : product;
                         if (discount || discount == undefined) {
-                            // self.add_promotion_product.apply(self, [product, promotion_product, line, rule, round_pr(price, 1), quantity, discount == undefined ? undefined : round_pr(discount, 0.01), event, relation_products, description, rule_description]);
-                            self.add_promotion_product.apply(self, [product, promotion_product, line, rule, price, quantity, discount == undefined ? undefined : round_pr(discount, 0.01), event, relation_products, description, rule_description]);
+                            self.add_promotion_product.apply(self, [product, promotion_product, line, rule, round_pr(price, self.pos.currency.rounding), quantity, discount == undefined ? undefined : round_pr(discount, 0.01), event, relation_products, description, rule_description]);
                         }
                     } else {
                         alert(_t("You should be setting pricelist of discount product !!!"));
