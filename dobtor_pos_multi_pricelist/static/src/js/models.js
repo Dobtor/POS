@@ -443,6 +443,13 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             });
             return ganeral_except_without_repeat_info;
         },
+        // get_product_mapping_all_rule: function*(product) {
+        //     _.each(self.pos.pricelists, function (pl) {
+        //         _.map(product.get_pricelist(pl, self.pos), item => {
+        //             yield item;
+        //         });
+        //     });
+        // },
         check_order_discount: function () {
             // Common Declare Variables
             var self = this;

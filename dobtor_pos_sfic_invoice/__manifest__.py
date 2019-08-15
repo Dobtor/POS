@@ -20,7 +20,7 @@
         'account',
         'dobtor_pos_sfic_wallet',
         'dobtor_pos_multi_pricelist',
-        'pos_orders_history_return',
+        'dobtor_pos_promotion_return',
     ],
 
     'data': [
