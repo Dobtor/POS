@@ -5,7 +5,7 @@ import psycopg2
 
 from odoo import models, fields, api, tools, _
 from odoo.exceptions import UserError, ValidationError
-from odoo.tools import safe_eval
+from odoo.tools import safe_eval, float_is_zero
 
 _logger = logging.getLogger(__name__)
 
@@ -50,8 +50,8 @@ class PosOrder(models.Model):
             order = tmp_order['data']
             pos_session = self.env["pos.session"].browse(
                 order.get("pos_session_id"))
-            to_invoice = tmp_order['to_invoice'] or pos_session.config_id.auto_invoicing
-            if to_invoice:
+            to_bill = tmp_order['to_invoice'] or pos_session.config_id.auto_invoicing
+            if to_bill:
                 self._match_payment_to_invoice(order)
 
             order['returned_order'] = True
@@ -68,13 +68,13 @@ class PosOrder(models.Model):
                     'Could not fully process the POS Order: %s', tools.ustr(e)
                 )
 
-            # if to_invoice:
+            # if to_bill:
             #     pos_order.action_pos_order_invoice()
             #     pos_order.invoice_id.sudo().action_invoice_open()
             #     pos_order.account_move = pos_order.invoice_id.move_id
 
     @api.model
-    def create_from_ui_with_exiting_orders(self, existing_references):
+    def create_from_ui_with_exiting_orders(self, orders,existing_references):
         orders_to_save = [
             o for o in orders if o['data']['name'] in existing_references
         ]
@@ -95,7 +95,7 @@ class PosOrder(models.Model):
             o for o in orders if o['data']['name'] not in existing_references
         ]
         
-        self.create_from_ui_with_exiting_orders(existing_references)
+        self.create_from_ui_with_exiting_orders(orders, existing_references)
 
         order_ids = []
 
@@ -131,21 +131,15 @@ class PosOrder(models.Model):
             if order.company_id.pos_guests_id:
                 partner_id = order.company_id.pos_guests_id
             else:
-                if self.env.ref('dobtor_pos_sfic_invoice.res_partner_pos_guests'):
-                    partner_id = self.env.ref(
-                        'dobtor_pos_sfic_invoice.res_partner_pos_guests')
-                else:
-                    partner_id = self.env['res.partner'].sudo().create({
-                        'name': 'The POS Guests',
-                        'supplier': True,
-                    })
-                order.company_id.update({
+                default_partner = self.env.ref('dobtor_pos_sfic_invoice.res_partner_pos_guests')
+                partner_id = default_partner if default_partner else self.env['res.partner'].sudo().create({
+                    'name': 'The POS Guests',
+                    'supplier': True,
+                })
+                order.sudo().company_id.update({
                     'pos_guests_id': partner_id.id
                 })
-                # self.env['res.company'].sudo().browse(order.company_id).write({
-                #     'pos_guests_id': partner_id.id
-                # })
-            order.update({'partner_id': partner_id})
+            order.sudo().update({'partner_id': partner_id})
         return partner_id
 
     @api.multi

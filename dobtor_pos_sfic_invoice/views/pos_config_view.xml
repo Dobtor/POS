@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
         <record id="dobtor_pos_sfic_invoice_pos_config_view_form" model="ir.ui.view">
             <field name="name">dobtor.pos.sfic.invoice.pos.config.view.form</field>
             <field name="model">pos.config</field>
@@ -19,14 +20,25 @@
                             <div class="content-group mt16" attrs="{'invisible': [('auto_invoicing', '=', False)]}">
                                 <div class="row mt16">
                                     <label string="Invoice Journal" for="invoice_journal_id" class="col-lg-3 o_light_label"/>
-                                    <field name="invoice_journal_id"
-                                            attrs="{'required': [('auto_invoicing', '=', True)]}"/>
+                                    <field name="invoice_journal_id" attrs="{'required': [('auto_invoicing', '=', True)]}"/>
+                                </div>
+                                <div class="row">
+                                    <label string="Bill Journal" for="bill_journal_id" class="col-lg-3 o_light_label"/>
+                                    <field name="bill_journal_id" attrs="{'required': [('auto_invoicing', '=', True)]}"/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </xpath>
+
+                <xpath expr="//div[@id='iface_invoicing']/div[@class='o_setting_right_pane']/div/div[@class='row mt16']" position="after">
+                    <div class="row">
+                        <label string="Bill Journal" for="bill_journal_id" class="col-lg-3 o_light_label"/>
+                        <field name="bill_journal_id" attrs="{'required': [('module_account', '=', True)]}"/>
+                    </div>
+                </xpath>
             </field>
         </record>
+
     </data>
 </odoo>
