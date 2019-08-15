@@ -9,18 +9,20 @@ from odoo.tools import safe_eval
 
 _logger = logging.getLogger(__name__)
 
+
 class PosOrder(models.Model):
     _inherit = "pos.order"
 
     invoice_state = fields.Selection(
         string='Invoice state',
-        selection=[('to_invoice', _('To invoice')), ('invoiced', _('Fully invoiced'))],
+        selection=[('to_invoice', _('To invoice')),
+                   ('invoiced', _('Fully invoiced'))],
         default='to_invoice'
     )
-    
 
     def _default_point_balance_product_id(self):
-        product_id = self.env["ir.config_parameter"].sudo().get_param("dobtor_pos_sfic_invoice.point_balance_product")
+        product_id = self.env["ir.config_parameter"].sudo().get_param(
+            "dobtor_pos_sfic_invoice.point_balance_product")
         return self.env["product.product"].browse(int(product_id))
 
     def _default_point_balance_account_id(self):
@@ -35,32 +37,72 @@ class PosOrder(models.Model):
             'taxes_id': None,
         }
 
+    @api.multi
+    def action_pos_order_paid(self):
+        if not self.test_paid() and not self._context.get('return', False):
+            raise UserError(_("Order is not paid."))
+        self.write({'state': 'paid'})
+        return self.create_picking()
+
+    @api.multi
+    def return_from_ui(self, orders):
+        for tmp_order in orders:
+            order = tmp_order['data']
+            pos_session = self.env["pos.session"].browse(
+                order.get("pos_session_id"))
+            to_invoice = tmp_order['to_invoice'] or pos_session.config_id.auto_invoicing
+            if to_invoice:
+                self._match_payment_to_invoice(order)
+
+            order['returned_order'] = True
+            pos_order = self._process_order(order)
+
+            try:
+                pos_order.with_context({
+                    'return': True,
+                }).action_pos_order_paid()
+            except psycopg2.OperationalError:
+                raise
+            except Exception as e:
+                _logger.error(
+                    'Could not fully process the POS Order: %s', tools.ustr(e)
+                )
+
+            # if to_invoice:
+            #     pos_order.action_pos_order_invoice()
+            #     pos_order.invoice_id.sudo().action_invoice_open()
+            #     pos_order.account_move = pos_order.invoice_id.move_id
+
     @api.model
-    def create_from_ui_with_exiting_orders(self, orders):
-        submitted_references = [o['data']['name'] for o in orders]
-        pos_order = self.search([('pos_reference', 'in', submitted_references)])
-        existing_orders = pos_order.read(['pos_reference'])
-        existing_references = set([o['pos_reference'] for o in existing_orders])
-        orders_to_save = [o for o in orders if o['data']['name'] in existing_references]
-        
+    def create_from_ui_with_exiting_orders(self, existing_references):
+        orders_to_save = [
+            o for o in orders if o['data']['name'] in existing_references
+        ]
         self.return_from_ui(orders_to_save)
-        return orders
-    
+
     @api.model
     def create_from_ui(self, orders):
-        orders = self.create_from_ui_with_exiting_orders(orders)
-
         # Keep only new orders
         submitted_references = [o['data']['name'] for o in orders]
-        pos_order = self.search([('pos_reference', 'in', submitted_references)])
+        pos_order = self.search(
+            [('pos_reference', 'in', submitted_references)]
+        )
         existing_orders = pos_order.read(['pos_reference'])
-        existing_references = set([o['pos_reference'] for o in existing_orders])
-        orders_to_save = [o for o in orders if o['data']['name'] not in existing_references]
+        existing_references = set(
+            [o['pos_reference'] for o in existing_orders]
+        )
+        orders_to_save = [
+            o for o in orders if o['data']['name'] not in existing_references
+        ]
+        
+        self.create_from_ui_with_exiting_orders(existing_references)
+
         order_ids = []
 
         for tmp_order in orders_to_save:
             order = tmp_order['data']
-            pos_session = self.env["pos.session"].browse(order.get("pos_session_id"))
+            pos_session = self.env["pos.session"].browse(
+                order.get("pos_session_id"))
             to_invoice = tmp_order['to_invoice'] or pos_session.config_id.auto_invoicing
             if to_invoice:
                 self._match_payment_to_invoice(order)
@@ -73,14 +115,38 @@ class PosOrder(models.Model):
                 # do not hide transactional errors, the order(s) won't be saved!
                 raise
             except Exception as e:
-                _logger.error('Could not fully process the POS Order: %s', tools.ustr(e))
+                _logger.error(
+                    'Could not fully process the POS Order: %s', tools.ustr(e))
 
             if to_invoice:
                 pos_order.action_pos_order_invoice()
-                pos_order.invoice_id.sudo().with_context(force_company=self.env.user.company_id.id).action_invoice_open()
+                pos_order.invoice_id.sudo().with_context(
+                    force_company=self.env.user.company_id.id).action_invoice_open()
                 pos_order.account_move = pos_order.invoice_id.move_id
         return order_ids
 
+    def _get_order_partner(self, order):
+        partner_id = order.partner_id
+        if not order.partner_id:
+            if order.company_id.pos_guests_id:
+                partner_id = order.company_id.pos_guests_id
+            else:
+                if self.env.ref('dobtor_pos_sfic_invoice.res_partner_pos_guests'):
+                    partner_id = self.env.ref(
+                        'dobtor_pos_sfic_invoice.res_partner_pos_guests')
+                else:
+                    partner_id = self.env['res.partner'].sudo().create({
+                        'name': 'The POS Guests',
+                        'supplier': True,
+                    })
+                order.company_id.update({
+                    'pos_guests_id': partner_id.id
+                })
+                # self.env['res.company'].sudo().browse(order.company_id).write({
+                #     'pos_guests_id': partner_id.id
+                # })
+            order.update({'partner_id': partner_id})
+        return partner_id
 
     @api.multi
     def action_pos_order_invoice(self):
@@ -88,31 +154,40 @@ class PosOrder(models.Model):
 
         for order in self:
             # Force company for all SUPERUSER_ID action
-            local_context = dict(self.env.context, force_company=order.company_id.id, company_id=order.company_id.id)
+            local_context = dict(
+                self.env.context, force_company=order.company_id.id, company_id=order.company_id.id)
             if order.invoice_id:
                 Invoice += order.invoice_id
                 continue
 
-            if not order.partner_id:
+            partner_id = self._get_order_partner(order)
+            if not partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
+            print('------------------------------', partner_id)
 
             prepare_invoice = order._prepare_invoice()
             invoice = Invoice.new(prepare_invoice)
             invoice._onchange_partner_id()
             invoice.fiscal_position_id = order.fiscal_position_id
 
-            inv = invoice._convert_to_write({name: invoice[name] for name in invoice._cache})
-            new_invoice = Invoice.with_context(local_context).sudo().create(inv)
-            message = _("This invoice has been created from the point of sale session: <a href=# data-oe-model=pos.order data-oe-id=%d>%s</a>") % (order.id, order.name)
+            inv = invoice._convert_to_write(
+                {name: invoice[name] for name in invoice._cache})
+            new_invoice = Invoice.with_context(
+                local_context).sudo().create(inv)
+            message = _(
+                "This invoice has been created from the point of sale session: <a href=# data-oe-model=pos.order data-oe-id=%d>%s</a>") % (order.id, order.name)
             new_invoice.message_post(body=message)
             # order.write({'invoice_id': new_invoice.id, 'state': 'invoiced'})
-            order.write({'invoice_id': new_invoice.id, 'invoice_state': 'invoiced'})
+            order.write({'invoice_id': new_invoice.id,
+                         'invoice_state': 'invoiced'})
             Invoice += new_invoice
 
-            self.with_context(local_context)._action_create_invoice_lines(local_context, order, new_invoice.id)
+            self.with_context(local_context)._action_create_invoice_lines(
+                local_context, order, new_invoice.id)
 
             new_invoice.with_context(local_context).sudo().compute_taxes()
-            new_invoice.with_context(local_context).sudo().set_round_off_value(order)
+            new_invoice.with_context(
+                local_context).sudo().set_round_off_value(order)
             # order.sudo().write({'state': 'invoiced'})
             order.sudo().write({'invoice_state': 'invoiced'})
 
@@ -139,13 +214,17 @@ class PosOrder(models.Model):
         if not order or not invoice_id:
             return
 
-        product_lines = order.lines.filtered(lambda x: not x.product_id.discount_type)
+        product_lines = order.lines.filtered(
+            lambda x: not x.product_id.discount_type)
         for product_line in product_lines:
-            self.with_context(local_context)._create_invoice_line(product_line, invoice_id)
+            self.with_context(local_context)._create_invoice_line(
+                product_line, invoice_id)
 
-        discount_lines = order.lines.filtered(lambda x: x.product_id.discount_type)
+        discount_lines = order.lines.filtered(
+            lambda x: x.product_id.discount_type)
         for discount_line in order.lines.filtered(lambda x: x.product_id.discount_type):
-            self.with_context(local_context).calculate_invoice_discount_line(discount_line, invoice_id)
+            self.with_context(local_context).calculate_invoice_discount_line(
+                discount_line, invoice_id)
 
         self._calculate_point_discount_line(local_context, order, invoice_id)
 
@@ -155,7 +234,7 @@ class PosOrder(models.Model):
 
         if not line.product_id.discount_type:
             return
-        
+
         Invoice = self.env["account.invoice"].browse(invoice_id)
         if not Invoice:
             raise UserError(_("Invioce not found : %d" % invoice_id))
@@ -164,30 +243,39 @@ class PosOrder(models.Model):
 
             invoice_lines = []
             for prod_id in relation_products:
-                inv_line = Invoice.invoice_line_ids.filtered(lambda x: x.product_id.id == prod_id)
+                inv_line = Invoice.invoice_line_ids.filtered(
+                    lambda x: x.product_id.id == prod_id)
                 if inv_line:
                     invoice_lines.append(inv_line)
-            
+
             if invoice_lines:
-                amount_total = sum(x.price_unit * x.quantity for x in invoice_lines)
+                amount_total = sum(
+                    x.price_unit * x.quantity for x in invoice_lines)
                 for inv_line in invoice_lines:
-                    discount_value = float(line.price_unit * line.qty) * float(inv_line.price_unit * inv_line.quantity) / float(amount_total)
-                    inv_line.discount_value += float("%.2f" % abs(discount_value))
-                    percentage = float(inv_line.discount_value) * 100 / float(inv_line.price_unit * inv_line.quantity)
+                    discount_value = float(line.price_unit * line.qty) * float(
+                        inv_line.price_unit * inv_line.quantity) / float(amount_total)
+                    inv_line.discount_value += float("%.2f" %
+                                                     abs(discount_value))
+                    percentage = float(
+                        inv_line.discount_value) * 100 / float(inv_line.price_unit * inv_line.quantity)
                     inv_line.discount = float("%.2f" % percentage)
         else:
             if Invoice.invoice_line_ids:
-                amount_total = sum(x.price_unit * x.quantity for x in Invoice.invoice_line_ids)
+                amount_total = sum(
+                    x.price_unit * x.quantity for x in Invoice.invoice_line_ids)
                 for inv_line in Invoice.invoice_line_ids:
-                    discount_value = float(line.price_unit * line.qty) * float(inv_line.price_unit * inv_line.quantity) / float(amount_total)
-                    inv_line.discount_value += float("%.2f" % abs(discount_value))
-                    percentage = float(inv_line.discount_value) * 100 / float(inv_line.price_unit * inv_line.quantity)
+                    discount_value = float(line.price_unit * line.qty) * float(
+                        inv_line.price_unit * inv_line.quantity) / float(amount_total)
+                    inv_line.discount_value += float("%.2f" %
+                                                     abs(discount_value))
+                    percentage = float(
+                        inv_line.discount_value) * 100 / float(inv_line.price_unit * inv_line.quantity)
                     inv_line.discount = float("%.2f" % percentage)
 
     def _create_invoice_line(self, line=False, invoice_id=False):
         if not line or not invoice_id:
             return
-        
+
         if line.product_id.discount_type:
             return
 
@@ -201,15 +289,19 @@ class PosOrder(models.Model):
                 inv = Invoice.browse(invoice_id)
                 if inv:
                     amount = payment.amount
-                    invoice_amount = sum(x.price_unit * x.quantity for x in inv.invoice_line_ids)
+                    invoice_amount = sum(
+                        x.price_unit * x.quantity for x in inv.invoice_line_ids)
                     for line in inv.invoice_line_ids:
-                        discount_value = float(amount) * (line.price_unit * line.quantity) / float(invoice_amount)
+                        discount_value = float(
+                            amount) * (line.price_unit * line.quantity) / float(invoice_amount)
                         line.discount_value += discount_value
-                        percentage = float(line.discount_value) * 100 / float(line.price_unit * line.quantity)
+                        percentage = float(
+                            line.discount_value) * 100 / float(line.price_unit * line.quantity)
                         line.update({
                             'discount': float("%.2f" % percentage)
                         })
-                    self.with_context(local_context)._create_point_balance_invoice_line(float(amount), False, invoice_id)
+                    self.with_context(local_context)._create_point_balance_invoice_line(
+                        float(amount), False, invoice_id)
 
     def _create_point_balance_invoice_line(self, amount, line=False, invoice_id=False):
         if not invoice_id:
@@ -220,7 +312,8 @@ class PosOrder(models.Model):
         if not point_product_id:
             vals = self._prepare_point_balance_product()
             point_product_id = self.env["product.product"].create(vals)
-            self.env["ir.config_parameter"].sudo().set_param("dobtor_pos_sfic_invoice.point_balance_product", point_product_id.id)
+            self.env["ir.config_parameter"].sudo().set_param(
+                "dobtor_pos_sfic_invoice.point_balance_product", point_product_id.id)
 
         AccountInvoiceLine = self.env["account.invoice.line"].sudo()
 
@@ -237,8 +330,10 @@ class PosOrder(models.Model):
 
         invoice_line = AccountInvoiceLine.sudo().new(inv_line)
         invoice_line._onchange_product_id()
-        inv_line = invoice_line._convert_to_write({name: invoice_line[name] for name in invoice_line._cache})
-        inv_line.update(price_unit=amount, discount=0, name=point_product_id.name, invoice_line_tax_ids=None)
+        inv_line = invoice_line._convert_to_write(
+            {name: invoice_line[name] for name in invoice_line._cache})
+        inv_line.update(price_unit=amount, discount=0,
+                        name=point_product_id.name, invoice_line_tax_ids=None)
         invoice_line = AccountInvoiceLine.create(inv_line)
 
         return invoice_line

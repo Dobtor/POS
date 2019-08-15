@@ -1,27 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-  <data>
-    <record id="dobtor_pos_sfic_invoice_res_config_settings_view_form" model="ir.ui.view">
-      <field name="name">dobtor.pos.sfic.invoice.res.config.settings.view.form</field>
-      <field name="model">res.config.settings</field>
-      <field name="inherit_id" ref="account.res_config_settings_view_form"/>
-      <field name="arch" type="xml">
-        <xpath expr="//div[@id='invoicing_settings']" position="inside">
-          <div class="col-12 col-lg-6 o_setting_box" id="dobtor_pos_sfic_invoice_round_off">
-            <div class="o_setting_left_pane">
-              <field name="round_off"/>
-            </div>
-            <div class="o_setting_right_pane">
-              <label for="round_off"/>
-              <div class="content-group mt16">
-                <div class="row mt16">
-                  <label for="round_off_account" string="Round Off Account" class="col-lg-3 o_light_label" attrs="{'invisible': [('round_off', '=', False)], 'required': [('round_off', '=', True)]}"/>
-                  <field name="round_off_account" attrs="{'invisible': [('round_off', '=', False)], 'required': [('round_off', '=', True)]}"/>
-                </div>
-              </div>
-            </div>
-          </div>
-        </xpath>
-      </field>
-    </record>
-  </data>
+    <data>
+
+        <record id="dobtor_pos_sfic_invoice_res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">dobtor.pos.sfic.invoice.res.config.settings.view.form</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='invoicing_settings']" position="inside">
+                    <div class="col-12 col-lg-6 o_setting_box" id="dobtor_pos_sfic_invoice_round_off">
+                        <div class="o_setting_left_pane">
+                            <field name="round_off"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="round_off"/>
+                            <div class="content-group mt16">
+                                <div class="row mt16">
+                                    <label for="round_off_account" string="Round Off Account" class="col-lg-3 o_light_label" attrs="{'invisible': [('round_off', '=', False)], 'required': [('round_off', '=', True)]}"/>
+                                    <field name="round_off_account" attrs="{'invisible': [('round_off', '=', False)], 'required': [('round_off', '=', True)]}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.pos</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@data-string='Point of sale']" position="inside">
+                    <h2>Accounting</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box" id="invoice_pos_guests">
+                            <div class="o_setting_right_pane">
+                                <div>
+                                    <label string="POS Guests" for="pos_guests_id"/>
+                                    <div class="text-muted">
+                                        Set default POS Guests for this Company.
+                                    </div>
+                                    <div class="content-group mt16">
+                                        <field name="pos_guests_id" colspan="4" nolabel="1" required="1" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
 </odoo>
