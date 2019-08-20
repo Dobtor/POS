@@ -7,6 +7,9 @@
             <field name="model">pos.order</field>
             <field name="inherit_id" ref="point_of_sale.view_pos_order_tree" />
             <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-muted">state == 'cancel' or (state == 'done' and invoice_state == 'to_invoice')</attribute>
+                </xpath>
                 <xpath expr="//field[@name='state']" position="after">
                     <field name="invoice_state" />
                 </xpath>
@@ -18,6 +21,12 @@
             <field name="model">pos.order</field>
             <field name="inherit_id" ref="point_of_sale.view_pos_pos_form" />
             <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="invoice_state" invisible="1" />
+                </xpath>
+                <xpath expr="//div[@class='oe_button_box']/button[@name='action_view_invoice']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('state','!=','invoiced'),('invoice_state','!=','invoiced')]}</attribute>
+                </xpath>
                 <xpath expr="//page[@name='extra']/group/group/field[@name='account_move']" position="after">
                     <field name="invoice_state" readonly="1" />
                 </xpath>

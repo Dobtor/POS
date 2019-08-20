@@ -18,6 +18,8 @@
     'depends': [
         'base',
         'account',
+        'sale',
+        'purchase',
         'dobtor_pos_sfic_wallet',
         'dobtor_pos_multi_pricelist',
         'dobtor_pos_promotion_return',

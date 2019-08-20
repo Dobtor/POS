@@ -37,6 +37,13 @@
                         <field name="bill_journal_id" attrs="{'required': [('module_account', '=', True)]}"/>
                     </div>
                 </xpath>
+                
+                <xpath expr="//label[@for='journal_id']/parent::div" position="after">
+                    <div class="row mt16" title="Whenever you close a session, one entry is generated in the following accounting journal for all the orders not bill. Bills are recorded in accounting separately.">
+                        <label string="Purchase Journal" for="purchase_journal_id" class="col-lg-4 o_light_label" widget="selection"/>
+                        <field name="purchase_journal_id"/>
+                    </div>
+                </xpath>
             </field>
         </record>
 

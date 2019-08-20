@@ -30,6 +30,11 @@ class PosConfig(models.Model):
         help="Accounting journal used to create bills.",
         default=_default_invoice_bill
     )
+    purchase_journal_id = journal_id = fields.Many2one(
+        'account.journal', string='Purchase Journal',
+        domain=[('type', '=', 'purchase')],
+        help="Accounting journal used to post Purchase entries.",
+        default=_default_bill_journal)
 
     @api.onchange("auto_invoicing")
     def _onchange_auto_invoicing(self):
