@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <record id="res_partner_pos_guests" model="res.partner">
+        <record id="res_partner_the_pos_guests" model="res.partner">
             <field name="name">The POS Guests</field>
             <field name="supplier">1</field>
         </record>

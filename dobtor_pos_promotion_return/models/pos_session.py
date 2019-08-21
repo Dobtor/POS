@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
-import math
 import psycopg2
-
 from odoo import models, fields, api, tools, _
+
+_logger = logging.getLogger(__name__)
 
 
 class PosSession(models.Model):
@@ -13,7 +13,7 @@ class PosSession(models.Model):
         for session in self:
             company_id = session.config_id.journal_id.company_id.id
             orders = session.order_ids.filtered(
-                lambda order: order.state == 'paid' and order.invoice_state == 'to_invoice' and o.returned_order == False)
+                lambda order: order.state == 'paid' and order.invoice_state == 'to_invoice' and order.returned_order == False)
 
             # if orders (Sale)
             if len(orders):
@@ -32,7 +32,7 @@ class PosSession(models.Model):
                     if order.state not in ('paid'):
                         raise UserError(
                             _("You cannot confirm all orders of this session, because they have not the 'paid' status.\n"
-                            "{reference} is in state {state}, total amount: {total}, paid: {paid}").format(
+                              "{reference} is in state {state}, total amount: {total}, paid: {paid}").format(
                                 reference=order.pos_reference or order.name,
                                 state=order.state,
                                 total=order.amount_total,
@@ -43,7 +43,8 @@ class PosSession(models.Model):
                 for order in session.order_ids.filtered(lambda o: o.state == 'paid' and o.invoice_state == 'invoiced'):
                     order.write({'state': 'done'})
 
-            orders_to_reconcile = session.order_ids._filtered_for_reconciliation().filtered(lambda o: o.returned_order == False)
+            orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
+            ).filtered(lambda o: o.returned_order == False)
             orders_to_reconcile.sudo()._reconcile_payments()
 
             # if orders (Purchase) - return
@@ -60,7 +61,7 @@ class PosSession(models.Model):
                     if return_order.state not in ('paid'):
                         raise UserError(
                             _("You cannot confirm all orders of this session, because they have not the 'paid' status.\n"
-                            "{reference} is in state {state}, total amount: {total}, paid: {paid}").format(
+                              "{reference} is in state {state}, total amount: {total}, paid: {paid}").format(
                                 reference=return_order.pos_reference or return_order.name,
                                 state=return_order.state,
                                 total=return_order.amount_total,
@@ -70,7 +71,6 @@ class PosSession(models.Model):
             else:
                 for order in session.order_ids.filtered(lambda o: o.state == 'paid' and o.invoice_state == 'invoiced'):
                     order.write({'state': 'done'})
-            orders_to_reconcile = session.order_ids._filtered_for_reconciliation().filtered(lambda o: o.returned_order == True)
+            orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
+            ).filtered(lambda o: o.returned_order == True)
             orders_to_reconcile.sudo()._reconcile_payments()
-            
-            

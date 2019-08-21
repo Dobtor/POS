@@ -2,12 +2,12 @@
 <odoo>
     <data>
 
-        <record id="pos_return_journal" model="account.journal">
+        <record id="account_journal_pos_return_journal" model="account.journal">
             <field name="name">POS Return Journal</field>
-            <field name="code">POSR</field>
+            <field name="code">POSP</field>
             <field name="type">purchase</field>
             <!-- avoid being selected as default journal -->
-            <field name="sequence">21</field>
+            <field name="sequence">22</field>
         </record>
 
     </data>

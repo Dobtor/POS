@@ -7,6 +7,7 @@
             <field name="model">pos.config</field>
             <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
             <field name="arch" type="xml">
+
                 <xpath expr="//div[@id='iface_invoicing']" position="after">
                     <div class="col-12 col-lg-6 o_setting_box" id="auto_invoicing">
                         <div class="o_setting_left_pane">
@@ -31,19 +32,6 @@
                     </div>
                 </xpath>
 
-                <xpath expr="//div[@id='iface_invoicing']/div[@class='o_setting_right_pane']/div/div[@class='row mt16']" position="after">
-                    <div class="row">
-                        <label string="Bill Journal" for="bill_journal_id" class="col-lg-3 o_light_label"/>
-                        <field name="bill_journal_id" attrs="{'required': [('module_account', '=', True)]}"/>
-                    </div>
-                </xpath>
-                
-                <xpath expr="//label[@for='journal_id']/parent::div" position="after">
-                    <div class="row mt16" title="Whenever you close a session, one entry is generated in the following accounting journal for all the orders not bill. Bills are recorded in accounting separately.">
-                        <label string="Purchase Journal" for="purchase_journal_id" class="col-lg-4 o_light_label" widget="selection"/>
-                        <field name="purchase_journal_id"/>
-                    </div>
-                </xpath>
             </field>
         </record>
 

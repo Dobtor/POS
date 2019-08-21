@@ -17,6 +17,11 @@
         'pos_orders_history_return'
     ],
     'data': [
+        'data/res_pertner_data.xml',
+        'data/account_journal.xml',
         'views/assets.xml',
+        'views/pos_config_views.xml',
+        'views/pos_order_views.xml',
+        'views/res_config_settings_views.xml',
     ],
 }
