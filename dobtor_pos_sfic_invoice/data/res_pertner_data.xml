@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="res_partner_pos_guests" model="res.partner">
+            <field name="name">The POS Guests (Delete)</field>
+            <field name="supplier">1</field>
+            <field name="active" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

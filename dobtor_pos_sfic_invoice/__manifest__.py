@@ -16,16 +16,16 @@
     'version': '0.1',
 
     'depends': [
-        'base',
         'account',
         'sale',
-        'purchase',
         'dobtor_pos_sfic_wallet',
         'dobtor_pos_multi_pricelist',
         'dobtor_pos_promotion_return',
     ],
 
     'data': [
+        'data/res_pertner_data.xml',
+        'data/account_journal.xml',
         'security/ir.model.access.csv',
         'views/res_config_settings_views.xml',
         'views/account_invoice_views.xml',

@@ -141,7 +141,7 @@ class PosOrder(models.Model):
             if order.company_id.pos_guests_id:
                 partner_id = order.company_id.pos_guests_id
             else:
-                default_partner = self.env.ref('dobtor_pos_promotion_return.res_partner_pos_guests')
+                default_partner = self.env.ref('dobtor_pos_promotion_return.res_partner_the_pos_guests')
                 partner_id = default_partner if default_partner else self.env['res.partner'].sudo().create({
                     'name': 'The POS Guests',
                     'supplier': True,

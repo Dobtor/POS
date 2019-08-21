@@ -17,3 +17,4 @@ class PosConfig(models.Model):
     def _onchange_auto_invoicing(self):
         if self.auto_invoicing:
             self.invoice_journal_id = self.env.ref('point_of_sale.pos_sale_journal')
+            self.bill_journal_id = self._default_invoice_bill()

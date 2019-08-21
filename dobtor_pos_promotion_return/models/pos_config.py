@@ -13,7 +13,7 @@ class PosConfig(models.Model):
 
     def _default_invoice_bill(self):
         journal = self.env.ref(
-            'dobtor_pos_promotion_return.pos_return_journal', raise_if_not_found=False
+            'dobtor_pos_promotion_return.account_journal_pos_return_journal', raise_if_not_found=False
         )
         if journal and journal.sudo().company_id == self.env.user.company_id:
             return journal
@@ -32,8 +32,8 @@ class PosConfig(models.Model):
         help="Accounting journal used to post Purchase entries.",
         default=_default_bill_journal)
 
-    @api.onchange("auto_invoicing")
-    def _onchange_auto_invoicing(self):
-        super()._onchange_auto_invoicing()
-        if self.auto_invoicing:
+    @api.onchange("module_account")
+    def _onchange_module_account(self):
+        super()._onchange_module_account()
+        if self.module_account:
             self.bill_journal_id = self._default_invoice_bill()
