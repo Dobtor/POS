@@ -32,6 +32,24 @@ class PosOrder(models.Model):
         copy=False
     )
 
+    def _get_order_partner(self, order):
+        partner_id = order.partner_id
+        if not order.partner_id:
+            if order.company_id.pos_guests_id:
+                partner_id = order.company_id.pos_guests_id
+            else:
+                default_partner = self.env.ref(
+                    'dobtor_pos_promotion_return.res_partner_the_pos_guests')
+                partner_id = default_partner if default_partner else self.env['res.partner'].sudo().create({
+                    'name': 'The POS Guests',
+                    'supplier': True,
+                })
+                order.sudo().company_id.update({
+                    'pos_guests_id': partner_id.id
+                })
+            order.sudo().update({'partner_id': partner_id})
+        return partner_id
+
     @api.model
     def create_from_ui(self, orders):
         submitted_references = [o['data']['name'] for o in orders]
@@ -42,8 +60,8 @@ class PosOrder(models.Model):
                                    for o in existing_orders])
         existing_orders_to_save = [o for o in orders if o['data']
                                    ['name'] in existing_references]
-        print(len(existing_orders_to_save))
-        if len(existing_orders_to_save) <= 1:
+        print(len(pos_order))
+        if len(pos_order) <= 1:
             self.return_from_ui(existing_orders_to_save)
 
         # Keep only new orders
@@ -135,36 +153,42 @@ class PosOrder(models.Model):
         else:
             return super()._process_order(pos_order)
 
-    def _get_order_partner(self, order):
-        partner_id = order.partner_id
-        if not order.partner_id:
-            if order.company_id.pos_guests_id:
-                partner_id = order.company_id.pos_guests_id
-            else:
-                default_partner = self.env.ref('dobtor_pos_promotion_return.res_partner_the_pos_guests')
-                partner_id = default_partner if default_partner else self.env['res.partner'].sudo().create({
-                    'name': 'The POS Guests',
-                    'supplier': True,
-                })
-                order.sudo().company_id.update({
-                    'pos_guests_id': partner_id.id
-                })
-            order.sudo().update({'partner_id': partner_id})
-        return partner_id
-
-
     #  return create bill open
-    def to_bill(self, order):
+
+    def to_bill(self, tmp_order, order):
         to_bill = tmp_order['to_invoice']
         return to_bill
 
     def _prepare_bank_statement_line_payment_values(self, data):
-        args = super()._prepare_bank_statement_line_payment_values(data)
+        """Create a new payment for the order"""
+        args = {
+            'amount': data['amount'],
+            'date': data.get('payment_date', fields.Date.context_today(self)),
+            'name': self.name + ': ' + (data.get('payment_name', '') or ''),
+            'partner_id': self.env["res.partner"]._find_accounting_partner(self.partner_id).id or False,
+        }
+
+        journal_id = data.get('journal', False)
+        statement_id = data.get('statement_id', False)
+        assert journal_id or statement_id, "No statement_id or journal_id passed to the method!"
+
+        journal = self.env['account.journal'].browse(journal_id)
+        # use the company of the journal and not of the current user
+        company_cxt = dict(
+            self.env.context, force_company=journal.company_id.id)
+
         if self.returned_order:
+            account_def = self.env['ir.property'].with_context(company_cxt).get(
+                'property_account_payable_id', 'res.partner')
             args['account_id'] = (
                 self.partner_id.property_account_payable_id.id
-            ) or False
-            
+            ) or (account_def and account_def.id) or False
+        else:
+            account_def = self.env['ir.property'].with_context(company_cxt).get(
+                'property_account_receivable_id', 'res.partner')
+            args['account_id'] = (self.partner_id.property_account_receivable_id.id) or (
+                account_def and account_def.id) or False
+
         if not args['account_id']:
             if not args['partner_id']:
                 msg = _('There is no receivable account defined to make payment.')
@@ -172,6 +196,25 @@ class PosOrder(models.Model):
                 msg = _('There is no receivable account defined to make payment for the partner: "%s" (id:%d).') % (
                     self.partner_id.name, self.partner_id.id,)
             raise UserError(msg)
+
+        context = dict(self.env.context)
+        context.pop('pos_session_id', False)
+        for statement in self.session_id.statement_ids:
+            if statement.id == statement_id:
+                journal_id = statement.journal_id.id
+                break
+            elif statement.journal_id.id == journal_id:
+                statement_id = statement.id
+                break
+        if not statement_id:
+            raise UserError(_('You have to open at least one cashbox.'))
+
+        args.update({
+            'statement_id': statement_id,
+            'pos_statement_id': self.id,
+            'journal_id': journal_id,
+            'ref': self.session_id.name,
+        })
 
         return args
 
@@ -181,8 +224,7 @@ class PosOrder(models.Model):
             order = tmp_order['data']
             if order['amount_total'] > 0:
                 continue
-
-            to_bill = self.to_bill(order)
+            to_bill = self.to_bill(tmp_order, order)
 
             order['returned_order'] = True
             pos_order = self._process_order(order)
@@ -303,7 +345,7 @@ class PosOrder(models.Model):
                         discount=line.discount, name=inv_name)
         return InvoiceLine.sudo().create(inv_line)
 
-    # closing 
+    # closing
     def _filtered_for_reconciliation(self):
         filter_states = ['invoiced', 'done']
         if self.env['ir.config_parameter'].sudo().get_param('point_of_sale.order_reconcile_mode', 'all') == 'partner_only':
@@ -313,14 +355,15 @@ class PosOrder(models.Model):
     def _reconcile_payments(self):
         super()._reconcile_payments()
         for order in self:
-            aml = order.statement_ids.mapped('journal_entry_ids') | order.bill_account_move.line_ids | order.invoice_id.move_id.line_ids
+            aml = order.statement_ids.mapped(
+                'journal_entry_ids') | order.bill_account_move.line_ids | order.invoice_id.move_id.line_ids
             aml = aml.filtered(lambda r: not r.reconciled and r.account_id.internal_type ==
                                'payable' and r.partner_id == order.partner_id.commercial_partner_id)
             try:
                 aml.reconcile()
             except Exception:
                 _logger.exception(
-                    'Reconciliation did not work for order %s (Bill)', order.name) 
+                    'Reconciliation did not work for order %s (Bill)', order.name)
 
     def _create_account_move_line(self, session=None, move=None):
         def _flatten_tax_and_children(taxes, group_done=None):

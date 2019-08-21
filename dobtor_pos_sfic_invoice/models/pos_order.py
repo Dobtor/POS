@@ -40,8 +40,8 @@ class PosOrder(models.Model):
                                    for o in existing_orders])
         existing_orders_to_save = [o for o in orders if o['data']
                           ['name'] in existing_references]
-        print(len(existing_orders_to_save))
-        if len(existing_orders_to_save) <= 1 :
+        print(len(pos_order))
+        if len(pos_order) <= 1 :
             self.return_from_ui(existing_orders_to_save)
         
         
@@ -77,7 +77,7 @@ class PosOrder(models.Model):
                 pos_order.account_move = pos_order.invoice_id.move_id
         return order_ids
 
-    def to_bill(self, order):
+    def to_bill(self, tmp_order, order):
         pos_session = self.env["pos.session"].browse(
             order.get("pos_session_id"))
         to_bill = tmp_order['to_invoice'] or pos_session.config_id.auto_invoicing

@@ -5,7 +5,10 @@
         The module allows to make order returns from POS with Promotion.
     """,
     'description': """
-        The module allows to make order returns from POS with Promotion.
+         - The module allows to make order returns from POS with Promotion.
+         - Can return posted pos order.
+         - If POS can create invoice, then create open bill waitting to close.
+         - Closing can reconcile bill and write to payable account.
     """,
     'author': "Dobtor SI",
     'website': "https://www.dobtor.com",

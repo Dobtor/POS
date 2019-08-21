@@ -43,13 +43,10 @@ class PosSession(models.Model):
                 for order in session.order_ids.filtered(lambda o: o.state == 'paid' and o.invoice_state == 'invoiced'):
                     order.write({'state': 'done'})
 
-            orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
-            ).filtered(lambda o: o.returned_order == False)
-            orders_to_reconcile.sudo()._reconcile_payments()
-
             # if orders (Purchase) - return
             return_orders = orders.filtered(
-                lambda o: o.returned_order == True and order.invoice_state == 'to_invoice' and order.state == 'paid')
+                lambda o: o.returned_order == True and o.invoice_state == 'to_invoice' and o.state == 'paid')
+            print('---- -- return_orders ---- --- :', return_orders)
             if len(return_orders):
                 purchase_journal_id = session.config_id.purchase_journal_id.id
                 purchase_move = self.env['pos.order'].with_context(force_company=company_id)._create_account_move(
@@ -71,6 +68,11 @@ class PosSession(models.Model):
             else:
                 for order in session.order_ids.filtered(lambda o: o.state == 'paid' and o.invoice_state == 'invoiced'):
                     order.write({'state': 'done'})
+
+            orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
+            ).filtered(lambda o: o.returned_order == False)
+            orders_to_reconcile.sudo()._reconcile_payments()
+            
             orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
             ).filtered(lambda o: o.returned_order == True)
             orders_to_reconcile.sudo()._reconcile_payments()
