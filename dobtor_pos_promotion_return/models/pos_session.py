@@ -43,8 +43,12 @@ class PosSession(models.Model):
                 for order in session.order_ids.filtered(lambda o: o.state == 'paid' and o.invoice_state == 'invoiced'):
                     order.write({'state': 'done'})
 
+            orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
+            ).filtered(lambda o: o.returned_order == False)
+            orders_to_reconcile.sudo()._reconcile_payments()
+
             # if orders (Purchase) - return
-            return_orders = orders.filtered(
+            return_orders = session.order_ids.filtered(
                 lambda o: o.returned_order == True and o.invoice_state == 'to_invoice' and o.state == 'paid')
             print('---- -- return_orders ---- --- :', return_orders)
             if len(return_orders):
@@ -69,9 +73,7 @@ class PosSession(models.Model):
                 for order in session.order_ids.filtered(lambda o: o.state == 'paid' and o.invoice_state == 'invoiced'):
                     order.write({'state': 'done'})
 
-            orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
-            ).filtered(lambda o: o.returned_order == False)
-            orders_to_reconcile.sudo()._reconcile_payments()
+            
             
             orders_to_reconcile = session.order_ids._filtered_for_reconciliation(
             ).filtered(lambda o: o.returned_order == True)
