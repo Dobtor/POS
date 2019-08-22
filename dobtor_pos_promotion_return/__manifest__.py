@@ -16,12 +16,14 @@
     'version': '0.1',
     'depends': [
         'base',
+        'account',
         'purchase',
         'dobtor_pos_multi_pricelist',
         'dobtor_pos_sfic_wallet',
         'pos_orders_history_return'
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/res_pertner_data.xml',
         'data/account_journal.xml',
         'views/assets.xml',
