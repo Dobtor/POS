@@ -18,7 +18,7 @@
                                         Set default POS Guests for this Company.
                                     </div>
                                     <div class="content-group mt16">
-                                        <field name="pos_guests_id" colspan="4" nolabel="1" required="1" />
+                                        <field name="pos_guests_id" colspan="4" nolabel="1" />
                                     </div>
                                 </div>
                             </div>
