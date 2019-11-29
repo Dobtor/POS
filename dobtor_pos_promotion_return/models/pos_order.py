@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
-from odoo import models, fields, api, _
+import psycopg2
+from odoo import tools, models, fields, api, _
 from odoo.tools import float_is_zero
 from odoo.exceptions import UserError
 
