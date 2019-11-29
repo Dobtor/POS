@@ -133,7 +133,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
             console.log('group_member', group_member)
             var today_date = new moment().format('MM');
             var leave_qty = 0;
-            if (customer && customer.birthday) {
+            if (customer && customer.birthday && customer.can_discount_times > customer.used_birthday_times) {
                 leave_qty = customer ? customer.birthday.split('-').slice(1)[0] == today_date ? customer.can_discount_times : 0 : 0;
             }
             var temp_qty = 0;
@@ -154,6 +154,7 @@ odoo.define('dobtor_pos_multi_pricelist.models', function (require) {
                     console.log('member discount');
                     if (self.pos.config.available_member_discount) {
                         if (sub_rate >= self.pos.config.member_discount_limit && customer && customer.member_id[0]) {
+                            
                             temp_qty = _.min([line.quantity, leave_qty]);
                             current_qty -= (temp_qty < 0 ? 0 : temp_qty);
 

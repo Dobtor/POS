@@ -39,6 +39,7 @@
         'views/assets.xml',
         'views/product_pricelist_form_view.xml',
         'views/pos_order_line.xml',
-        'data/partner.xml'
+        'data/partner.xml',
+        'views/res_partner.xml',
     ],
 }

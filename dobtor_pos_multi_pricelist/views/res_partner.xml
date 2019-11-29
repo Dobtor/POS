@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="partner_used_birthday_times_view" model="ir.ui.view">
+        <field name="name">partner_used_birthday_times_view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group/group" position="inside">
+                <field name="used_birthday_times"/>
+                <field name="can_discount_times"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
