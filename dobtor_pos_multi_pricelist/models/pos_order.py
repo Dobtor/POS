@@ -21,5 +21,6 @@ class PosOrder(models.Model):
                     order_date = order_date.split('-')[-2:-1]
                 birthday = datetime.strftime(partner.birthday, '%m')
                 if order_date and order_date[0]== birthday:
-                    partner.used_birthday_times = partner.used_birthday_times + 1
+                    if partner.used_birthday_times < partner.can_discount_times:
+                        partner.used_birthday_times = partner.used_birthday_times + 1
         return res 
