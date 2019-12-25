@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="purchase_expense_type_Letter_of_Credit_Fee" model="purchase.expense.type">
+            <field name="name">Letter of Credit Fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Air_transport" model="purchase.expense.type">
+            <field name="name">Air transport</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_income_tax" model="purchase.expense.type">
+            <field name="name">Income tax</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Warehouse_rent" model="purchase.expense.type">
+            <field name="name">Warehouse rent</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Customs_fees" model="purchase.expense.type">
+            <field name="name">Customs fees</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Tally_fee" model="purchase.expense.type">
+            <field name="name">Tally fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_moving_fee" model="purchase.expense.type">
+            <field name="name">moving fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Truck_freight_fee" model="purchase.expense.type">
+            <field name="name">Truck freight fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Visa_fee" model="purchase.expense.type">
+            <field name="name">Visa fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record> 
+        <record id="purchase_expense_type_insurance" model="purchase.expense.type">
+            <field name="name">Insurance</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Taxes_payable" model="purchase.expense.type">
+            <field name="name">Taxes payable</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Other_customs_fees" model="purchase.expense.type">
+            <field name="name">Other customs fees</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+
+        <record id="purchase_expense_type_commission_fee" model="purchase.expense.type">
+            <field name="name">commission fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Packaging_fee" model="purchase.expense.type">
+            <field name="name">Packaging fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+        <record id="purchase_expense_type_Mold_opening_fee" model="purchase.expense.type">
+            <field name="name">Mold opening fee</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+    </data>
+</odoo>
