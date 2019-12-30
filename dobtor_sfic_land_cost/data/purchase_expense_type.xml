@@ -23,7 +23,7 @@
             <field name="undeletable" eval="True"/>
         </record>
         <record id="purchase_expense_type_Customs_fees" model="purchase.expense.type">
-            <field name="name">Customs fees</field>
+            <field name="name">Customs clearance fees</field>
             <field name="default_expense" eval="True"/>
             <field name="undeletable" eval="True"/>
         </record>
@@ -46,7 +46,7 @@
             <field name="name">Visa fee</field>
             <field name="default_expense" eval="True"/>
             <field name="undeletable" eval="True"/>
-        </record> 
+        </record>
         <record id="purchase_expense_type_insurance" model="purchase.expense.type">
             <field name="name">Insurance</field>
             <field name="default_expense" eval="True"/>
@@ -58,7 +58,13 @@
             <field name="undeletable" eval="True"/>
         </record>
         <record id="purchase_expense_type_Other_customs_fees" model="purchase.expense.type">
-            <field name="name">Other customs fees</field>
+            <field name="name">Other customs clearance fees</field>
+            <field name="default_expense" eval="True"/>
+            <field name="undeletable" eval="True"/>
+        </record>
+
+        <record id="purchase_expense_type_other_income_tax" model="purchase.expense.type">
+            <field name="name">Other income tax</field>
             <field name="default_expense" eval="True"/>
             <field name="undeletable" eval="True"/>
         </record>
