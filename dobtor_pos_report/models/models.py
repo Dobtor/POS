@@ -3,7 +3,6 @@ from odoo.exceptions import UserError
 from odoo import api, fields, models, tools
 
 
-
 class PosConfig(models.Model):
     _inherit = "pos.config"
 
@@ -16,7 +15,26 @@ class PosConfig(models.Model):
                     performance += order.amount_total
             res.performance = performance
 
-    performance = fields.Float(string='performance',compute='_compute_performance')
+    performance = fields.Float(string='performance',
+                               compute='_compute_performance')
+
+
+class PosOrder(models.Model):
+    _inherit = "pos.order"
+
+    @api.multi
+    def _compute_order_info(self):
+        for order in self:
+            line_total_qty = 0
+            line_list_price_total = 0
+            for line in order.lines:
+                line_total_qty += line.qty
+                line_list_price_total += (line.price_unit*line.qty)
+            order.sale_qty = line_total_qty
+            order.list_price_amount = line_list_price_total
+
+    sale_qty = fields.Integer(string='Sale Qty',compute='_compute_order_info' )
+    list_price_amount = fields.Float(string="list price amount",compute='_compute_order_info' )
 
 
 class PosOrderLine(models.Model):
@@ -104,7 +122,9 @@ class ReportPosOrder2(models.Model):
     session_id = fields.Many2one('pos.session',
                                  string='Session',
                                  readonly=True)
-    dicount_rate = fields.Float(string='dicount_rate', readonly=True,group_operator = 'avg')
+    dicount_rate = fields.Float(string='dicount_rate',
+                                readonly=True,
+                                group_operator='avg')
     asp = fields.Float(string='ASP', readonly=True)
     order_count = fields.Integer(string='Order Count', readonly=True)
     atv = fields.Float(string='ATV', readonly=True)

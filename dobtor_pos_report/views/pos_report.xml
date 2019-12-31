@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <record id="view_pos_order_tree" model="ir.ui.view">
+        <field name="name">pos.order.tree</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='session_id']" position="after">
+                <field name="list_price_amount"/>
+                <field name="sale_qty"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
     <record id="view_report_pos_order_pivot" model="ir.ui.view">
         <field name="name">report.pos.order.pivot</field>
         <field name="model">report.pos.order</field>
