@@ -16,6 +16,7 @@
                 <field name="expired_date"/>
                 <field name="history_join_ids" widget="many2many_tags"/>
                 <field name="birthday"/>
+                <field name="sfic_point" string="Member Point"/>
             </xpath>
         </field>
     </record>

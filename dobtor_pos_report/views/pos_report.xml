@@ -7,8 +7,8 @@
         <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='session_id']" position="after">
-                <field name="list_price_amount"/>
-                <field name="sale_qty"/>
+                <field name="list_price_amount" sum="List Total"/>
+                <field name="sale_qty" sum="Total Qty"/>
             </xpath>
 
         </field>
@@ -24,7 +24,6 @@
                 <field name="included_tax_total" type="measure"/>
                 <field name="order_count" type="measure"/>
             </xpath>
-
         </field>
     </record>
 

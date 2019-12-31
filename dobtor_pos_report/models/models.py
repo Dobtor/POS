@@ -71,16 +71,16 @@ class PosOrderReport(models.Model):
                                       readonly=True)
     order_count = fields.Float(string='Order Count', readonly=True)
     order_average_amount = fields.Float('Order Average Amount', readonly=True)
-    list_price_total = fields.Float(string='List Price Amount', readonly=True)
+    avg_discount_rate = fields.Float(string='Average Discount Rate', readonly=True,group_operator='avg')
+    price_sub_total = fields.Float(string='List Price Amount', readonly=True)
 
     def _select(self):
         result = super()._select()
         result += """
             ,SUM(l.included_tax_total) AS included_tax_total
             ,1.0/cast(oc.order_count as Float) AS order_count
-            ,SUM(l.product_list_price_total) AS list_price_total
             ,SUM(l.included_tax_total)*cast(oc.order_count as Float) AS order_average_amount
-          
+            ,SUM(l.included_tax_total)/SUM(l.qty * l.price_unit)*100 as avg_discount_rate
         """
         return result
 
@@ -100,8 +100,6 @@ class PosOrderReport(models.Model):
         """
         return result
 
-
-# ------------------------
 class ReportPosOrder2(models.Model):
     _name = "report.pos.order2"
     _auto = False
@@ -110,7 +108,7 @@ class ReportPosOrder2(models.Model):
     date = fields.Datetime(string='Order Date', readonly=True)
     order_id = fields.Many2one('pos.order', string='Order', readonly=True)
     price_total = fields.Float(string='Total Price', readonly=True)
-    price_sub_total = fields.Float(string='Subtotal w/o discount',
+    list_price_total = fields.Float(string='List Price Amount',
                                    readonly=True)
     qty = fields.Integer(string='Product Quantity', readonly=True)
     config_id = fields.Many2one('pos.config',
@@ -139,12 +137,14 @@ class ReportPosOrder2(models.Model):
                 orders.date_order AS date,
                 SUM(line.qty) AS qty,
                 orders.amount_total AS price_total,
-                SUM(line.qty * line.price_unit) AS price_sub_total,
+                SUM(line.qty * line.price_unit) AS list_price_total,
                 orders.amount_total / SUM(line.qty * line.price_unit)*100 AS dicount_rate,
                 orders.amount_total / SUM(line.qty) AS asp,
                 1 AS order_count,
                 orders.amount_total / oc.order_count AS atv
         """
+
+
 
     def _from(self):
         return """
