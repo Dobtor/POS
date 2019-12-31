@@ -9,6 +9,7 @@
     'summary': 'Dobtor Pos report',
     'depends': [
         'point_of_sale',
+        'dobtor_pos_promotion_return',
     ],
     'data': [
         'security/ir.model.access.csv',

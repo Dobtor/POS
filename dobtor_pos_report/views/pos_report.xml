@@ -53,6 +53,18 @@
     </record>
 
 
+    <record id="view_report_pos_order_search" model="ir.ui.view">
+        <field name="name">report.pos.order.search</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='not_invoiced']" position="after">
+                 <filter string="Returned Orders" name="return_order" domain="[('return_order','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+
     <record id="action_report_pos_order2" model="ir.actions.act_window">
         <field name="name">Orders Analysis</field>
         <field name="res_model">report.pos.order2</field>

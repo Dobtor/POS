@@ -29,12 +29,13 @@ class PosOrder(models.Model):
             line_list_price_total = 0
             for line in order.lines:
                 line_total_qty += line.qty
-                line_list_price_total += (line.price_unit*line.qty)
+                line_list_price_total += (line.price_unit * line.qty)
             order.sale_qty = line_total_qty
             order.list_price_amount = line_list_price_total
 
-    sale_qty = fields.Integer(string='Sale Qty',compute='_compute_order_info' )
-    list_price_amount = fields.Float(string="list price amount",compute='_compute_order_info' )
+    sale_qty = fields.Integer(string='Sale Qty', compute='_compute_order_info')
+    list_price_amount = fields.Float(string="list price amount",
+                                     compute='_compute_order_info')
 
 
 class PosOrderLine(models.Model):
@@ -71,8 +72,20 @@ class PosOrderReport(models.Model):
                                       readonly=True)
     order_count = fields.Float(string='Order Count', readonly=True)
     order_average_amount = fields.Float('Order Average Amount', readonly=True)
-    avg_discount_rate = fields.Float(string='Average Discount Rate', readonly=True,group_operator='avg')
+    avg_discount_rate = fields.Float(string='Average Discount Rate',
+                                     readonly=True,
+                                     group_operator='avg')
     price_sub_total = fields.Float(string='List Price Amount', readonly=True)
+    return_order = fields.Boolean(string='Returned Order', readonly=True)
+
+    # @api.depends('order_id')
+    # def compute_return_order(self):
+    #     for res in self:
+    #         if res.order_id.return_order:
+    #             res.return_order = True
+    #         else:
+    #             res.return_order = False
+
 
     def _select(self):
         result = super()._select()
@@ -81,6 +94,7 @@ class PosOrderReport(models.Model):
             ,1.0/cast(oc.order_count as Float) AS order_count
             ,SUM(l.included_tax_total)*cast(oc.order_count as Float) AS order_average_amount
             ,SUM(l.included_tax_total)/SUM(l.qty * l.price_unit)*100 as avg_discount_rate
+            ,s.returned_order as return_order 
         """
         return result
 
@@ -96,9 +110,10 @@ class PosOrderReport(models.Model):
     def _group_by(self):
         result = super()._group_by()
         result += """
-            ,oc.order_count
+            ,oc.order_count,s.returned_order 
         """
         return result
+
 
 class ReportPosOrder2(models.Model):
     _name = "report.pos.order2"
@@ -108,8 +123,7 @@ class ReportPosOrder2(models.Model):
     date = fields.Datetime(string='Order Date', readonly=True)
     order_id = fields.Many2one('pos.order', string='Order', readonly=True)
     price_total = fields.Float(string='Total Price', readonly=True)
-    list_price_total = fields.Float(string='List Price Amount',
-                                   readonly=True)
+    list_price_total = fields.Float(string='List Price Amount', readonly=True)
     qty = fields.Integer(string='Product Quantity', readonly=True)
     config_id = fields.Many2one('pos.config',
                                 string='Point of Sale',
@@ -143,8 +157,6 @@ class ReportPosOrder2(models.Model):
                 1 AS order_count,
                 orders.amount_total / oc.order_count AS atv
         """
-
-
 
     def _from(self):
         return """
