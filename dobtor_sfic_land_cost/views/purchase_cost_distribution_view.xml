@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_purchase_cost_distribution_tree_extend" model="ir.ui.view">
+        <field name="model">purchase.cost.distribution</field>
+        <field name="inherit_id" ref="purchase_landed_cost.view_purchase_cost_distribution_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="replace">
+                <tree string="Purchase cost distributions">
+                    <!-- <field name="name"/> -->
+                    <field name="lc_tt_no"/>
+                    <field name="total_purchase" widget="monetary" sum="Total Purchase"/>
+                    <field name="total_expense" widget="monetary" sum="Total Expense"/>
+                    <field name="amount_total" widget="monetary" sum="Total"/>
+                    <field name="letter_of_credit_fee" widget="monetary" sum="Total" />
+                    <field name="air_transport" widget="monetary" sum="Total"/>
+                    <field name="income_tax" widget="monetary" sum="Total"/>
+                    <field name="warehouse_rent" widget="monetary" sum="Total"/>
+                    <field name="customs_fees" widget="monetary" sum="Total"/>
+                    <field name="tally_fee" widget="monetary" sum="Total"/>
+                    <field name="moving_fee" widget="monetary" sum="Total"/>
+                    <field name="truck_freight_fee" widget="monetary" sum="Total"/>
+                    <field name="visa_fee" widget="monetary" sum="Total"/>
+                    <field name="other_customs_fees" widget="monetary" sum="Total"/>
+                    <field name="insurance" widget="monetary" sum="Total"/>
+                    <field name="taxes_payable" widget="monetary" sum="Total"/>
+                    <field name="other_income_tax" widget="monetary" sum="Total"/>
+                    <field name="commission_fee" widget="monetary" sum="Total"/>
+                    <field name="packaging_fee" widget="monetary" sum="Total"/>
+                    <field name="mold_opening_fee" widget="monetary" sum="Total"/>
+
+                    <field name="date" invisible="1"/>
+                    <field name="cost_lines" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_cost_distribution_form_extend" model="ir.ui.view">
+        <field name="name">purchase.cost.distribution.form</field>
+        <field name="inherit_id" ref="purchase_landed_cost.purchase_cost_distribution_form"/>
+        <field name="model">purchase.cost.distribution</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="lc_tt_no"/>
+            </xpath>
+            <xpath expr="//field[@name='cost_lines']/tree/field[@name='picking_id']" position="after">
+                <field name="warehouse_id"/>
+                <!-- <field name="purchase_date_order"/> -->
+
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_cost_distribution_line_tree_extend" model="ir.ui.view">
+        <field name="inherit_id" ref="purchase_landed_cost.view_purchase_cost_distribution_line_tree"/>
+        <field name="model">purchase.cost.distribution.line</field>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='picking_id']" position="after">
+                <field name="warehouse_id"/>
+                <!-- <field name="purchase_date_order"/> -->
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_cost_distribution_line_form_extend" model="ir.ui.view">
+        <field name="inherit_id" ref="purchase_landed_cost.view_purchase_cost_distribution_line_form"/>
+        <field name="name">purchase.cost.distribution.line.form</field>
+        <field name="model">purchase.cost.distribution.line</field>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//field[@name='purchase_id']" position="after">
+                <field name="purchase_date_order"/>
+            </xpath> -->
+            <xpath expr="//field[@name='picking_id']" position="after">
+                <field name="warehouse_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_landed_cost.action_purchase_cost_distribution" model="ir.actions.act_window">
+        <field name="view_mode">tree,form,calendar,pivot</field>
+    </record>
+
+    <record id="view_purchase_cost_distribution_pivot" model="ir.ui.view">
+        <field name="name">purchase.cost.distribution.pivot</field>
+        <field name="model">purchase.cost.distribution</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="lc_tt_no" type="row"/>
+                <field name="date" interval="month" type="col"/>
+                <field name="total_purchase" type="measure"/>
+                <field name="total_expense" type="measure" />
+                <field name="amount_total" type="measure"/>
+                <field name="letter_of_credit_fee" type="measure"/>
+                <field name="letter_of_credit_fee_rate" type="measure"/>
+                <field name="air_transport" type="measure"/>
+                <field name="air_transport_rate" type="measure"/>
+                <field name="income_tax" type="measure"/>
+                <field name="income_tax_rate" type="measure"/>
+                <field name="warehouse_rent" type="measure"/>
+                <field name="warehouse_rent_rate" type="measure"/>
+                <field name="customs_fees" type="measure"/>
+                <field name="customs_fees_rate" type="measure"/>
+                <field name="tally_fee" type="measure"/>
+                <field name="tally_fee_rate" type="measure"/>
+                <field name="moving_fee" type="measure"/>
+                <field name="moving_fee_rate" type="measure"/>
+                <field name="truck_freight_fee" type="measure"/>
+                <field name="truck_freight_fee_rate" type="measure"/>
+                <field name="visa_fee" type="measure"/>
+                <field name="visa_fee_rate" type="measure"/>
+                <field name="other_customs_fees" type="measure"/>
+                <field name="other_customs_fees_rate" type="measure"/>
+                <field name="insurance" type="measure"/>
+                <field name="insurance_rate" type="measure"/>
+                <field name="taxes_payable" type="measure"/>
+                <field name="taxes_payable_rate" type="measure"/>
+                <field name="other_income_tax" type="measure"/>
+                <field name="other_income_tax_rate" type="measure"/>
+                <field name="commission_fee" type="measure"/>
+                <field name="commission_fee_rate" type="measure"/>
+                <field name="packaging_fee" type="measure"/>
+                <field name="packaging_fee_rate" type="measure"/>
+                <field name="mold_opening_fee" type="measure"/>
+                <field name="mold_opening_fee_rate" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+</odoo>
