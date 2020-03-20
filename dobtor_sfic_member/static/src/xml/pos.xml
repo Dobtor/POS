@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="ClientDetailsEdit">
+        <t t-jquery='div[t-attf-class*="client-detail"]' t-operation="replace"/>
+        <t t-jquery='div.client-detail:last' t-operation="replace"/>
+        <t t-jquery='input.client-phone' t-operation="replace">
+            <input class='detail client-phone'  name='phone'    type='tel' onkeypress='return (event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57) || (event.charCode == 0 || event.charCode == 08  || event.charCode == 127)' maxlength="10" t-att-value='partner.phone || ""'></input>
+        </t>
+        <t t-jquery="div.client-details-left" t-operation="append">
+            <div class='client-detail'>
+                <span class='label'>Birthday</span>
+                <input class='detail client-birthday' name='birthday' type="date" t-att-value='partner.birthday || ""'></input>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>ExpiryDate</span>
+                <input class='detail client-expired_date' name='Term' readonly="1" t-att-value='partner.expired_date || ""'></input>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>Gender</span>
+                <select t-if='!partner.id' class='detail client-gender' name="gender">
+　                  <option value="male">Male</option>
+　                  <option value="female">Female</option>
+                </select>
+                <select t-if='partner.gender=="male"' class='detail client-gender' name="gender">
+　                  <option value="male"  selected="true">Male</option>
+　                  <option value="female">Female</option>
+                </select>
+                <select t-if='partner.gender=="female"' class='detail client-gender' name="gender">
+　                  <option value="male">Male</option>
+　                  <option value="female" selected="true">Female</option>
+                </select>
+                <input class='detail client-gender' name='gender' type="radio" value='male' style="width:20px;">Male</input>
+                <input class='detail client-gender' name='gender' type="radio" value='female' style="width:20px;">Female</input> 
+            </div>
+        </t>
+        <t t-jquery="div.client-details-right" t-operation="append">
+            <div class='client-detail'>
+                <span class='label' style="width:95px">TotoalAmount</span>
+                <input class='detail client-total_amount' style="width: 320px;" name='Total amount' readonly="1" t-att-value='partner.total_amount || 0'></input>
+            </div>
+        </t>
+
+    </t>
+    <t t-extend="ClientDetails">
+        <t t-jquery='div[t-attf-class*="client-detail"]' t-operation="replace"/>
+        <t t-jquery="div.client-details-left" t-operation="append">
+            <div class='client-detail'>
+                <span class='label'>Birthday</span>
+                <t t-if='partner.birthday'>
+                    <span class='detail client-birthday'>
+                        <t t-esc='partner.birthday' />
+                    </span>
+                </t>
+                <t t-if='!partner.birthday'>
+                    <span class='detail client-birthday empty'>N/A</span>
+                </t>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>ExpiryDate</span>
+                <t t-if='partner.expired_date'>
+                    <span class='detail client-expired_date'>
+                        <t t-esc='partner.expired_date' />
+                    </span>
+                </t>
+                <t t-if='!partner.expired_date'>
+                    <span class='detail client-expired_date empty'>N/A</span>
+                </t>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>Gender</span>
+                <t t-if='partner.gender'>
+                    <span class='detail client-gender'>
+                        <t t-esc='partner.gender'/>
+                    </span>
+                </t>
+                <t t-if='!partner.gender'>
+                    <span class='detail client-gender empty'>N/A</span>
+                </t>
+            </div>
+        </t>
+        <t t-jquery="div.client-details-right" t-operation="append">
+            <div class='client-detail'>
+                <span class='label' style="width:95px">TotoalAmount</span>
+                <t t-if='partner.total_amount'>
+                    <span class='detail client-total_amount'>
+                        <t t-esc='partner.total_amount' />
+                    </span>
+                </t>
+                <t t-if='!partner.total_amount'>
+                    <span class='detail client-total_amount empty'>0</span>
+                </t>
+            </div>
+        </t>
+    </t>
+</templates>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="sfic_member_partner" model="ir.ui.view">
+            <field name="name">sfic.member.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/group" position="inside">
+                    <field name="total_amount" />
+                    <field name="expired_date"/>
+                    <field name="birthday"/>
+                    <field name="gender" widget="radio"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

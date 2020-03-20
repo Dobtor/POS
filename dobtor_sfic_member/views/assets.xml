@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="assets_extend" name="assets" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/dobtor_sfic_member/static/src/js/models.js"></script>
+            </xpath>
+        </template>
+    </data>
+</odoo>
