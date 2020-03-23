@@ -20,6 +20,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         'views/assets.xml',
+        'views/sales_member_views.xml',
         'views/res_partner_views.xml',
     ],
     'qweb': ['static/src/xml/pos.xml'],
