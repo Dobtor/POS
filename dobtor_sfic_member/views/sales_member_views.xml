@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <record id="act_sales_member_form" model="ir.actions.act_window">
-        <field name="res_model">sales.member</field>
-        <field name="view_type">form</field>
-        <field name="name">Sale Members</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
     <record model="ir.ui.view" id="sales_member_form">
         <field name="name">sales.member.form</field>
         <field name="model">sales.member</field>
@@ -21,7 +14,13 @@
                     </div>
                     <group>
                         <group>
-                            <field name="member_ids"/>
+                            <field name="member_line" editable="top">
+                                <tree editable="top">
+                                    <field name="partner_id"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                </tree>
+                            </field>
                         </group>
                     </group>
                 </sheet>
@@ -39,5 +38,13 @@
         </field>
     </record>
 
+    <record id="act_sales_member_form" model="ir.actions.act_window">
+        <field name="res_model">sales.member</field>
+        <field name="view_type">form</field>
+        <field name="name">Sale Members</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <menuitem id="point_of_sale_member_config" name="Member Setting" action="act_sales_member_form" parent="point_of_sale.menu_point_config_product" sequence="10"/>
+
 </odoo>

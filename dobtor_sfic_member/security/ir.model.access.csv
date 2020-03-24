@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_dobtor_sfic_member_dobtor_sfic_member,dobtor_sfic_member.dobtor_sfic_member,model_dobtor_sfic_member_dobtor_sfic_member,,1,0,0,0
+access_sale_member,sale_member : all,model_sales_member,,1,1,1,1
+access_sale_member_line,sale_member_line : all,model_sales_member_line,,1,1,1,1

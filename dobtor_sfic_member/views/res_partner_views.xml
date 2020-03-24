@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//group/group" position="inside">
-                    <field name="member_id" readonly="1"/>
+                    <field name="member_id" />
                     <field name="total_amount" />
                     <field name="expired_date"/>
                     <field name="birthday"/>
