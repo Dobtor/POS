@@ -42,9 +42,6 @@ class SaleMemberLine(models.Model):
             ])
         if len(line):
             line.unlink()
-            self.env['res.partner'].write({
-                
-            })
         return super().write(val)
 
     @api.model
