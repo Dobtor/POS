@@ -9,19 +9,16 @@
         Add member info in POS UI
     """,
 
-    'author': "My Company",
-    'website': "http://www.yourcompany.com",
+    'author': "Dobtor SI",
+    'website': "https://www.dobtor.com",
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
-        'point_of_sale',
+        'base',
     ],
-
     'data': [
         'security/ir.model.access.csv',
-        'views/assets.xml',
         'views/sales_member_views.xml',
         'views/res_partner_views.xml',
     ],
-    'qweb': ['static/src/xml/pos.xml'],
 }
