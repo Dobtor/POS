@@ -31,8 +31,8 @@
 　                  <option value="male">Male</option>
 　                  <option value="female" selected="true">Female</option>
                 </select>
-                <input class='detail client-gender' name='gender' type="radio" value='male' style="width:20px;">Male</input>
-                <input class='detail client-gender' name='gender' type="radio" value='female' style="width:20px;">Female</input> 
+                <!-- <input class='detail client-gender' name='gender' type="radio" value='male' style="width:20px;">Male</input>
+                <input class='detail client-gender' name='gender' type="radio" value='female' style="width:20px;">Female</input>  -->
             </div>
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
