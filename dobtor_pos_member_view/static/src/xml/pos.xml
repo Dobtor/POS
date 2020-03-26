@@ -36,7 +36,10 @@
             </div>
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
-
+            <div class='client-detail'>
+                <span class='label' style="width:95px">Mobile</span>
+                <input class='detail client-mobile' style="width: 320px;" name='mobile' readonly="1" t-att-value='partner.mobile || 0'></input>
+            </div>
             <div class='client-detail'>
                 <span class='label' style="width:95px">Membership</span>
                 <input class='detail client-member_type_name' style="width: 320px;" name='member_type_name' readonly="1" t-att-value='partner.member_type_name || 0'></input>
@@ -90,6 +93,17 @@
             </div>
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
+            <div class='client-detail'>
+                <span class='label' style="width:95px">Mobile</span>
+                <t t-if='partner.mobile'>
+                    <span class='detail client-mobile'>
+                        <t t-esc='partner.mobile' />
+                    </span>
+                </t>
+                <t t-if='!partner.mobile'>
+                    <span class='detail client-mobile empty'>N/A</span>
+                </t>
+            </div>
             <div class='client-detail'>
                 <span class='label' style="width:95px">Membership</span>
                 <t t-if='partner.member_type_name'>
