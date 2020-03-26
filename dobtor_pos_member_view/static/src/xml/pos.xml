@@ -19,7 +19,7 @@
             </div>
             <div class='client-detail'>
                 <span class='label'>Gender</span>
-                <select t-if='!partner.id' class='detail client-gender' name="gender">
+                <select t-if='!partner.gender' class='detail client-gender' name="gender">
 　                  <option value="male">Male</option>
 　                  <option value="female">Female</option>
                 </select>
