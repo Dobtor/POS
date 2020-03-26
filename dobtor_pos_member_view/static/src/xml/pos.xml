@@ -37,20 +37,20 @@
         </t>
         <t t-jquery="div.client-details-right" t-operation="append">
             <div class='client-detail'>
-                <span class='label' style="width:95px">Mobile</span>
-                <input class='detail client-mobile' style="width: 320px;" name='mobile' readonly="1" t-att-value='partner.mobile || 0'></input>
+                <span class='label' >Mobile</span>
+                <input class='detail client-mobile' name='mobile' readonly="1" t-att-value='partner.mobile || 0'></input>
             </div>
             <div class='client-detail'>
-                <span class='label' style="width:95px">Membership</span>
-                <input class='detail client-member_type_name' style="width: 320px;" name='member_type_name' readonly="1" t-att-value='partner.member_type_name || 0'></input>
+                <span class='label' >Membership</span>
+                <input class='detail client-member_type_name' name='member_type_name' t-att-value='partner.member_type_name || ""'></input>
             </div>
             <div class='client-detail'>
                 <span class='label'>Point</span>
                 <input class='detail client-sfic_point' name='Point' readonly="1" t-att-value='partner.sfic_point || 0'></input>
             </div>
             <div class='client-detail'>
-                <span class='label' style="width:95px">TotoalAmount</span>
-                <input class='detail client-total_amount' style="width: 320px;" name='Total amount' readonly="1" t-att-value='partner.total_amount || 0'></input>
+                <span class='label' >TotoalAmount</span>
+                <input class='detail client-total_amount' name='Total amount' readonly="1" t-att-value='partner.total_amount || 0'></input>
             </div>
         </t>
 
