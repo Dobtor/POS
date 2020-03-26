@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import odoo
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from datetime import datetime
 import time
 
@@ -12,7 +12,14 @@ class ResPartner(models.Model):
     birthday = fields.Date('Date of Birth')
     total_amount = fields.Float(string='total_amount',default=0)
     expired_date= fields.Datetime(string='Expired Date',default=fields.Datetime.now,)
-    gender = fields.Selection(selection=[('male', 'Male'), ('female', 'Female')], required=True,copy=False)
+    gender = fields.Selection(selection=[
+        ('male', _('Male')),
+        ('female', _('Female')),
+        ('ohter', _('Other'))
+    ],
+        string='Gender',
+        default='male'
+    )
 
     member_id = fields.Many2one(
         comodel_name='sales.member',
