@@ -38,11 +38,11 @@
         <t t-jquery="div.client-details-right" t-operation="append">
             <div class='client-detail'>
                 <span class='label' >Mobile</span>
-                <input class='detail client-mobile' name='mobile' t-att-value='partner.mobile || 0'></input>
+                <input class='detail client-mobile' name='mobile' t-att-value='partner.mobile || ""'></input>
             </div>
             <div class='client-detail'>
                 <span class='label' >Membership</span>
-                <input class='detail client-member_type_name' readonly="1" name='member_type_name' t-att-value='partner.member_type_name || ""'></input>
+                <input class='detail client-member_type_name' readonly="1" name='member_type_name' t-att-value='partner.member_type_name || 0'></input>
             </div>
             <div class='client-detail'>
                 <span class='label'>Point</span>
