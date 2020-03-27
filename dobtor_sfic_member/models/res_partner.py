@@ -23,6 +23,7 @@ class ResPartner(models.Model):
 
     member_id = fields.Many2one(
         comodel_name='sales.member',
+        store=True
     )
 
     @api.multi
