@@ -33,4 +33,13 @@ class ResPartner(models.Model):
                     'partner_id': res.id,
                     'member_id': int(vals.get('member_id'))
                 })
+            check = {key: val for key,
+                     val in vals.items() if key == 'member_id'}
+            if len(check) and check['member_id'] == False and res.member_id != False:
+                line = self.env['sales.member.line'].search([
+                    ('partner_id', '=', res.id),
+                    ('member_id', '=', res.member_id.id)
+                ])
+                if len(line):
+                    line.unlink()
         return super().write(vals)
