@@ -21,27 +21,16 @@ class ResPartner(models.Model):
         default='male'
     )
 
-    # member_id = fields.Many2one(
-    #     comodel_name='sales.member',
-    # )
-
-    # @api.multi
-    # def write(self, vals):
-    #     for res in self:
-    #         if vals.get('member_id', False):
-    #             self.env['sales.member.line'].create({
-    #                 'partner_id': res.id,
-    #                 'member_id': int(vals.get('member_id'))
-    #             })
-    #     return super().write(vals)
-
-
     member_id = fields.Many2one(
         comodel_name='sales.member',
     )
 
     @api.multi
-    def compute_member(self):
+    def write(self, vals):
         for res in self:
-            line_id = self.env['sales.member.line'].search([('partner_id', '=', res.id)], limit=1)
-            res.member_id = line_id.member_id if line_id else False
+            if vals.get('member_id', False):
+                self.env['sales.member.line'].create({
+                    'partner_id': res.id,
+                    'member_id': int(vals.get('member_id'))
+                })
+        return super().write(vals)
