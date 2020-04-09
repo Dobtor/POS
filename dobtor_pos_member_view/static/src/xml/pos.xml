@@ -144,6 +144,17 @@
                     <span class='detail client-total_amount empty'>0</span>
                 </t>
             </div>
+            <div class='client-detail'>
+                <span class='label' style="width:95px">Counter</span>
+                <t t-if='partner.pos_counter'>
+                    <span class='detail client-pos_counter'>
+                        <t t-esc='partner.pos_counter' />
+                    </span>
+                </t>
+                <t t-if='!partner.pos_counter'>
+                    <span class='detail client-pos_counter empty'>N/A</span>
+                </t>
+            </div>
         </t>
     </t>
 </templates>

@@ -5,7 +5,7 @@ odoo.define('dobtor_pos_member_view.models', function (require) {
 
     models.PosModel = models.PosModel.extend({
         initialize: function (session, attributes) {
-            models.load_fields('res.partner', ['birthday', 'expired_date', 'sfic_point', 'total_amount', 'gender', 'member_id']);
+            models.load_fields('res.partner', ['birthday', 'expired_date', 'sfic_point', 'total_amount', 'gender', 'member_id', 'pos_counter']);
             _super_posmodel.initialize.apply(this, arguments);
         },
     });

@@ -20,7 +20,10 @@ class ResPartner(models.Model):
         string='Gender',
         default='male'
     )
-
+    pos_counter = fields.Many2one(
+        string='Counter',
+        comodel_name='pos.config',
+    )
     member_id = fields.Many2one(
         comodel_name='sales.member',
     )

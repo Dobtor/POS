@@ -15,6 +15,7 @@
     'version': '0.1',
     'depends': [
         'base',
+        'point_of_sale',
     ],
     'data': [
         'security/ir.model.access.csv',
