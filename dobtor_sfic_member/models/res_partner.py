@@ -24,6 +24,7 @@ class ResPartner(models.Model):
         string='Counter',
         comodel_name='pos.config',
     )
+    pos_counter_name = fields.Char(string='pos_counter_name',related='pos_counter.name')
     member_id = fields.Many2one(
         comodel_name='sales.member',
     )

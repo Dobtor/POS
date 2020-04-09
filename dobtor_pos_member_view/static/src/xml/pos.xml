@@ -105,7 +105,7 @@
                 <span class='label' style="width:95px">Counter</span>
                 <t t-if='partner.pos_counter'>
                     <span class='detail client-pos_counter'>
-                        <t t-esc='partner.pos_counter' />
+                        <t t-esc='partner.pos_counter_name' />
                     </span>
                 </t>
                 <t t-if='!partner.pos_counter'>
@@ -129,7 +129,11 @@
                 <span class='label' style="width:95px">Membership</span>
                 <t t-if='partner.member_id'>
                     <span class='detail client-member_id'>
-                        <t t-esc='partner.member_id.name' />
+                        <t t-foreach='widget.pos.member_id' t-as='member_id'>
+                            <t t-if="member_id.id === partner.member_id[0]">
+                                <t t-esc='member_id.name'/>
+                            </t>
+                        </t>
                     </span>
                 </t>
                 <t t-if='!partner.member_id'>
