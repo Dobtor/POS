@@ -59,6 +59,9 @@
                 <span class='label' >TotoalAmount</span>
                 <input class='detail client-total_amount' name='Total amount' readonly="1" t-att-value='partner.total_amount || 0'></input>
             </div>
+            <div class='client-detail'>
+                <input type="hidden" class='detail client-config' name='config' readonly="1" t-att-value='widget.pos.config.id'></input>
+            </div>
         </t>
 
     </t>
@@ -96,6 +99,17 @@
                 </t>
                 <t t-if='!partner.gender'>
                     <span class='detail client-gender empty'>N/A</span>
+                </t>
+            </div>
+            <div class='client-detail'>
+                <span class='label' style="width:95px">Counter</span>
+                <t t-if='partner.pos_counter'>
+                    <span class='detail client-pos_counter'>
+                        <t t-esc='partner.pos_counter' />
+                    </span>
+                </t>
+                <t t-if='!partner.pos_counter'>
+                    <span class='detail client-pos_counter empty'>N/A</span>
                 </t>
             </div>
         </t>
@@ -142,17 +156,6 @@
                 </t>
                 <t t-if='!partner.total_amount'>
                     <span class='detail client-total_amount empty'>0</span>
-                </t>
-            </div>
-            <div class='client-detail'>
-                <span class='label' style="width:95px">Counter</span>
-                <t t-if='partner.pos_counter'>
-                    <span class='detail client-pos_counter'>
-                        <t t-esc='partner.pos_counter' />
-                    </span>
-                </t>
-                <t t-if='!partner.pos_counter'>
-                    <span class='detail client-pos_counter empty'>N/A</span>
                 </t>
             </div>
         </t>

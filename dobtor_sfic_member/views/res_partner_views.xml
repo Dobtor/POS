@@ -12,6 +12,7 @@
                     <field name="expired_date"/>
                     <field name="birthday"/>
                     <field name="gender" widget="radio"/>
+                    <field name="pos_counter" />
                 </xpath>
             </field>
         </record>
