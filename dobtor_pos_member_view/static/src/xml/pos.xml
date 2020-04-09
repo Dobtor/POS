@@ -41,8 +41,15 @@
                 <input class='detail client-mobile' name='mobile' t-att-value='partner.mobile || ""'></input>
             </div>
             <div class='client-detail'>
-                <span class='label' >Membership</span>
-                <input class='detail client-member_type_name' readonly="1" name='member_type_name' t-att-value='partner.member_type_name || 0'></input>
+                <span class='label'>Membership</span>
+                <select class='detail client-member_id needsclick' name='member_id'>
+                    <option value=''>None</option>
+                    <t t-foreach='widget.pos.member_id' t-as='member_id'>
+                        <option t-att-value='member_id.id' t-att-selected="partner.member_id ? ((member_id.id === partner.member_id[0]) ? true : undefined) : undefined">
+                            <t t-esc='member_id.name'/>
+                        </option>
+                    </t>
+                </select>
             </div>
             <div class='client-detail'>
                 <span class='label'>Point</span>
@@ -106,13 +113,13 @@
             </div>
             <div class='client-detail'>
                 <span class='label' style="width:95px">Membership</span>
-                <t t-if='partner.member_type_name'>
-                    <span class='detail client-member_type_name'>
-                        <t t-esc='partner.member_type_name' />
+                <t t-if='partner.member_id'>
+                    <span class='detail client-member_id'>
+                        <t t-esc='partner.member_id.name' />
                     </span>
                 </t>
-                <t t-if='!partner.member_type_name'>
-                    <span class='detail client-member_type_name empty'>N/A</span>
+                <t t-if='!partner.member_id'>
+                    <span class='detail client-member_id empty'>N/A</span>
                 </t>
             </div>
             <div class='client-detail'>
