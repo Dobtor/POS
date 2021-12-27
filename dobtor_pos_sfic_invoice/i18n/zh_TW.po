@@ -1,0 +1,146 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* dobtor_pos_sfic_invoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20191212\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-27 03:44+0000\n"
+"PO-Revision-Date: 2021-12-27 03:44+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_res_config_settings__round_off
+#: model:ir.model.fields,help:dobtor_pos_sfic_invoice.field_res_config_settings__round_off
+msgid "Allow rounding of invoice amount"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_pos_config__auto_invoicing
+msgid "Auto Invoicing"
+msgstr "自動產生會計帳單"
+
+#. module: dobtor_pos_sfic_invoice
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_sfic_invoice.dobtor_pos_sfic_invoice_pos_config_view_form
+msgid "Auto create invoices"
+msgstr "自動建立帳單"
+
+#. module: dobtor_pos_sfic_invoice
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_sfic_invoice.dobtor_pos_sfic_invoice_pos_config_view_form
+msgid "Bill Journal"
+msgstr "採購日記帳"
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model,name:dobtor_pos_sfic_invoice.model_res_config_settings
+msgid "Config Settings"
+msgstr "配置設定"
+
+#. module: dobtor_pos_sfic_invoice
+#: code:addons/dobtor_pos_sfic_invoice/models/pos_order.py:132
+#, python-format
+msgid "Customer Invoice"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_account_invoice_line__discount_value
+msgid "Discount Value"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: code:addons/dobtor_pos_sfic_invoice/models/pos_order.py:174
+#, python-format
+msgid "Invioce not found : %d"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model,name:dobtor_pos_sfic_invoice.model_account_invoice
+msgid "Invoice"
+msgstr "憑單"
+
+#. module: dobtor_pos_sfic_invoice
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_sfic_invoice.dobtor_pos_sfic_invoice_pos_config_view_form
+msgid "Invoice Journal"
+msgstr "銷售日記帳"
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model,name:dobtor_pos_sfic_invoice.model_account_invoice_line
+msgid "Invoice Line"
+msgstr "憑單行"
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model,name:dobtor_pos_sfic_invoice.model_account_move_line
+msgid "Journal Item"
+msgstr "日記帳明細"
+
+#. module: dobtor_pos_sfic_invoice
+#: code:addons/dobtor_pos_sfic_invoice/models/account_invoice.py:139
+#, python-format
+msgid "Please create some invoice lines."
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: code:addons/dobtor_pos_sfic_invoice/models/account_invoice.py:137
+#, python-format
+msgid "Please define sequence on the journal related to this invoice."
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: code:addons/dobtor_pos_sfic_invoice/models/pos_order.py:100
+#, python-format
+msgid "Please provide a partner for the sale."
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: code:addons/dobtor_pos_sfic_invoice/models/pos_order.py:26
+#, python-format
+msgid "Point balance"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model,name:dobtor_pos_sfic_invoice.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "POS配置"
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model,name:dobtor_pos_sfic_invoice.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "POS訂單"
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_account_invoice__round_active
+msgid "Round Active"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_res_config_settings__round_off_account
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_sfic_invoice.dobtor_pos_sfic_invoice_res_config_settings_view_form
+msgid "Round Off Account"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_account_invoice__round_off_value
+msgid "Round off amount"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_account_invoice__rounded_total
+msgid "Rounded Total"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_invoice.field_account_invoice__date_settlement
+msgid "Settlement Date"
+msgstr ""
+
+#. module: dobtor_pos_sfic_invoice
+#: code:addons/dobtor_pos_sfic_invoice/models/pos_order.py:111
+#, python-format
+msgid "This invoice has been created from the point of sale session: <a href=# data-oe-model=pos.order data-oe-id=%d>%s</a>"
+msgstr ""
+

@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0-20190128\n"
+"Project-Id-Version: Odoo Server 12.0-20191212\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-06 09:02+0000\n"
-"PO-Revision-Date: 2019-06-06 09:02+0000\n"
+"POT-Creation-Date: 2021-12-27 03:33+0000\n"
+"PO-Revision-Date: 2021-12-27 03:33+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -50,11 +50,12 @@ msgstr "創建時間"
 #. module: dobtor_pos_sfic_wallet
 #: selection:pos.point.transaction,point_type:0
 msgid "Credit"
-msgstr ""
+msgstr "貸方"
 
 #. module: dobtor_pos_sfic_wallet
 #. openerp-web
 #: code:addons/dobtor_pos_sfic_wallet/static/src/js/screens.js:43
+#: code:addons/dobtor_pos_sfic_wallet/static/src/js/screens.js:58
 #: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__partner_id
 #, python-format
 msgid "Customer"
@@ -63,7 +64,7 @@ msgstr "客戶"
 #. module: dobtor_pos_sfic_wallet
 #: selection:pos.point.transaction,point_type:0
 msgid "Debit"
-msgstr ""
+msgstr "借方"
 
 #. module: dobtor_pos_sfic_wallet
 #: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__display_name
@@ -134,7 +135,7 @@ msgstr "POS訂單"
 #. module: dobtor_pos_sfic_wallet
 #: model:ir.model,name:dobtor_pos_sfic_wallet.model_pos_session
 msgid "Point of Sale Session"
-msgstr "POS會話"
+msgstr "POS前台"
 
 #. module: dobtor_pos_sfic_wallet
 #: model:ir.model.fields,field_description:dobtor_pos_sfic_wallet.field_pos_point_transaction__pos_order_id
@@ -170,6 +171,7 @@ msgstr "審核日期"
 #. module: dobtor_pos_sfic_wallet
 #. openerp-web
 #: code:addons/dobtor_pos_sfic_wallet/static/src/js/screens.js:43
+#: code:addons/dobtor_pos_sfic_wallet/static/src/js/screens.js:58
 #, python-format
 msgid "[Points: "
 msgstr "[點數: "

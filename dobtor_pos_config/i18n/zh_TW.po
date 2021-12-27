@@ -1,0 +1,113 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* dobtor_pos_config
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20191212\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-27 03:37+0000\n"
+"PO-Revision-Date: 2021-12-27 03:37+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: dobtor_pos_config
+#: model:ir.model.fields,field_description:dobtor_pos_config.field_pos_config__multi_pricelist_ids
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Available Multi Pricelists"
+msgstr "選擇多個價格表"
+
+#. module: dobtor_pos_config
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Available Using Member Discount in POS."
+msgstr "於POS使用會員優惠折扣"
+
+#. module: dobtor_pos_config
+#: model:ir.model.fields,field_description:dobtor_pos_config.field_product_pricelist__posconfig_ids
+msgid "Available Using POS"
+msgstr "應用於POS"
+
+#. module: dobtor_pos_config
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Birthday Discounts Rule."
+msgstr "生日折扣商品"
+
+#. module: dobtor_pos_config
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Choose multi pricelists for the Point Of Sale"
+msgstr "在POS上選擇多個價格表"
+
+#. module: dobtor_pos_config
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Discount conditions"
+msgstr "折扣優惠上限"
+
+#. module: dobtor_pos_config
+#: selection:pos.config,member_discount_rule:0
+msgid "Higher price"
+msgstr "由高價開始打折"
+
+#. module: dobtor_pos_config
+#: selection:pos.config,member_discount_rule:0
+msgid "Lower price"
+msgstr "由低價開始打折"
+
+#. module: dobtor_pos_config
+#: model:ir.model.fields,field_description:dobtor_pos_config.field_pos_config__member_discount_limit
+msgid "Member Discount Limit"
+msgstr ""
+
+#. module: dobtor_pos_config
+#: model:ir.model.fields,field_description:dobtor_pos_config.field_pos_config__member_discount_rule
+msgid "Member Discount Rule"
+msgstr ""
+
+#. module: dobtor_pos_config
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Multi Pricelists"
+msgstr "多個價格表"
+
+#. module: dobtor_pos_config
+#: model:ir.model.fields,field_description:dobtor_pos_config.field_pos_order__date_order
+msgid "Order Date"
+msgstr "訂購日期"
+
+#. module: dobtor_pos_config
+#: model:ir.model,name:dobtor_pos_config.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "POS配置"
+
+#. module: dobtor_pos_config
+#: model:ir.model,name:dobtor_pos_config.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "POS訂單"
+
+#. module: dobtor_pos_config
+#: model:ir.model,name:dobtor_pos_config.model_product_pricelist
+msgid "Pricelist"
+msgstr "價格表"
+
+#. module: dobtor_pos_config
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Set shop-specific prices, seasonal discounts, etc with different pricelist."
+msgstr "透過多個價格表的演算產生本台POS自動套用的中央優惠折扣"
+
+#. module: dobtor_pos_config
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_config.dobtor_pos_config
+msgid "Use Member Discount"
+msgstr "使用會員優惠折扣"
+
+#. module: dobtor_pos_config
+#: model:ir.model.fields,field_description:dobtor_pos_config.field_pos_config__available_member_discount
+msgid "Use Member Discount."
+msgstr "使用會員優惠折扣"
+
+#. module: dobtor_pos_config
+#: model:ir.model.fields,field_description:dobtor_pos_config.field_pos_config__use_multi_pricelists
+msgid "Use Multi pricelists."
+msgstr "使用多個價格表"
+

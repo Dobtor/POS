@@ -1,0 +1,221 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* dobtor_sale_member
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20191212\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-27 03:45+0000\n"
+"PO-Revision-Date: 2021-12-27 03:45+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: dobtor_sale_member
+#: code:addons/dobtor_sale_member/models/member.py:48
+#, python-format
+msgid "%s %% discount"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__birthday_discount
+msgid "Birthday Discount"
+msgstr "生日折扣"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__birthday_discount_times
+msgid "Birthday Discount Times"
+msgstr "生日折扣次數"
+
+#. module: dobtor_sale_member
+#: model:ir.model,name:dobtor_sale_member.model_res_partner
+msgid "Contact"
+msgstr "聯絡人"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__create_uid
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__create_uid
+msgid "Created by"
+msgstr "創建者"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__create_date
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__create_date
+msgid "Created on"
+msgstr "創建時間"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__date
+msgid "Date"
+msgstr "日期   "
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_partner__birthday
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_users__birthday
+msgid "Date of Birth"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__description
+msgid "Description"
+msgstr "描述"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__discount_price
+msgid "Discount"
+msgstr "折扣"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__discount_rate
+msgid "Discount rate"
+msgstr "會員折扣"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__display_name
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__display_name
+msgid "Display Name"
+msgstr "顯示名稱"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_partner__expired_date
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_users__expired_date
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__expired_date
+msgid "Expired Date"
+msgstr "會員效期長度"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_partner__history_join_ids
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_users__history_join_ids
+msgid "History Join"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__id
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__id
+msgid "ID"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join____last_update
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member____last_update
+msgid "Last Modified on"
+msgstr "最後修改時間"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__write_uid
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__write_uid
+msgid "Last Updated by"
+msgstr "最後更新人"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__write_date
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__write_date
+msgid "Last Updated on"
+msgstr "最後更新時間"
+
+#. module: dobtor_sale_member
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_member.sale_member_partner
+msgid "Member Point"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.ui.menu,name:dobtor_sale_member.point_of_sale_member_config
+msgid "Member Setting"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_partner__member_id
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_users__member_id
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__type_id
+msgid "Member Type"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.actions.server,name:dobtor_sale_member.ir_cron_verify_member_ir_actions_server
+#: model:ir.cron,cron_name:dobtor_sale_member.ir_cron_verify_member
+#: model:ir.cron,name:dobtor_sale_member.ir_cron_verify_member
+msgid "Member; Verify qualifications"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__member_ids
+msgid "Members"
+msgstr "會員"
+
+#. module: dobtor_sale_member
+#: model:ir.model,name:dobtor_sale_member.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "POS訂單"
+
+#. module: dobtor_sale_member
+#: model:ir.model,name:dobtor_sale_member.model_pos_session
+msgid "Point of Sale Session"
+msgstr "POS前台"
+
+#. module: dobtor_sale_member
+#: model:ir.actions.act_window,name:dobtor_sale_member.act_sales_member_form
+msgid "Sale Members"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_member.sales_member_form
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_member.sales_member_tree
+msgid "Sales member"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__single_threshold
+msgid "Single Threshold"
+msgstr "單筆消費滿額金額"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__annual_threshold
+msgid "Threshold"
+msgstr "累積消費滿額升級金額"
+
+#. module: dobtor_sale_member
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_member.sale_member_partner
+msgid "Upgrade"
+msgstr "升級"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_history_join__partner_id
+msgid "member_id"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_partner__member_type_name
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_users__member_type_name
+msgid "member_type_name"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__name
+msgid "name"
+msgstr "名稱"
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_sales_member__next_threshold
+msgid "next Threshold"
+msgstr "年度維持累積消費金額"
+
+#. module: dobtor_sale_member
+#: model:ir.model,name:dobtor_sale_member.model_sales_history_join
+msgid "sales.history.join"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model,name:dobtor_sale_member.model_sales_member
+msgid "sales.member"
+msgstr ""
+
+#. module: dobtor_sale_member
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_partner__total_amount
+#: model:ir.model.fields,field_description:dobtor_sale_member.field_res_users__total_amount
+msgid "total_amount"
+msgstr ""
+

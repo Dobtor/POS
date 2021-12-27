@@ -1,0 +1,271 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* dobtor_pos_promotion_return
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20191212\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-27 03:42+0000\n"
+"PO-Revision-Date: 2021-12-27 03:42+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: dobtor_pos_promotion_return
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_promotion_return.res_config_settings_view_form
+msgid "Accounting"
+msgstr "會計"
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model.fields,help:dobtor_pos_promotion_return.field_pos_config__bill_journal_id
+msgid "Accounting journal used to create bills."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model.fields,help:dobtor_pos_promotion_return.field_pos_config__journal_id
+#: model:ir.model.fields,help:dobtor_pos_promotion_return.field_pos_config__purchase_journal_id
+#: model:ir.model.fields,help:dobtor_pos_promotion_return.field_pos_order__purchase_journal
+msgid "Accounting journal used to post Purchase entries."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:67
+#, python-format
+msgid "All products have been returned."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_pos_config__bill_journal_id
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_promotion_return.dobtor_pos_return_config_view_form
+msgid "Bill Journal"
+msgstr "採購日記帳"
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model,name:dobtor_pos_promotion_return.model_res_company
+msgid "Companies"
+msgstr "公司"
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model,name:dobtor_pos_promotion_return.model_res_config_settings
+msgid "Config Settings"
+msgstr "配置設定"
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:309
+#, python-format
+msgid "Customer Bill"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:136
+#, python-format
+msgid "Empty Serial/Lot Number"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:66
+#, python-format
+msgid "Error"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:18
+#: selection:pos.order,invoice_state:0
+#, python-format
+msgid "Fully invoiced"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_pos_order__invoice_state
+msgid "Invoice state"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_pos_order__bill_account_move
+msgid "Journal Entry (BILL)"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:146
+#, python-format
+msgid "No cash statement found for this session. Unable to record returned cash."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:137
+#, python-format
+msgid "One or more product(s) required serial/lot number."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:112
+#, python-format
+msgid "Order Is Empty"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_res_company__pos_guests_id
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_res_config_settings__pos_guests_id
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_promotion_return.res_config_settings_view_form
+msgid "POS Guests"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:525
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:534
+#, python-format
+msgid "Please define income account for this product: \"%s\" (id:%d)."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:281
+#, python-format
+msgid "Please provide a partner for the sale."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model,name:dobtor_pos_promotion_return.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "POS配置"
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model,name:dobtor_pos_promotion_return.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "POS訂單"
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model,name:dobtor_pos_promotion_return.model_pos_session
+msgid "Point of Sale Session"
+msgstr "POS前台"
+
+#. module: dobtor_pos_promotion_return
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_pos_config__journal_id
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_pos_config__purchase_journal_id
+#: model:ir.model.fields,field_description:dobtor_pos_promotion_return.field_pos_order__purchase_journal
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_promotion_return.dobtor_pos_return_config_view_form
+msgid "Purchase Journal"
+msgstr "採購日記帳"
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:387
+#, python-format
+msgid "Selected orders do not have the same session!"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/res_config_setting.py:23
+#: model:ir.model.fields,help:dobtor_pos_promotion_return.field_res_config_settings__pos_guests_id
+#, python-format
+msgid "Set Default POS Guests for this Company"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_promotion_return.res_config_settings_view_form
+msgid "Set default POS Guests for this Company."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:595
+#, python-format
+msgid "Tax"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:504
+#, python-format
+msgid "The POS order must have lines when calling this method"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:197
+#, python-format
+msgid "There is no receivable account defined to make payment for the partner: \"%s\" (id:%d)."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:195
+#, python-format
+msgid "There is no receivable account defined to make payment."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:291
+#, python-format
+msgid "This invoice has been created from the point of sale session: <a href=# data-oe-model=pos.order data-oe-id=%d>%s</a>"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:17
+#: selection:pos.order,invoice_state:0
+#, python-format
+msgid "To invoice"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:634
+#, python-format
+msgid "Trade Receivables"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:26
+#, python-format
+msgid "Warning"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_promotion_return.dobtor_pos_return_config_view_form
+msgid "Whenever you close a session, one entry is generated in the following accounting journal for all the orders not bill. Bills are recorded in accounting separately."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_session.py:34
+#: code:addons/dobtor_pos_promotion_return/models/pos_session.py:64
+#, python-format
+msgid "You cannot confirm all orders of this session, because they have not the 'paid' status.\n"
+"{reference} is in state {state}, total amount: {total}, paid: {paid}"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:27
+#, python-format
+msgid "You have an unfinished return of the order. Please complete the return of the order and try again."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:211
+#, python-format
+msgid "You have to open at least one cashbox."
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_session.py:24
+#, python-format
+msgid "You have to set a Sale Journal for the POS:%s"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#. openerp-web
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:104
+#: code:addons/dobtor_pos_promotion_return/static/src/js/screens.js:207
+#, python-format
+msgid "point"
+msgstr ""
+
+#. module: dobtor_pos_promotion_return
+#: code:addons/dobtor_pos_promotion_return/models/pos_order.py:150
+#, python-format
+msgid "return"
+msgstr ""
+

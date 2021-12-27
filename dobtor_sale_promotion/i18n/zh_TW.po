@@ -1,0 +1,912 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* dobtor_sale_promotion
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20191212\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-27 03:53+0000\n"
+"PO-Revision-Date: 2021-12-27 03:53+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,applied_on:0
+msgid " Product Category"
+msgstr "產品分類"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:102
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_sale_promotion_rule_range_based__end
+#, python-format
+msgid "-1 Express infinite"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/res_config_setting.py:9
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_res_config_settings__group_sale_promotion
+#, python-format
+msgid "Allow Custom Promotion Rule"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:153
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__applied_on
+#, python-format
+msgid "Applied on"
+msgstr "套用於"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:34
+#, python-format
+msgid "Applied on After Order"
+msgstr "於訂單最後計算"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__applied_on
+msgid "Apply On"
+msgstr "應用於"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:89
+#: code:addons/dobtor_sale_promotion/models/promotion.py:162
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__attribute_id
+#, python-format
+msgid "Attribute"
+msgstr "屬性"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model,name:dobtor_sale_promotion.model_product_attribute_value
+msgid "Attribute Value"
+msgstr "屬性值"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:51
+#: code:addons/dobtor_sale_promotion/models/migrations.py:109
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_attribute_id
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_attribute_id
+#, python-format
+msgid "BOGO Discount Attribute"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:67
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_free_attribute_id
+#, python-format
+msgid "BOGO Free Attribute"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:10
+#, python-format
+msgid "BOGO Offer"
+msgstr "買送促銷"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model,name:dobtor_sale_promotion.model_sale_promotion_bogo_offer_item
+msgid "BOGO Offer Item"
+msgstr "買送促銷項目"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:82
+#, python-format
+msgid "BOGO Rule Lines"
+msgstr "買送規則累進明細"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_base_on
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_base_on
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__based_on
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__based_on
+msgid "Based On"
+msgstr "基於"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_gift_base_on
+msgid "Bogo Gift Base On"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:29
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__buy_x
+#, python-format
+msgid "Buy (X Unit)"
+msgstr "買X個產品"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:22
+#, python-format
+msgid "Buy (X Unit) of Product , Get (Y Unit) of Product Free"
+msgstr "買X個產品，獲得Y個產品打N折"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:23
+#, python-format
+msgid "Buy (X Unit) of Product , Get Product for % Discount"
+msgstr "買\"累計X個\"產品，獲得\"X個產品\"打N%折"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:27
+#, python-format
+msgid "Buy (X Unit) of Product A, Get (Y Unit) of Product B for $ or % Discount"
+msgstr "買X個A產品，獲得Y個產品B固定以S價格購買或打N%折"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:25
+#, python-format
+msgid "Buy (X Unit) of Product Get (Y Unit) of Another Products Free"
+msgstr "買X個產品獲得Y個不包含X個產品內的額外免費產品"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_gift_base_on
+msgid "Bxa Gyb Discount Gift Base On"
+msgstr "買送折扣規則套用於"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_free_gift_base_on
+msgid "Bxa Gyb Free Gift Base On"
+msgstr "買送規則產品套用於"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:13
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__repeat_ok
+#, python-format
+msgid "Can be Repeat"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:16
+#, python-format
+msgid "Can not Repeat"
+msgstr "不允許重複計算折扣優惠"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:112
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__based_on_rebate
+#, python-format
+msgid "Cash Back"
+msgstr "現金回饋"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:106
+#, python-format
+msgid "Cash Back (Rebate)"
+msgstr "現金回饋"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_product_attribute_value__create_variant
+msgid "Check this if you want to create multiple variants for this attribute."
+msgstr "如果要為此屬性創建多個變體，請選中此項。"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:50
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:136
+#, python-format
+msgid "Combo Promotion"
+msgstr "組合促銷"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:68
+#, python-format
+msgid "Combo Rule Lines"
+msgstr "組合規則明細"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__compute_price
+msgid "Compute Price"
+msgstr "計算價格"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model,name:dobtor_sale_promotion.model_res_config_settings
+msgid "Config Settings"
+msgstr "配置設定"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_attribute.py:9
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_attribute_value__create_variant
+#, python-format
+msgid "Create Variants"
+msgstr "創建變體"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__create_uid
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__create_uid
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__create_uid
+msgid "Created by"
+msgstr "創建者"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__create_date
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__create_date
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__create_date
+msgid "Created on"
+msgstr "創建時間"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/res_config_setting.py:19
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_res_config_settings__promotion_product_id
+#, python-format
+msgid "Default product used for promotion"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:64
+#: code:addons/dobtor_sale_promotion/models/migrations.py:121
+#, python-format
+msgid "Discounted Product"
+msgstr "折扣的產品"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:30
+#: code:addons/dobtor_sale_promotion/models/migrations.py:40
+#: code:addons/dobtor_sale_promotion/models/migrations.py:55
+#: code:addons/dobtor_sale_promotion/models/migrations.py:90
+#, python-format
+msgid "Discounted Product Qty"
+msgstr "折扣產品數量(Y)"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:78
+#, python-format
+msgid "Discounted Products"
+msgstr "打折的產品"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:56
+#: code:addons/dobtor_sale_promotion/models/migrations.py:71
+#: code:addons/dobtor_sale_promotion/models/migrations.py:113
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_variant_ids
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_variant_ids
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_free_variant_ids
+#, python-format
+msgid "Discounted Variant Value"
+msgstr "已打折的產品屬性值"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__display_name
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__display_name
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__display_name
+msgid "Display Name"
+msgstr "顯示名稱"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:101
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__end
+#, python-format
+msgid "End"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:34
+#: code:addons/dobtor_sale_promotion/models/migrations.py:94
+#: selection:product.pricelist.item,compute_price:0
+#, python-format
+msgid "Fix Price"
+msgstr "固定價格"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:179
+#, python-format
+msgid "Fix Price (Specify a Price)"
+msgstr "固定價格(指定價格)"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:69
+#: code:addons/dobtor_sale_promotion/models/migrations.py:126
+#, python-format
+msgid "Fixed Discount"
+msgstr "固定銷售價格(S)"
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,compute_price:0
+msgid "Formula"
+msgstr "公式"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:35
+#, python-format
+msgid "General Promotion"
+msgstr "標準促銷"
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,applied_on:0
+msgid "Global"
+msgstr "全域"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__id
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__id
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__id
+msgid "ID"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_product__is_promotion_product
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_template__is_promotion_product
+msgid "Is Promotion Product"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:208
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:210
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:218
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:220
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:223
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:225
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:235
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:237
+#, python-format
+msgid "It has to be greater than 0"
+msgstr "必須大於0"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:212
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:227
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:239
+#: code:addons/dobtor_sale_promotion/models/promotion.py:125
+#, python-format
+msgid "It has to be less than 100"
+msgstr "必須小於100"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:70
+#: code:addons/dobtor_sale_promotion/models/promotion.py:204
+#, python-format
+msgid "It has to be less then 100"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item____last_update
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale____last_update
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based____last_update
+msgid "Last Modified on"
+msgstr "最後修改時間"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__write_uid
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__write_uid
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__write_uid
+msgid "Last Updated by"
+msgstr "最後更新人"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__write_date
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__write_date
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__write_date
+msgid "Last Updated on"
+msgstr "最後更新時間"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:103
+#, python-format
+msgid "Order by Price"
+msgstr "價格計算次序"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:73
+#, python-format
+msgid "Order by Price (Combo)"
+msgstr "價格計算次序（組合）"
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,range_based_on:0
+msgid "Over base Discount"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:34
+#: code:addons/dobtor_sale_promotion/models/promotion.py:116
+#: code:addons/dobtor_sale_promotion/models/promotion.py:189
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__based_on_percentage
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__based_on_percentage
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__based_on_percentage
+#, python-format
+msgid "Percentage"
+msgstr "百分比"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:35
+#: code:addons/dobtor_sale_promotion/models/migrations.py:95
+#: code:addons/dobtor_sale_promotion/models/promotion.py:107
+#: code:addons/dobtor_sale_promotion/models/promotion.py:180
+#: selection:product.pricelist.item,compute_price:0
+#, python-format
+msgid "Percentage (discount)"
+msgstr "百分比 ( 折扣 )"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:72
+#: code:addons/dobtor_sale_promotion/models/migrations.py:44
+#: code:addons/dobtor_sale_promotion/models/migrations.py:129
+#, python-format
+msgid "Percentage Discount"
+msgstr "折扣百分比(N%)"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:215
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:231
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:243
+#: code:addons/dobtor_sale_promotion/models/promotion.py:72
+#: code:addons/dobtor_sale_promotion/models/promotion.py:130
+#: code:addons/dobtor_sale_promotion/models/promotion.py:133
+#: code:addons/dobtor_sale_promotion/models/promotion.py:207
+#: code:addons/dobtor_sale_promotion/models/promotion.py:210
+#, python-format
+msgid "Please enter Some Value for Calculation"
+msgstr "必須輸入可被計算的數值"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:185
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__based_on_price
+#, python-format
+msgid "Price"
+msgstr "價格"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model,name:dobtor_sale_promotion.model_product_pricelist_item
+msgid "Pricelist Item"
+msgstr "價格表明細"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_product_pricelist_item__applied_on
+msgid "Pricelist Item applicable on selected option"
+msgstr "適用於選定的選項價格表明細"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:11
+#, python-format
+msgid "Primary key"
+msgstr "不與其他優惠折扣合併計算"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:43
+#: code:addons/dobtor_sale_promotion/models/migrations.py:60
+#: code:addons/dobtor_sale_promotion/models/migrations.py:102
+#: code:addons/dobtor_sale_promotion/models/promotion.py:155
+#: code:addons/dobtor_sale_promotion/models/promotion.py:173
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__product_id
+#: selection:product.pricelist.item,applied_on:0
+#, python-format
+msgid "Product"
+msgstr "產品"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:26
+#: code:addons/dobtor_sale_promotion/models/migrations.py:36
+#: code:addons/dobtor_sale_promotion/models/migrations.py:51
+#: code:addons/dobtor_sale_promotion/models/migrations.py:86
+#, python-format
+msgid "Product Qty"
+msgstr "基數產品數量(X)"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model,name:dobtor_sale_promotion.model_product_template
+msgid "Product Template"
+msgstr "產品模板"
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,applied_on:0
+msgid "Product Variant"
+msgstr "產品變體"
+
+#. module: dobtor_sale_promotion
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_promotion.product_template_promotion_form_view
+msgid "Promotion"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:41
+#, python-format
+msgid "Promotion Method"
+msgstr "優惠折扣方式"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/res_config_setting.py:15
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_res_config_settings__promotion_product_id
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_promotion.res_config_settings_view_form
+#, python-format
+msgid "Promotion Product"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:17
+#: code:addons/dobtor_sale_promotion/models/promotion.py:81
+#: code:addons/dobtor_sale_promotion/models/promotion.py:141
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__promotion_id
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__promotion_id
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__promotion_id
+#, python-format
+msgid "Promotion Reference"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_promotion.res_config_settings_view_form
+msgid "Promotion Rule (Combo Promotion, BOGO Offer), etc."
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_product_pricelist_item__base_on
+msgid "Promotion rule applicable on selected option"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model,name:dobtor_sale_promotion.model_sale_promotion_rule_combo_sale
+msgid "Promotion rule combo sale"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model,name:dobtor_sale_promotion.model_sale_promotion_rule_range_based
+msgid "Promotion rule range based"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__range_based_on
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__range_based_on
+msgid "Range Based On"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:63
+#, python-format
+msgid "Range Rule Lines"
+msgstr "規則範圍明細"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:43
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:125
+#: selection:product.pricelist.item,range_based_on:0
+#, python-format
+msgid "Range based Discount"
+msgstr "基於折扣範圍"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:23
+#: code:addons/dobtor_sale_promotion/models/promotion.py:87
+#: code:addons/dobtor_sale_promotion/models/promotion.py:147
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_bogo_offer_item__pricelist_id
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__pricelist_id
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__pricelist_id
+#, python-format
+msgid "Referce pricelist"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_promotion.product_pricelist_item_extend_form_view
+msgid "Rule Item"
+msgstr "規則項目"
+
+#. module: dobtor_sale_promotion
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_promotion.product_pricelist_item_bogo_offer_form_view
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_promotion.product_pricelist_item_extend_form_view
+msgid "Rule Lines"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:13
+#, python-format
+msgid "Rules are not integrated with orders"
+msgstr "不與其他優惠折扣合併計算"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:15
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:18
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_product_pricelist_item__not_repeat_ok
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_product_pricelist_item__repeat_ok
+#, python-format
+msgid "Rules are unique and not repeated"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_product_pricelist_item__variant_ids
+msgid "Specify a variant value if this rule only applies to one product. Keep empty otherwise."
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/promotion.py:98
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_range_based__start
+#, python-format
+msgid "Start"
+msgstr "累計金額"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:45
+#: selection:product.pricelist.item,bogo_gift_base_on:0
+#, python-format
+msgid "The Same as Apple On"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:78
+#, python-format
+msgid "Use last compliance discount, Apply all"
+msgstr "於最後結帳套用計算"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:128
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:132
+#, python-format
+msgid "Variant : {}"
+msgstr "變體 : {}"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/bogo_promotion.py:44
+#: code:addons/dobtor_sale_promotion/models/migrations.py:61
+#: code:addons/dobtor_sale_promotion/models/migrations.py:103
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:85
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:93
+#: code:addons/dobtor_sale_promotion/models/promotion.py:156
+#: code:addons/dobtor_sale_promotion/models/promotion.py:166
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_sale_promotion_rule_combo_sale__variant_ids
+#, python-format
+msgid "Variant Value"
+msgstr "屬性值"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:75
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:105
+#, python-format
+msgid "ascending"
+msgstr "低到高"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/migrations.py:20
+#, python-format
+msgid "bogo base on"
+msgstr "買送促銷基於"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:134
+#, python-format
+msgid "bogo offer"
+msgstr "買送促銷"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:76
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:106
+#, python-format
+msgid "descending"
+msgstr "高到低"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:32
+#, python-format
+msgid "level on"
+msgstr "規則類型"
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:27
+#, python-format
+msgid "pricelist sequence"
+msgstr "價格表序列"
+
+#. module: dobtor_sale_promotion
+#: model:res.groups,name:dobtor_sale_promotion.group_sale_promotion
+msgid "promotion on lines"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model_terms:ir.ui.view,arch_db:dobtor_sale_promotion.res_config_settings_view_form
+msgid "promotions."
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: code:addons/dobtor_sale_promotion/models/product_pricelist.py:22
+#, python-format
+msgid "sequence"
+msgstr "序列"
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__not_repeat_ok
+msgid "不允許重複計算折扣優惠"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__is_primary_key
+#: model:ir.model.fields,help:dobtor_sale_promotion.field_product_pricelist_item__is_primary_key
+msgid "不與其他優惠折扣合併計算"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,combo_order_by_pirce:0
+#: selection:product.pricelist.item,order_by_pirce:0
+msgid "低到高"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__pricelist_sequence
+msgid "價格表序列"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__order_by_pirce
+msgid "價格計算次序"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__combo_order_by_pirce
+msgid "價格計算次序（組合）"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__base_on
+msgid "優惠折扣方式"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,bogo_base_on:0
+#: selection:product.pricelist.item,bxa_gyb_discount_base_on:0
+msgid "固定價格"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:sale.promotion.rule.combo.sale,based_on:0
+msgid "固定價格(指定價格)"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_fixed_price
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_fixed_price
+msgid "固定銷售價格(S)"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_Aproduct_unit
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gya_free_Aproduct_unit
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_Aproduct_unit
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_free_Aproduct_unit
+msgid "基數產品數量(X)"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,base_on:0
+msgid "基於折扣範圍"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__attribute_id
+msgid "屬性"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__variant_ids
+#: selection:product.pricelist.item,applied_on:0
+#: selection:product.pricelist.item,bogo_gift_base_on:0
+#: selection:product.pricelist.item,bxa_gyb_discount_gift_base_on:0
+#: selection:product.pricelist.item,bxa_gyb_free_gift_base_on:0
+#: selection:sale.promotion.rule.combo.sale,applied_on:0
+msgid "屬性值"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__sequence
+msgid "序列"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_free_products
+msgid "打折的產品"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_Bproduct_unit
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gya_free_Bproduct_unit
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_Bproduct_unit
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_free_Bproduct_unit
+msgid "折扣產品數量(Y)"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_percentage_price
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gya_free_percentage_price
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_percentage_price
+msgid "折扣百分比(N%)"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_product
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gyb_discount_product
+msgid "折扣的產品"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gya_discount_apply_all
+msgid "於最後結帳套用計算"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,level_on:0
+msgid "於訂單最後計算"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,level_on:0
+msgid "標準促銷"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:sale.promotion.rule.range.based,based_on:0
+msgid "現金回饋"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,bogo_gift_base_on:0
+#: selection:product.pricelist.item,bxa_gyb_discount_gift_base_on:0
+#: selection:product.pricelist.item,bxa_gyb_free_gift_base_on:0
+#: selection:sale.promotion.rule.combo.sale,applied_on:0
+msgid "產品"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,bogo_base_on:0
+#: selection:product.pricelist.item,bxa_gyb_discount_base_on:0
+#: selection:sale.promotion.rule.combo.sale,based_on:0
+#: selection:sale.promotion.rule.range.based,based_on:0
+msgid "百分比 ( 折扣 )"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,compute_price:0
+msgid "組合促銷"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__combo_sale_ids
+msgid "組合規則明細"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__range_based_ids
+msgid "規則範圍明細"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__level_on
+msgid "規則類型"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,bogo_base:0
+msgid "買\"累計X個\"產品，獲得\"X個產品\"打N%折"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,bogo_base:0
+msgid "買X個A產品，獲得Y個產品B固定以S價格購買或打N%折"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,bogo_base:0
+msgid "買X個產品獲得Y個不包含X個產品內的額外免費產品"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,bogo_base:0
+msgid "買X個產品，獲得Y個產品打N折"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,compute_price:0
+msgid "買送促銷"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bogo_base
+msgid "買送促銷基於"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: model:ir.model.fields,field_description:dobtor_sale_promotion.field_product_pricelist_item__bxa_gya_discount_ids
+msgid "買送規則累進明細"
+msgstr ""
+
+#. module: dobtor_sale_promotion
+#: selection:product.pricelist.item,combo_order_by_pirce:0
+#: selection:product.pricelist.item,order_by_pirce:0
+msgid "高到低"
+msgstr ""
+

@@ -1,0 +1,135 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* dobtor_pos_sfic_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20191212\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-27 03:43+0000\n"
+"PO-Revision-Date: 2021-12-27 03:43+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__create_uid
+msgid "Created by"
+msgstr "創建者"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__create_date
+msgid "Created on"
+msgstr "創建時間"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__display_name
+msgid "Display Name"
+msgstr "顯示名稱"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_product_product__extra_attribute_value_ids
+msgid "Extra Attribute Values"
+msgstr ""
+
+#. module: dobtor_pos_sfic_base
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_sfic_base.dobtor_pos_sfic_base_pos_config_view_form
+msgid "General"
+msgstr "常規"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__id
+msgid "ID"
+msgstr ""
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type____last_update
+msgid "Last Modified on"
+msgstr "最後修改時間"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__write_uid
+msgid "Last Updated by"
+msgstr "最後更新人"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__write_date
+msgid "Last Updated on"
+msgstr "最後更新時間"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__name
+msgid "Name"
+msgstr "名稱"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_config__pos_type
+msgid "POS Type"
+msgstr "POS 類型"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_pos_type__pos_point_ratio
+msgid "Point Ratio"
+msgstr ""
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model,name:dobtor_pos_sfic_base.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "POS配置"
+
+#. module: dobtor_pos_sfic_base
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_sfic_base.dobtor_pos_sfic_base_pos_config_view_form
+msgid "Pos type"
+msgstr "POS 類型"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model,name:dobtor_pos_sfic_base.model_product_product
+msgid "Product"
+msgstr "產品"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model,name:dobtor_pos_sfic_base.model_product_attribute
+msgid "Product Attribute"
+msgstr "產品屬性"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model,name:dobtor_pos_sfic_base.model_product_template
+msgid "Product Template"
+msgstr "產品模板"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model,name:dobtor_pos_sfic_base.model_product_template_attribute_line
+msgid "Product Template Attribute Line"
+msgstr "產品模板屬性明細行"
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,help:dobtor_pos_sfic_base.field_product_product__valid_product_template_attribute_line_hnva_ids
+#: model:ir.model.fields,help:dobtor_pos_sfic_base.field_product_template__valid_product_template_attribute_line_hnva_ids
+msgid "Technical compute"
+msgstr "技術計算"
+
+#. module: dobtor_pos_sfic_base
+#: code:addons/dobtor_pos_sfic_base/models/product.py:71
+#, python-format
+msgid "The number of variants to generate is too high. "
+msgstr ""
+
+#. module: dobtor_pos_sfic_base
+#: model_terms:ir.ui.view,arch_db:dobtor_pos_sfic_base.dobtor_pos_sfic_base_product_template_form_view
+msgid "Update Extra variant"
+msgstr ""
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_product_product__valid_product_template_attribute_line_hnva_ids
+#: model:ir.model.fields,field_description:dobtor_pos_sfic_base.field_product_template__valid_product_template_attribute_line_hnva_ids
+msgid "Valid Product Attribute Lines Has No Variant Attributes"
+msgstr ""
+
+#. module: dobtor_pos_sfic_base
+#: model:ir.model,name:dobtor_pos_sfic_base.model_pos_type
+msgid "pos.type"
+msgstr ""
+
